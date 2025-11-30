@@ -1,71 +1,116 @@
 <template>
-  <div class="page-container">
-    <div class="page-card">
-      <div class="header">
-        <button @click="goBack" class="btn-back">← {{ $t('common.back') }}</button>
-        <h1>{{ $t('nav.myRequests') }}</h1>
+  <AppLayout>
+    <div class="my-requests">
+      <!-- Header Actions -->
+      <div class="page-header">
+        <div>
+          <h1>{{ $t('nav.myRequests') }}</h1>
+          <p>View and manage all your requests</p>
+        </div>
+        <BaseButton variant="primary" @click="createNew">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
+          </svg>
+          {{ $t('request.newRequest') }}
+        </BaseButton>
       </div>
 
+      <!-- Error Alert -->
       <div v-if="error" class="alert alert-error">
         {{ error }}
       </div>
 
-      <div v-if="isLoading" class="loading">
-        {{ $t('common.loading') }}
+      <!-- Loading State -->
+      <div v-if="isLoading" class="loading-state">
+        <div class="spinner"></div>
+        <p>{{ $t('common.loading') }}</p>
       </div>
 
-      <div v-else-if="requests.length === 0" class="empty-state">
-        <p>{{ $t('request.noRequests') }}</p>
-        <button @click="createNew" class="btn-primary">{{ $t('request.newRequest') }}</button>
-      </div>
+      <!-- Empty State -->
+      <BaseCard v-else-if="requests.length === 0" class="empty-state-card">
+        <div class="empty-state">
+          <svg width="96" height="96" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <h2>{{ $t('request.noRequests') }}</h2>
+          <p>You haven't created any requests yet. Start by creating your first request.</p>
+          <BaseButton variant="primary" size="lg" @click="createNew">
+            {{ $t('request.newRequest') }}
+          </BaseButton>
+        </div>
+      </BaseCard>
 
-      <div v-else class="requests-list">
+      <!-- Requests List -->
+      <div v-else>
+        <!-- Filter Bar -->
         <div class="filter-bar">
           <button
             v-for="status in statuses"
             :key="status.value"
             @click="filterStatus = status.value"
-            :class="['filter-btn', { active: filterStatus === status.value }]"
+            :class="['filter-chip', { active: filterStatus === status.value }]"
           >
             {{ status.label }}
+            <span v-if="status.count > 0" class="count">{{ status.count }}</span>
           </button>
         </div>
 
-        <div
-          v-for="request in filteredRequests"
-          :key="request.id"
-          class="request-item"
-          @click="viewDetails(request.id)"
-        >
-          <div class="request-header">
-            <h3>{{ request.title }}</h3>
-            <span :class="['badge', `badge-${request.status}`]">
-              {{ formatStatus(request.status) }}
-            </span>
-          </div>
+        <!-- Requests Grid -->
+        <div class="requests-grid">
+          <BaseCard
+            v-for="request in filteredRequests"
+            :key="request.id"
+            class="request-card"
+            @click="viewDetails(request.id)"
+          >
+            <div class="request-header">
+              <div class="request-title-section">
+                <h3>{{ request.title }}</h3>
+                <p class="request-id">#{{ request.id }}</p>
+              </div>
+              <BaseBadge :variant="getStatusVariant(request.status)">
+                {{ formatStatus(request.status) }}
+              </BaseBadge>
+            </div>
 
-          <p class="request-description">{{ truncate(request.description, 150) }}</p>
+            <p class="request-description">{{ truncate(request.description, 120) }}</p>
 
-          <div class="request-meta">
-            <span class="meta-item">
-              <strong>{{ $t('request.submittedAt') }}:</strong>
-              {{ formatDate(request.submitted_at || request.created_at) }}
-            </span>
-            <span v-if="request.current_department" class="meta-item">
-              <strong>{{ $t('request.currentDepartment') }}:</strong> {{ request.current_department.name }}
-            </span>
-            <span v-if="request.workflow_path" class="meta-item">
-              <strong>{{ $t('request.workflowPath') }}:</strong> {{ request.workflow_path.name }}
-            </span>
-          </div>
+            <div class="request-footer">
+              <div class="request-meta">
+                <div class="meta-item">
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>{{ formatDate(request.submitted_at || request.created_at) }}</span>
+                </div>
 
-          <div v-if="request.attachments && request.attachments.length > 0" class="attachments">
-            {{ request.attachments.length }} {{ $t('request.attachments') }}
-          </div>
+                <div v-if="request.current_department" class="meta-item">
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>{{ request.current_department.name }}</span>
+                </div>
+
+                <div v-if="request.attachments && request.attachments.length > 0" class="meta-item">
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>{{ request.attachments.length }} files</span>
+                </div>
+              </div>
+
+              <button class="view-btn" @click.stop="viewDetails(request.id)">
+                View Details
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </div>
+          </BaseCard>
         </div>
       </div>
     </div>
-  </div>
+  </AppLayout>
 </template>
 
 <script setup>
@@ -74,6 +119,10 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
+import AppLayout from '../components/AppLayout.vue'
+import BaseCard from '../components/BaseCard.vue'
+import BaseButton from '../components/BaseButton.vue'
+import BaseBadge from '../components/BaseBadge.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -86,15 +135,20 @@ const filterStatus = ref('all')
 
 const API_URL = 'http://localhost:8000/api'
 
+const getStatusCount = (status) => {
+  if (status === 'all') return requests.value.length
+  return requests.value.filter(r => r.status === status).length
+}
+
 const statuses = computed(() => [
-  { label: t('common.all'), value: 'all' },
-  { label: t('status.draft'), value: 'draft' },
-  { label: t('status.pending'), value: 'pending' },
-  { label: t('status.in_review'), value: 'in_review' },
-  { label: t('status.need_more_details'), value: 'need_more_details' },
-  { label: t('status.approved'), value: 'approved' },
-  { label: t('status.rejected'), value: 'rejected' },
-  { label: t('status.completed'), value: 'completed' }
+  { label: t('common.all'), value: 'all', count: getStatusCount('all') },
+  { label: t('status.draft'), value: 'draft', count: getStatusCount('draft') },
+  { label: t('status.pending'), value: 'pending', count: getStatusCount('pending') },
+  { label: t('status.in_review'), value: 'in_review', count: getStatusCount('in_review') },
+  { label: t('status.need_more_details'), value: 'need_more_details', count: getStatusCount('need_more_details') },
+  { label: t('status.approved'), value: 'approved', count: getStatusCount('approved') },
+  { label: t('status.rejected'), value: 'rejected', count: getStatusCount('rejected') },
+  { label: t('status.completed'), value: 'completed', count: getStatusCount('completed') }
 ])
 
 const filteredRequests = computed(() => {
@@ -111,22 +165,24 @@ onMounted(async () => {
 const loadRequests = async () => {
   try {
     isLoading.value = true
+    console.log('Loading requests with token:', authStore.token ? 'Token exists' : 'No token')
+    console.log('API URL:', `${API_URL}/requests`)
+
     const response = await axios.get(`${API_URL}/requests`, {
       headers: {
         Authorization: `Bearer ${authStore.token}`
       }
     })
 
+    console.log('Requests response:', response.data)
     requests.value = response.data.requests
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to load requests'
+    console.error('Failed to load requests:', err)
+    console.error('Error response:', err.response?.data)
+    error.value = err.response?.data?.message || err.message || 'Failed to load requests'
   } finally {
     isLoading.value = false
   }
-}
-
-const goBack = () => {
-  router.push('/dashboard')
 }
 
 const createNew = () => {
@@ -135,6 +191,19 @@ const createNew = () => {
 
 const viewDetails = (id) => {
   router.push(`/requests/${id}`)
+}
+
+const getStatusVariant = (status) => {
+  const variants = {
+    draft: 'gray',
+    pending: 'warning',
+    in_review: 'info',
+    need_more_details: 'warning',
+    approved: 'success',
+    rejected: 'error',
+    completed: 'success'
+  }
+  return variants[status] || 'gray'
 }
 
 const formatStatus = (status) => {
@@ -158,222 +227,248 @@ const truncate = (text, length) => {
 </script>
 
 <style scoped>
-.page-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
-}
-
-.page-card {
-  background: white;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  max-width: 1000px;
+.my-requests {
+  max-width: 1400px;
   margin: 0 auto;
 }
 
-.header {
+/* Page Header */
+.page-header {
   display: flex;
   align-items: center;
-  margin-bottom: 30px;
-  gap: 15px;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-8);
 }
 
-.btn-back {
-  padding: 8px 16px;
-  background: #f5f5f5;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s;
+.page-header h1 {
+  font-size: var(--font-size-3xl);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-2);
 }
 
-.btn-back:hover {
-  background: #e0e0e0;
-}
-
-h1 {
-  color: #333;
-  font-size: 28px;
+.page-header p {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
-.alert {
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-20);
+  gap: var(--spacing-4);
 }
 
-.alert-error {
-  background: #fee;
-  color: #c33;
-  border: 1px solid #fcc;
+.loading-state p {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  margin: 0;
 }
 
-.loading {
-  text-align: center;
-  padding: 40px;
-  color: #666;
-  font-size: 16px;
+/* Empty State */
+.empty-state-card {
+  padding: var(--spacing-12);
 }
 
 .empty-state {
   text-align: center;
-  padding: 60px 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.empty-state svg {
+  color: var(--color-gray-300);
+  margin-bottom: var(--spacing-6);
+}
+
+.empty-state h2 {
+  font-size: var(--font-size-2xl);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-3);
 }
 
 .empty-state p {
-  color: #666;
-  font-size: 16px;
-  margin-bottom: 20px;
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-6);
 }
 
+/* Filter Bar */
 .filter-bar {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-6);
   flex-wrap: wrap;
+  padding: var(--spacing-4);
+  background: var(--color-background);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
 }
 
-.filter-btn {
-  padding: 8px 16px;
-  background: #f5f5f5;
-  border: 2px solid transparent;
-  border-radius: 8px;
+.filter-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
-  color: #666;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
 }
 
-.filter-btn:hover {
-  background: #e0e0e0;
+.filter-chip:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-300);
 }
 
-.filter-btn.active {
-  background: #667eea;
+.filter-chip.active {
+  background: var(--color-primary-600);
   color: white;
-  border-color: #667eea;
+  border-color: var(--color-primary-600);
 }
 
-.requests-list {
+.filter-chip .count {
+  padding: 2px var(--spacing-2);
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  min-width: 20px;
+  text-align: center;
+}
+
+.filter-chip.active .count {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Requests Grid */
+.requests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: var(--spacing-6);
+}
+
+.request-card {
+  cursor: pointer;
+  transition: all var(--transition-base);
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  height: 100%;
 }
 
-.request-item {
-  padding: 20px;
-  border: 2px solid #e0e0e0;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s;
-  background: white;
-}
-
-.request-item:hover {
-  border-color: #667eea;
-  transform: translateY(-2px);
-  background: #f8f9ff;
+.request-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-primary-300);
 }
 
 .request-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
 }
 
-.request-header h3 {
-  color: #333;
-  font-size: 18px;
+.request-title-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.request-title-section h3 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.request-id {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-mono);
   margin: 0;
 }
 
-.badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.badge-draft {
-  background: #e0e0e0;
-  color: #666;
-}
-
-.badge-pending {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.badge-in_review {
-  background: #cfe2ff;
-  color: #084298;
-}
-
-.badge-need_more_details {
-  background: #f8d7da;
-  color: #842029;
-}
-
-.badge-approved {
-  background: #d1e7dd;
-  color: #0f5132;
-}
-
-.badge-rejected {
-  background: #f8d7da;
-  color: #842029;
-}
-
-.badge-completed {
-  background: #d1e7dd;
-  color: #0f5132;
-}
-
 .request-description {
-  color: #666;
-  font-size: 14px;
-  margin-bottom: 15px;
-  line-height: 1.5;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--spacing-4);
+  flex: 1;
+}
+
+.request-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-border);
 }
 
 .request-meta {
   display: flex;
-  gap: 20px;
   flex-wrap: wrap;
-  font-size: 13px;
-  color: #999;
+  gap: var(--spacing-4);
 }
 
-.meta-item strong {
-  color: #666;
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
 }
 
-.attachments {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #667eea;
-  font-weight: 500;
+.meta-item svg {
+  color: var(--color-gray-400);
+  flex-shrink: 0;
 }
 
-.btn-primary {
-  padding: 14px 28px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
+.view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary-600);
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all var(--transition-fast);
+  width: 100%;
 }
 
-.btn-primary:hover {
-  transform: translateY(-2px);
+.view-btn:hover {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-300);
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-4);
+  }
+
+  .requests-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
 }
 </style>

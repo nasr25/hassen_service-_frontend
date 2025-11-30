@@ -1,105 +1,203 @@
 <template>
-  <div class="page-container">
-    <div class="page-card">
-      <div class="header">
-        <button @click="goBack" class="btn-back">← Back</button>
-        <h1>Request Details</h1>
-        <button
-          v-if="request && request.status === 'need_more_details'"
-          @click="editRequest"
-          class="btn-edit"
-        >
-          ✏️ Edit & Resubmit
-        </button>
+  <AppLayout>
+    <div class="request-detail">
+      <!-- Header with Back Button and Actions -->
+      <div class="page-header">
+        <div class="header-left">
+          <BaseButton variant="ghost" size="sm" @click="goBack">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+            </svg>
+            Back to Requests
+          </BaseButton>
+        </div>
+        <div class="header-right">
+          <BaseButton
+            v-if="request && request.status === 'need_more_details'"
+            variant="primary"
+            @click="editRequest"
+          >
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+            </svg>
+            Edit & Resubmit
+          </BaseButton>
+        </div>
       </div>
 
+      <!-- Error Alert -->
       <div v-if="error" class="alert alert-error">
         {{ error }}
       </div>
 
-      <!-- Need More Details Notice -->
+      <!-- Need More Details Warning -->
       <div v-if="request && request.status === 'need_more_details'" class="alert alert-warning">
-        <strong>⚠️ More Details Required</strong>
+        <div class="alert-header">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <strong>More Details Required</strong>
+        </div>
         <p>This request needs additional information. Please review the comments in the workflow history below, update your request, and resubmit.</p>
       </div>
 
-      <div v-if="isLoading" class="loading">
-        Loading request details...
+      <!-- Loading State -->
+      <div v-if="isLoading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading request details...</p>
       </div>
 
-      <div v-else-if="request" class="request-details">
-        <!-- Request Info -->
-        <div class="info-section">
-          <div class="section-header">
-            <h2>{{ request.title }}</h2>
-            <span :class="['badge', `badge-${request.status}`]">
-              {{ formatStatus(request.status) }}
-            </span>
-          </div>
+      <!-- Request Content -->
+      <div v-else-if="request" class="request-content">
+        <!-- Request Info Section -->
+        <BaseCard class="info-card">
+          <template #header>
+            <div class="card-header-content">
+              <div>
+                <h2 class="request-title">{{ request.title }}</h2>
+                <p class="request-id">#{{ request.id }}</p>
+              </div>
+              <BaseBadge :variant="getStatusVariant(request.status)">
+                {{ formatStatus(request.status) }}
+              </BaseBadge>
+            </div>
+          </template>
 
+          <!-- Info Grid -->
           <div class="info-grid">
             <div class="info-item">
-              <strong>Submitted By:</strong>
-              <span>{{ request.user?.name }}</span>
+              <div class="info-label">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                </svg>
+                <span>Submitted By</span>
+              </div>
+              <div class="info-value">{{ request.user?.name }}</div>
             </div>
+
             <div class="info-item">
-              <strong>Email:</strong>
-              <span>{{ request.user?.email }}</span>
+              <div class="info-label">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                </svg>
+                <span>Email</span>
+              </div>
+              <div class="info-value">{{ request.user?.email }}</div>
             </div>
+
             <div class="info-item">
-              <strong>Submitted At:</strong>
-              <span>{{ formatDate(request.submitted_at || request.created_at) }}</span>
+              <div class="info-label">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                </svg>
+                <span>Submitted At</span>
+              </div>
+              <div class="info-value">{{ formatDate(request.submitted_at || request.created_at) }}</div>
             </div>
+
             <div v-if="request.completed_at" class="info-item">
-              <strong>Completed At:</strong>
-              <span>{{ formatDate(request.completed_at) }}</span>
+              <div class="info-label">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span>Completed At</span>
+              </div>
+              <div class="info-value">{{ formatDate(request.completed_at) }}</div>
             </div>
+
             <div v-if="request.current_department" class="info-item">
-              <strong>Current Department:</strong>
-              <span>{{ request.current_department.name }}</span>
+              <div class="info-label">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+                </svg>
+                <span>Current Department</span>
+              </div>
+              <div class="info-value">{{ request.current_department.name }}</div>
             </div>
+
             <div v-if="request.workflow_path" class="info-item">
-              <strong>Workflow Path:</strong>
-              <span>{{ request.workflow_path.name }}</span>
+              <div class="info-label">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+                <span>Workflow Path</span>
+              </div>
+              <div class="info-value">{{ request.workflow_path.name }}</div>
             </div>
           </div>
 
+          <!-- Description -->
           <div class="description-section">
-            <strong>Description:</strong>
+            <h4>Description</h4>
             <p>{{ request.description }}</p>
           </div>
 
+          <!-- Additional Details -->
           <div v-if="request.additional_details" class="description-section">
-            <strong>Additional Details:</strong>
+            <h4>Additional Details</h4>
             <p>{{ request.additional_details }}</p>
           </div>
 
-          <div v-if="request.rejection_reason" class="rejection-reason">
-            <strong>Rejection Reason:</strong>
+          <!-- Rejection Reason -->
+          <div v-if="request.rejection_reason" class="rejection-section">
+            <div class="rejection-header">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+              </svg>
+              <h4>Rejection Reason</h4>
+            </div>
             <p>{{ request.rejection_reason }}</p>
           </div>
+        </BaseCard>
 
-          <!-- Attachments -->
-          <div v-if="request.attachments && request.attachments.length > 0" class="attachments-section">
-            <strong>Attachments:</strong>
-            <div class="attachments-list">
-              <div v-for="attachment in request.attachments" :key="attachment.id" class="attachment-item">
-                <span class="attachment-icon">📎</span>
-                <span class="attachment-name">{{ attachment.original_name }}</span>
-                <span class="attachment-size">({{ formatFileSize(attachment.file_size) }})</span>
+        <!-- Attachments Section -->
+        <BaseCard v-if="request.attachments && request.attachments.length > 0" class="attachments-card">
+          <template #header>
+            <div class="section-header">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+              </svg>
+              <h3>Attachments</h3>
+              <BaseBadge variant="gray">{{ request.attachments.length }}</BaseBadge>
+            </div>
+          </template>
+
+          <div class="attachments-list">
+            <div v-for="attachment in request.attachments" :key="attachment.id" class="attachment-item">
+              <div class="attachment-icon">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div class="attachment-info">
+                <div class="attachment-name">{{ attachment.original_name }}</div>
+                <div class="attachment-size">{{ formatFileSize(attachment.file_size) }}</div>
               </div>
             </div>
           </div>
-        </div>
+        </BaseCard>
 
-        <!-- Workflow History -->
-        <div class="history-section">
-          <h3>📋 Workflow History</h3>
+        <!-- Workflow History Section -->
+        <BaseCard class="history-card">
+          <template #header>
+            <div class="section-header">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+              </svg>
+              <h3>Workflow History</h3>
+            </div>
+          </template>
 
+          <!-- Empty State -->
           <div v-if="!request.transitions || request.transitions.length === 0" class="empty-history">
+            <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
             <p>No workflow history yet.</p>
           </div>
 
+          <!-- Timeline -->
           <div v-else class="timeline">
             <div v-for="(transition, index) in request.transitions" :key="transition.id" class="timeline-item">
               <div class="timeline-marker">
@@ -109,50 +207,63 @@
 
               <div class="timeline-content">
                 <div class="timeline-header">
-                  <span class="timeline-action">
-                    {{ formatAction(transition.action) }}
-                  </span>
-                  <span class="timeline-date">
-                    {{ formatDateTime(transition.created_at) }}
-                  </span>
+                  <div class="timeline-action-wrapper">
+                    <span class="timeline-action">{{ formatAction(transition.action) }}</span>
+                    <BaseBadge variant="gray" class="timeline-badge">
+                      {{ formatStatus(transition.to_status) }}
+                    </BaseBadge>
+                  </div>
+                  <span class="timeline-date">{{ formatDateTime(transition.created_at) }}</span>
                 </div>
 
                 <div class="timeline-details">
-                  <div v-if="transition.actioned_by" class="detail-item">
-                    <strong>By:</strong> {{ transition.actioned_by.name }} ({{ transition.actioned_by.email }})
+                  <div v-if="transition.actioned_by" class="detail-row">
+                    <span class="detail-label">By:</span>
+                    <span class="detail-value">{{ transition.actioned_by.name }} ({{ transition.actioned_by.email }})</span>
                   </div>
 
-                  <div v-if="transition.from_department_id" class="detail-item">
-                    <strong>From:</strong> {{ getDepartmentName(transition.from_department_id) }}
+                  <div v-if="transition.from_department_id" class="detail-row">
+                    <span class="detail-label">From:</span>
+                    <span class="detail-value">{{ getDepartmentName(transition.from_department_id) }}</span>
                   </div>
 
-                  <div v-if="transition.to_department" class="detail-item">
-                    <strong>To:</strong> {{ transition.to_department.name }}
+                  <div v-if="transition.to_department" class="detail-row">
+                    <span class="detail-label">To:</span>
+                    <span class="detail-value">{{ transition.to_department.name }}</span>
                   </div>
 
-                  <div v-if="transition.to_user_id" class="detail-item">
-                    <strong>Assigned to:</strong> User ID {{ transition.to_user_id }}
+                  <div v-if="transition.to_user_id" class="detail-row">
+                    <span class="detail-label">Assigned to:</span>
+                    <span class="detail-value">User ID {{ transition.to_user_id }}</span>
                   </div>
 
-                  <div class="detail-item">
-                    <strong>Status Change:</strong>
-                    <span :class="['mini-badge', `badge-${transition.from_status}`]">{{ formatStatus(transition.from_status) }}</span>
-                    →
-                    <span :class="['mini-badge', `badge-${transition.to_status}`]">{{ formatStatus(transition.to_status) }}</span>
+                  <div class="detail-row">
+                    <span class="detail-label">Status Change:</span>
+                    <div class="status-change">
+                      <BaseBadge :variant="getStatusVariant(transition.from_status)" class="mini-badge">
+                        {{ formatStatus(transition.from_status) }}
+                      </BaseBadge>
+                      <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                      </svg>
+                      <BaseBadge :variant="getStatusVariant(transition.to_status)" class="mini-badge">
+                        {{ formatStatus(transition.to_status) }}
+                      </BaseBadge>
+                    </div>
                   </div>
 
                   <div v-if="transition.comments" class="transition-comments">
-                    <strong>Comments:</strong>
-                    <p>{{ transition.comments }}</p>
+                    <span class="detail-label">Comments:</span>
+                    <p class="comment-text">{{ transition.comments }}</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </BaseCard>
       </div>
     </div>
-  </div>
+  </AppLayout>
 </template>
 
 <script setup>
@@ -160,6 +271,10 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import axios from 'axios'
+import AppLayout from '../components/AppLayout.vue'
+import BaseCard from '../components/BaseCard.vue'
+import BaseButton from '../components/BaseButton.vue'
+import BaseBadge from '../components/BaseBadge.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -201,6 +316,19 @@ const goBack = () => {
 
 const editRequest = () => {
   router.push(`/requests/${route.params.id}/edit`)
+}
+
+const getStatusVariant = (status) => {
+  const variants = {
+    draft: 'gray',
+    pending: 'warning',
+    in_review: 'info',
+    need_more_details: 'warning',
+    approved: 'success',
+    rejected: 'error',
+    completed: 'success'
+  }
+  return variants[status] || 'gray'
 }
 
 const formatStatus = (status) => {
@@ -263,287 +391,293 @@ const getDepartmentName = (deptId) => {
 </script>
 
 <style scoped>
-.page-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
-}
-
-.page-card {
-  background: white;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+.request-detail {
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.header {
+/* Page Header */
+.page-header {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 30px;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-6);
 }
 
-.btn-back {
-  padding: 8px 16px;
-  background: #f5f5f5;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s;
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
 }
 
-.btn-back:hover {
-  background: #e0e0e0;
-}
-
-.btn-edit {
-  padding: 10px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: transform 0.2s;
-  margin-left: auto;
-}
-
-.btn-edit:hover {
-  transform: translateY(-2px);
-}
-
-h1 {
-  color: #333;
-  font-size: 28px;
-  margin: 0;
-  flex: 1;
-}
-
+/* Alerts */
 .alert {
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
+  margin-bottom: var(--spacing-6);
 }
 
-.alert-error {
-  background: #fee;
-  color: #c33;
-  border: 1px solid #fcc;
+.alert-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
 }
 
-.alert-warning {
-  background: #fff3cd;
-  color: #856404;
-  border: 2px solid #ffc107;
+.alert-header svg {
+  flex-shrink: 0;
 }
 
-.alert-warning strong {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 16px;
+.alert-header strong {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
 }
 
-.alert-warning p {
+.alert p {
   margin: 0;
-  line-height: 1.5;
+  line-height: var(--line-height-relaxed);
 }
 
-.loading {
-  text-align: center;
-  padding: 40px;
-  color: #666;
-  font-size: 16px;
-}
-
-/* Request Details */
-.request-details {
+/* Loading State */
+.loading-state {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-}
-
-.info-section {
-  background: #f8f9fa;
-  padding: 25px;
-  border-radius: 12px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  justify-content: center;
+  padding: var(--spacing-20);
+  gap: var(--spacing-4);
 }
 
-.section-header h2 {
-  color: #333;
-  font-size: 24px;
+.loading-state p {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
-.badge {
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
+/* Request Content */
+.request-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
 }
 
-.badge-draft {
-  background: #e0e0e0;
-  color: #666;
+/* Info Card */
+.info-card {
+  padding: 0;
 }
 
-.badge-pending {
-  background: #fff3cd;
-  color: #856404;
+.card-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+  padding: var(--spacing-6);
+  padding-bottom: 0;
 }
 
-.badge-in_review {
-  background: #cfe2ff;
-  color: #084298;
+.request-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-1);
 }
 
-.badge-completed {
-  background: #d1e7dd;
-  color: #0f5132;
+.request-id {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-family: var(--font-family-mono);
+  margin: 0;
 }
 
-.badge-rejected {
-  background: #f8d7da;
-  color: #842029;
-}
-
-.badge-need_more_details {
-  background: #fff3cd;
-  color: #856404;
-}
-
+/* Info Grid */
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-6);
+  padding: var(--spacing-6);
+  padding-bottom: 0;
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: var(--spacing-2);
 }
 
-.info-item strong {
-  color: #666;
-  font-size: 13px;
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
 }
 
-.info-item span {
-  color: #333;
-  font-size: 15px;
+.info-label svg {
+  color: var(--color-gray-400);
+  flex-shrink: 0;
 }
 
+.info-value {
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Description Section */
 .description-section {
-  margin-top: 15px;
+  padding: var(--spacing-6);
+  padding-top: var(--spacing-5);
+  border-top: 1px solid var(--color-border);
 }
 
-.description-section strong {
-  color: #666;
-  font-size: 14px;
-  display: block;
-  margin-bottom: 8px;
+.description-section h4 {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .description-section p {
-  color: #333;
-  line-height: 1.6;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-relaxed);
   margin: 0;
 }
 
-.rejection-reason {
-  background: #fff3cd;
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px solid #ffc107;
-  margin-top: 15px;
+/* Rejection Section */
+.rejection-section {
+  padding: var(--spacing-6);
+  padding-top: var(--spacing-5);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-error-50);
+  margin: 0 var(--spacing-6) var(--spacing-6) var(--spacing-6);
+  border-radius: var(--radius-lg);
 }
 
-.rejection-reason strong {
-  color: #856404;
-  display: block;
-  margin-bottom: 8px;
+.rejection-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
 }
 
-.rejection-reason p {
-  color: #856404;
+.rejection-header svg {
+  color: var(--color-error-600);
+  flex-shrink: 0;
+}
+
+.rejection-header h4 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-error-700);
   margin: 0;
 }
 
-.attachments-section {
-  margin-top: 20px;
+.rejection-section p {
+  font-size: var(--font-size-base);
+  color: var(--color-error-700);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
 }
 
-.attachments-section strong {
-  color: #666;
-  font-size: 14px;
-  display: block;
-  margin-bottom: 10px;
+/* Attachments Card */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.section-header svg {
+  color: var(--color-primary-600);
+  flex-shrink: 0;
+}
+
+.section-header h3 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+  flex: 1;
 }
 
 .attachments-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-3);
 }
 
 .attachment-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.attachment-item:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-primary-300);
 }
 
 .attachment-icon {
-  font-size: 18px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+}
+
+.attachment-info {
+  flex: 1;
+  min-width: 0;
 }
 
 .attachment-name {
-  color: #333;
-  font-size: 14px;
-  flex: 1;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .attachment-size {
-  color: #999;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-1);
 }
 
-/* Workflow History */
-.history-section {
-  background: white;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 25px;
-}
-
-.history-section h3 {
-  color: #333;
-  font-size: 20px;
-  margin: 0 0 25px 0;
-}
-
+/* History Card */
 .empty-history {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-12);
   text-align: center;
-  padding: 40px;
-  color: #999;
 }
 
+.empty-history svg {
+  color: var(--color-gray-300);
+  margin-bottom: var(--spacing-4);
+}
+
+.empty-history p {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Timeline */
 .timeline {
   display: flex;
   flex-direction: column;
@@ -552,7 +686,7 @@ h1 {
 
 .timeline-item {
   display: flex;
-  gap: 20px;
+  gap: var(--spacing-6);
   position: relative;
 }
 
@@ -560,114 +694,182 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 30px;
+  width: 24px;
   flex-shrink: 0;
+  padding-top: 2px;
 }
 
 .marker-dot {
   width: 16px;
   height: 16px;
-  border-radius: 50%;
-  border: 3px solid #667eea;
-  background: white;
+  border-radius: var(--radius-full);
+  border: 3px solid var(--color-primary-600);
+  background: var(--color-background);
   z-index: 1;
+  flex-shrink: 0;
 }
 
 .marker-dot.marker-assign_path {
-  border-color: #4caf50;
+  border-color: var(--color-success-600);
 }
 
 .marker-dot.marker-assign {
-  border-color: #2196f3;
+  border-color: var(--color-info-600);
 }
 
 .marker-dot.marker-complete {
-  border-color: #4caf50;
+  border-color: var(--color-success-600);
 }
 
 .marker-dot.marker-reject {
-  border-color: #ff6b6b;
+  border-color: var(--color-error-600);
 }
 
 .marker-dot.marker-return_to_department {
-  border-color: #ff9800;
+  border-color: var(--color-warning-600);
+}
+
+.marker-dot.marker-request_details {
+  border-color: var(--color-warning-600);
 }
 
 .marker-line {
   width: 2px;
   flex: 1;
-  background: #e0e0e0;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  background: var(--color-border);
+  margin-top: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
 }
 
 .timeline-content {
   flex: 1;
-  padding-bottom: 30px;
+  padding-bottom: var(--spacing-8);
 }
 
 .timeline-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-4);
+  gap: var(--spacing-4);
+  flex-wrap: wrap;
+}
+
+.timeline-action-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
 }
 
 .timeline-action {
-  color: #667eea;
-  font-weight: 600;
-  font-size: 16px;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary-700);
+}
+
+.timeline-badge {
+  font-size: var(--font-size-xs);
 }
 
 .timeline-date {
-  color: #999;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
 }
 
 .timeline-details {
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
+  background: var(--color-surface);
+  padding: var(--spacing-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-3);
 }
 
-.detail-item {
-  font-size: 14px;
-  color: #666;
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
 }
 
-.detail-item strong {
-  color: #333;
-  margin-right: 5px;
+.detail-label {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  color: var(--color-text-primary);
+  flex: 1;
+}
+
+.status-change {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
+.status-change svg {
+  color: var(--color-gray-400);
+  flex-shrink: 0;
 }
 
 .mini-badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  margin: 0 5px;
+  font-size: var(--font-size-xs);
 }
 
 .transition-comments {
-  margin-top: 8px;
-  padding-top: 12px;
-  border-top: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  padding-top: var(--spacing-3);
+  border-top: 1px solid var(--color-border);
 }
 
-.transition-comments strong {
-  display: block;
-  margin-bottom: 6px;
-  color: #333;
-}
-
-.transition-comments p {
-  color: #555;
+.comment-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-relaxed);
   font-style: italic;
+  background: var(--color-background);
+  padding: var(--spacing-3);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-primary-300);
   margin: 0;
-  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-4);
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .timeline-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .timeline-action-wrapper {
+    flex-wrap: wrap;
+  }
+
+  .detail-label {
+    min-width: 100px;
+  }
 }
 </style>
