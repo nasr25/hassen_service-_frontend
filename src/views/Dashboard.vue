@@ -102,6 +102,17 @@
           <p>{{ $t('dashboard.reviewRequests.description') }}</p>
         </BaseCard>
 
+        <BaseCard v-if="canViewWorkflow" class="action-card" @click="goToDepartmentARequests">
+          <div class="action-icon action-icon-info">
+            <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+              <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <h3>All Requests</h3>
+          <p>View all requests with history and status</p>
+        </BaseCard>
+
         <BaseCard v-if="canViewDepartment" class="action-card" @click="goDepartmentWorkflow">
           <div class="action-icon action-icon-info">
             <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
@@ -227,6 +238,10 @@ const goToNewRequest = () => {
 
 const goToWorkflowReview = () => {
   router.push('/workflow/review')
+}
+
+const goToDepartmentARequests = () => {
+  router.push('/department-a-requests')
 }
 
 const goDepartmentWorkflow = () => {

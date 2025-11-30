@@ -58,6 +58,18 @@ const routes = [
     name: 'AdminPanel',
     component: () => import('../views/AdminPanel.vue'),
     meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/department-a-requests',
+    name: 'DepartmentARequests',
+    component: () => import('../views/DepartmentARequests.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/request-history/:id',
+    name: 'RequestHistory',
+    component: () => import('../views/RequestHistory.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
