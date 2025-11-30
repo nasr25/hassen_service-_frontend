@@ -57,9 +57,21 @@
           </div>
 
           <div class="request-actions">
-            <button v-if="isManager && !request.current_user_id" @click="openPathEvaluationModal(request)" class="btn-action btn-assign">
-              👤 Assign to Employee
-            </button>
+            <!-- Manager Actions (only for unassigned requests) -->
+            <template v-if="isManager && !request.current_user_id">
+              <button @click="openPathEvaluationModal(request, 'accept')" class="btn-action btn-accept">
+                ✓ Accept Idea
+              </button>
+              <button @click="openPathEvaluationModal(request, 'accept_later')" class="btn-action btn-accept-later">
+                ⏰ Accept for Later
+              </button>
+              <button @click="openPathEvaluationModal(request, 'reject')" class="btn-action btn-reject">
+                ✗ Reject Idea
+              </button>
+              <button @click="openPathEvaluationModal(request, 'return')" class="btn-action btn-return">
+                ↩️ Return to Dept A
+              </button>
+            </template>
 
             <!-- Employee: Return to Manager -->
             <button
@@ -68,15 +80,6 @@
               class="btn-action btn-return-manager"
             >
               ↩️ Return to Manager
-            </button>
-
-            <!-- Manager: Return to Dept A (only for unassigned requests) -->
-            <button
-              v-if="isManager && !request.current_user_id"
-              @click="openReturnToDeptAModal(request)"
-              class="btn-action btn-return"
-            >
-              ✓ Return to Dept A
             </button>
           </div>
         </div>
@@ -166,7 +169,15 @@
         <p class="modal-subtitle">Request: {{ pathEvaluationModal.request?.title }}</p>
 
         <div class="alert alert-info">
-          <strong>Note:</strong> You must evaluate this request before assigning it to an employee.
+          <strong>Action:</strong>
+          <span v-if="pathEvaluationModal.action === 'accept'">Accept Idea - Assign to employee</span>
+          <span v-else-if="pathEvaluationModal.action === 'accept_later'">Accept for Later - Schedule for future assignment</span>
+          <span v-else-if="pathEvaluationModal.action === 'reject'">Reject Idea - Decline this request</span>
+          <span v-else-if="pathEvaluationModal.action === 'return'">Return to Department A for validation</span>
+        </div>
+
+        <div class="alert alert-info">
+          <strong>Note:</strong> Please evaluate this request before proceeding.
         </div>
 
         <div v-if="pathEvaluationModal.isLoading" class="loading">
@@ -215,10 +226,10 @@
           <button @click="closePathEvaluationModal" class="btn-secondary">Cancel</button>
           <button
             v-if="pathEvaluationModal.questions.length === 0"
-            @click="proceedToAssign"
+            @click="proceedWithAction"
             class="btn-primary"
           >
-            Proceed to Assign
+            {{ getActionButtonText() }}
           </button>
           <button
             v-else
@@ -307,6 +318,7 @@ const returnToDeptAModal = ref({
 const pathEvaluationModal = ref({
   show: false,
   request: null,
+  action: null, // 'accept', 'accept_later', 'reject', 'return'
   questions: [],
   evaluations: {},
   isLoading: false,
@@ -524,9 +536,10 @@ const isEvaluationComplete = computed(() => {
   })
 })
 
-const openPathEvaluationModal = async (request) => {
+const openPathEvaluationModal = async (request, action) => {
   pathEvaluationModal.value.show = true
   pathEvaluationModal.value.request = request
+  pathEvaluationModal.value.action = action
   pathEvaluationModal.value.questions = []
   pathEvaluationModal.value.evaluations = {}
   pathEvaluationModal.value.isLoading = true
@@ -611,8 +624,8 @@ const submitPathEvaluation = async () => {
     success.value = 'Evaluation submitted successfully'
     setTimeout(() => (success.value = null), 3000)
 
-    // Proceed to assign modal
-    proceedToAssign()
+    // Proceed with the selected action
+    proceedWithAction()
   } catch (err) {
     error.value = err.response?.data?.message || 'Failed to submit evaluation'
   } finally {
@@ -620,10 +633,87 @@ const submitPathEvaluation = async () => {
   }
 }
 
-const proceedToAssign = () => {
+const getActionButtonText = () => {
+  switch (pathEvaluationModal.value.action) {
+    case 'accept':
+      return 'Proceed to Assign Employee'
+    case 'accept_later':
+      return 'Accept for Later'
+    case 'reject':
+      return 'Reject Idea'
+    case 'return':
+      return 'Return to Dept A'
+    default:
+      return 'Continue'
+  }
+}
+
+const proceedWithAction = () => {
   const request = pathEvaluationModal.value.request
+  const action = pathEvaluationModal.value.action
   closePathEvaluationModal()
-  openAssignModal(request)
+
+  switch (action) {
+    case 'accept':
+      openAssignModal(request)
+      break
+    case 'accept_later':
+      acceptIdeaForLater(request)
+      break
+    case 'reject':
+      rejectIdea(request)
+      break
+    case 'return':
+      openReturnToDeptAModal(request)
+      break
+  }
+}
+
+const acceptIdeaForLater = async (request) => {
+  if (!confirm(`Accept this idea for later implementation?\n\nRequest: ${request.title}`)) return
+
+  try {
+    error.value = null
+    await axios.post(
+      `${API_URL}/department/requests/${request.id}/accept-later`,
+      { comments: 'Idea accepted for future implementation' },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      }
+    )
+
+    success.value = 'Idea accepted for later implementation'
+    await loadRequests()
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to accept idea'
+  }
+}
+
+const rejectIdea = async (request) => {
+  const reason = prompt(`Reject this idea?\n\nRequest: ${request.title}\n\nPlease provide a reason for rejection:`)
+  if (!reason) return
+
+  try {
+    error.value = null
+    await axios.post(
+      `${API_URL}/department/requests/${request.id}/reject`,
+      { comments: reason },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      }
+    )
+
+    success.value = 'Idea rejected'
+    await loadRequests()
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to reject idea'
+  }
 }
 </script>
 
@@ -798,33 +888,53 @@ h1 {
 
 .btn-action {
   flex: 1;
-  min-width: 180px;
+  min-width: 160px;
   padding: 10px 16px;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.btn-assign {
-  background: #2196f3;
-  color: white;
-}
-
-.btn-assign:hover {
-  background: #0b7dda;
-  transform: translateY(-2px);
-}
-
-.btn-return {
+.btn-accept {
   background: #4caf50;
   color: white;
 }
 
-.btn-return:hover {
+.btn-accept:hover {
   background: #45a049;
+  transform: translateY(-2px);
+}
+
+.btn-accept-later {
+  background: #ff9800;
+  color: white;
+}
+
+.btn-accept-later:hover {
+  background: #f57c00;
+  transform: translateY(-2px);
+}
+
+.btn-reject {
+  background: #f44336;
+  color: white;
+}
+
+.btn-reject:hover {
+  background: #d32f2f;
+  transform: translateY(-2px);
+}
+
+.btn-return {
+  background: #2196f3;
+  color: white;
+}
+
+.btn-return:hover {
+  background: #0b7dda;
   transform: translateY(-2px);
 }
 
