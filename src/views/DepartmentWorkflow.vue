@@ -57,7 +57,7 @@
           </div>
 
           <div class="request-actions">
-            <button v-if="isManager && !request.current_user_id" @click="openAssignModal(request)" class="btn-action btn-assign">
+            <button v-if="isManager && !request.current_user_id" @click="openPathEvaluationModal(request)" class="btn-action btn-assign">
               👤 Assign to Employee
             </button>
 
@@ -159,6 +159,79 @@
       </div>
     </div>
 
+    <!-- Path Evaluation Modal (Manager) -->
+    <div v-if="pathEvaluationModal.show" class="modal-overlay" @click="closePathEvaluationModal">
+      <div class="modal-content path-evaluation-modal" @click.stop>
+        <h2>✅ Path Evaluation Required</h2>
+        <p class="modal-subtitle">Request: {{ pathEvaluationModal.request?.title }}</p>
+
+        <div class="alert alert-info">
+          <strong>Note:</strong> You must evaluate this request before assigning it to an employee.
+        </div>
+
+        <div v-if="pathEvaluationModal.isLoading" class="loading">
+          Loading evaluation questions...
+        </div>
+
+        <div v-else-if="pathEvaluationModal.questions.length === 0" class="alert alert-info">
+          <strong>No evaluation questions configured for this workflow path.</strong>
+          <p style="margin-top: 8px; font-size: 13px;">You can proceed directly to assign this request.</p>
+        </div>
+
+        <div v-else class="evaluation-questions-list">
+          <div v-for="(question, index) in pathEvaluationModal.questions" :key="question.id" class="evaluation-question">
+            <h4 class="question-title">
+              <span class="question-number">Q{{ index + 1 }}</span>
+              {{ question.question }}
+            </h4>
+
+            <div class="evaluation-toggles">
+              <button
+                :class="['toggle-btn', 'applied', { active: pathEvaluationModal.evaluations[question.id]?.is_applied === true }]"
+                @click="setEvaluation(question.id, true)"
+              >
+                ✓ Applied
+              </button>
+              <button
+                :class="['toggle-btn', 'not-applied', { active: pathEvaluationModal.evaluations[question.id]?.is_applied === false }]"
+                @click="setEvaluation(question.id, false)"
+              >
+                ✗ Not Applied
+              </button>
+            </div>
+
+            <div class="form-group">
+              <label>Notes (Optional)</label>
+              <textarea
+                v-model="pathEvaluationModal.evaluations[question.id].notes"
+                placeholder="Add any additional comments or context..."
+                rows="2"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button @click="closePathEvaluationModal" class="btn-secondary">Cancel</button>
+          <button
+            v-if="pathEvaluationModal.questions.length === 0"
+            @click="proceedToAssign"
+            class="btn-primary"
+          >
+            Proceed to Assign
+          </button>
+          <button
+            v-else
+            @click="submitPathEvaluation"
+            :disabled="!isEvaluationComplete || pathEvaluationModal.isSaving"
+            class="btn-primary"
+          >
+            {{ pathEvaluationModal.isSaving ? 'Saving...' : 'Save Evaluation & Continue' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Return to Department A Modal (Manager) -->
     <div v-if="returnToDeptAModal.show" class="modal-overlay" @click="closeReturnToDeptAModal">
       <div class="modal-content" @click.stop>
@@ -229,6 +302,15 @@ const returnToDeptAModal = ref({
   request: null,
   comments: '',
   isLoading: false
+})
+
+const pathEvaluationModal = ref({
+  show: false,
+  request: null,
+  questions: [],
+  evaluations: {},
+  isLoading: false,
+  isSaving: false
 })
 
 const API_URL = 'http://localhost:8000/api'
@@ -430,6 +512,118 @@ const confirmReturnToDeptA = async () => {
   } finally {
     returnToDeptAModal.value.isLoading = false
   }
+}
+
+// Path Evaluation Modal
+const isEvaluationComplete = computed(() => {
+  if (pathEvaluationModal.value.questions.length === 0) return true
+
+  return pathEvaluationModal.value.questions.every(q => {
+    const evaluation = pathEvaluationModal.value.evaluations[q.id]
+    return evaluation && evaluation.is_applied !== undefined && evaluation.is_applied !== null
+  })
+})
+
+const openPathEvaluationModal = async (request) => {
+  pathEvaluationModal.value.show = true
+  pathEvaluationModal.value.request = request
+  pathEvaluationModal.value.questions = []
+  pathEvaluationModal.value.evaluations = {}
+  pathEvaluationModal.value.isLoading = true
+
+  try {
+    const response = await axios.get(
+      `${API_URL}/department/requests/${request.id}/path-evaluation-questions`,
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      }
+    )
+
+    pathEvaluationModal.value.questions = response.data.questions
+
+    // Initialize evaluations object
+    response.data.questions.forEach(q => {
+      pathEvaluationModal.value.evaluations[q.id] = {
+        is_applied: null,
+        notes: ''
+      }
+    })
+
+    // Load existing evaluations if any
+    if (response.data.evaluations) {
+      Object.values(response.data.evaluations).forEach(evaluation => {
+        if (pathEvaluationModal.value.evaluations[evaluation.path_evaluation_question_id]) {
+          pathEvaluationModal.value.evaluations[evaluation.path_evaluation_question_id] = {
+            is_applied: evaluation.is_applied,
+            notes: evaluation.notes || ''
+          }
+        }
+      })
+    }
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to load evaluation questions'
+    closePathEvaluationModal()
+  } finally {
+    pathEvaluationModal.value.isLoading = false
+  }
+}
+
+const closePathEvaluationModal = () => {
+  pathEvaluationModal.value.show = false
+  pathEvaluationModal.value.request = null
+  pathEvaluationModal.value.questions = []
+  pathEvaluationModal.value.evaluations = {}
+}
+
+const setEvaluation = (questionId, isApplied) => {
+  if (!pathEvaluationModal.value.evaluations[questionId]) {
+    pathEvaluationModal.value.evaluations[questionId] = { notes: '' }
+  }
+  pathEvaluationModal.value.evaluations[questionId].is_applied = isApplied
+}
+
+const submitPathEvaluation = async () => {
+  try {
+    pathEvaluationModal.value.isSaving = true
+    error.value = null
+
+    // Transform evaluations object to array format expected by API
+    const evaluationsArray = pathEvaluationModal.value.questions.map(q => ({
+      question_id: q.id,
+      is_applied: pathEvaluationModal.value.evaluations[q.id].is_applied,
+      notes: pathEvaluationModal.value.evaluations[q.id].notes || null
+    }))
+
+    await axios.post(
+      `${API_URL}/department/requests/${pathEvaluationModal.value.request.id}/path-evaluation`,
+      {
+        evaluations: evaluationsArray
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      }
+    )
+
+    success.value = 'Evaluation submitted successfully'
+    setTimeout(() => (success.value = null), 3000)
+
+    // Proceed to assign modal
+    proceedToAssign()
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to submit evaluation'
+  } finally {
+    pathEvaluationModal.value.isSaving = false
+  }
+}
+
+const proceedToAssign = () => {
+  const request = pathEvaluationModal.value.request
+  closePathEvaluationModal()
+  openAssignModal(request)
 }
 </script>
 
@@ -784,5 +978,102 @@ h1 {
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Path Evaluation Modal Styles */
+.path-evaluation-modal {
+  max-width: 700px;
+}
+
+.evaluation-questions-list {
+  margin-top: 20px;
+}
+
+.evaluation-question {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 2px solid #e0e0e0;
+}
+
+.question-title {
+  color: #333;
+  font-size: 15px;
+  margin: 0 0 15px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.5;
+}
+
+.question-number {
+  background: #667eea;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.evaluation-toggles {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.toggle-btn:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.toggle-btn.applied.active {
+  background: #4caf50;
+  color: white;
+  border-color: #4caf50;
+}
+
+.toggle-btn.not-applied.active {
+  background: #f44336;
+  color: white;
+  border-color: #f44336;
+}
+
+.toggle-btn.applied:not(.active):hover {
+  border-color: #4caf50;
+  background: #e8f5e9;
+}
+
+.toggle-btn.not-applied:not(.active):hover {
+  border-color: #f44336;
+  background: #ffebee;
+}
+
+.evaluation-question .form-group {
+  margin-bottom: 0;
+}
+
+.evaluation-question .form-group label {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.evaluation-question .form-group textarea {
+  font-size: 13px;
+  padding: 10px;
 }
 </style>
