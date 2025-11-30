@@ -17,7 +17,12 @@
     "no": "لا",
     "confirm": "تأكيد",
     "logout": "تسجيل الخروج",
-    "welcome": "مرحباً"
+    "welcome": "مرحباً",
+    "actions": "الإجراءات",
+    "view": "عرض",
+    "download": "تحميل",
+    "close": "إغلاق",
+    "continue": "متابعة"
   },
   "nav": {
     "dashboard": "لوحة التحكم",
@@ -25,7 +30,8 @@
     "newRequest": "طلب جديد",
     "workflowReview": "مراجعة سير العمل",
     "departmentWorkflow": "سير عمل القسم",
-    "adminPanel": "لوحة الإدارة"
+    "adminPanel": "لوحة الإدارة",
+    "allRequests": "جميع الطلبات"
   },
   "auth": {
     "login": "تسجيل الدخول",
@@ -57,6 +63,10 @@
       "title": "مراجعة الطلبات",
       "description": "مراجعة سير عمل القسم أ"
     },
+    "allRequests": {
+      "title": "جميع الطلبات",
+      "description": "عرض جميع الطلبات مع السجل والحالة"
+    },
     "departmentWorkflow": {
       "title": "سير عمل القسم",
       "description": "إدارة طلبات القسم"
@@ -78,7 +88,10 @@
     "submittedBy": "مقدم من",
     "submittedAt": "تاريخ التقديم",
     "completedAt": "تاريخ الإكمال",
+    "lastUpdated": "آخر تحديث",
     "currentDepartment": "القسم الحالي",
+    "currentLocation": "الموقع الحالي",
+    "assignedTo": "معين إلى",
     "workflowPath": "مسار سير العمل",
     "attachments": "المرفقات",
     "optional": "اختياري",
@@ -86,15 +99,21 @@
     "newRequest": "طلب جديد",
     "editRequest": "تعديل الطلب",
     "viewDetails": "عرض التفاصيل",
+    "viewHistory": "عرض السجل",
     "saveDraft": "حفظ كمسودة",
     "saveChanges": "حفظ التغييرات",
     "submitRequest": "تقديم الطلب",
     "resubmitRequest": "إعادة تقديم الطلب",
     "editAndResubmit": "تعديل وإعادة التقديم",
     "requestDetails": "تفاصيل الطلب",
+    "requestHistory": "سجل الطلب",
+    "requestOverview": "نظرة عامة على الطلب",
+    "requestId": "رقم الطلب",
     "workflowHistory": "سجل سير العمل",
+    "transitionHistory": "سجل التحويلات",
     "noHistory": "لا يوجد سجل لسير العمل بعد",
     "noRequests": "لم تقدم أي طلبات بعد.",
+    "noRequestsFound": "لم يتم العثور على طلبات.",
     "uploadFile": "رفع ملف",
     "removeFile": "إزالة الملف",
     "maxFileSize": "الحد الأقصى لحجم الملف: 10 ميجابايت",
@@ -113,6 +132,8 @@
   "workflow": {
     "title": "مراجعة سير العمل",
     "subtitle": "مراجعة وتعيين الطلبات إلى مسارات سير العمل",
+    "allRequestsTitle": "جميع الطلبات",
+    "allRequestsSubtitle": "عرض جميع الطلبات والحالة الحالية",
     "pendingRequests": "الطلبات قيد الانتظار",
     "noPendingRequests": "لا توجد طلبات قيد الانتظار للمراجعة",
     "assignPath": "تعيين المسار",
@@ -135,6 +156,21 @@
       "notesPlaceholder": "أضف أي ملاحظات حول هذا التقييم...",
       "submitAndContinue": "إرسال والمتابعة",
       "saving": "جاري الحفظ..."
+    },
+    "pathEvaluation": {
+      "title": "تقييم المسار مطلوب",
+      "note": "يرجى تقييم هذا الطلب قبل المتابعة",
+      "applied": "مطبق",
+      "notApplied": "غير مطبق",
+      "action": "الإجراء",
+      "acceptIdea": "قبول الفكرة - تعيين للموظف",
+      "acceptLater": "قبول للمستقبل - جدولة للتعيين لاحقاً",
+      "rejectIdea": "رفض الفكرة - رفض هذا الطلب",
+      "returnToDeptA": "العودة إلى القسم أ للتحقق",
+      "proceedToAssign": "المتابعة للتعيين",
+      "acceptForLater": "قبول للمستقبل",
+      "rejectIdea2": "رفض الفكرة",
+      "returnToDeptA2": "العودة إلى القسم أ"
     }
   },
   "department": {
@@ -142,10 +178,20 @@
     "subtitle": "إدارة الطلبات في قسمك",
     "requests": "طلبات القسم",
     "employees": "الموظفون",
+    "acceptIdea": "قبول الفكرة",
+    "acceptForLater": "قبول للمستقبل",
+    "rejectIdea": "رفض الفكرة",
+    "returnToDeptA": "العودة إلى القسم أ",
     "assignToEmployee": "تعيين لموظف",
     "returnToManager": "العودة إلى المدير",
-    "returnToDeptA": "العودة إلى القسم أ",
-    "moveToNext": "الانتقال إلى القسم التالي"
+    "moveToNext": "الانتقال إلى القسم التالي",
+    "selectEmployee": "اختر الموظف",
+    "comments": "التعليقات",
+    "commentsOptional": "التعليقات (اختياري)",
+    "commentsPlaceholder": "أضف أي تعليقات...",
+    "workSummary": "ملخص العمل / التعليقات",
+    "validationSummary": "ملخص التحقق / التعليقات",
+    "unassigned": "غير معين"
   },
   "admin": {
     "title": "لوحة الإدارة",
@@ -154,7 +200,11 @@
     "users": "المستخدمون",
     "assignments": "تعيينات المستخدمين",
     "evaluationQuestions": "أسئلة التقييم",
+    "pathEvaluationQuestions": "أسئلة تقييم المسار",
     "permissionsRoles": "الصلاحيات والأدوار",
+    "deptAEvaluation": "تقييم القسم أ (تقييم 1-10)",
+    "pathEvaluation": "أسئلة تقييم المسار (مطبق/غير مطبق)",
+    "pathEvaluationDescription": "أسئلة لمديري الأقسام لتقييم الطلبات قبل التعيين للموظفين",
     "createDepartment": "إنشاء قسم",
     "editDepartment": "تعديل القسم",
     "deleteDepartment": "حذف القسم",
@@ -165,6 +215,8 @@
     "createQuestion": "إنشاء سؤال",
     "editQuestion": "تعديل السؤال",
     "deleteQuestion": "حذف السؤال",
+    "addPathQuestion": "إضافة سؤال مسار",
+    "editPathQuestion": "تعديل سؤال المسار",
     "departmentName": "اسم القسم",
     "departmentCode": "رمز القسم",
     "isActive": "نشط",
@@ -176,10 +228,19 @@
     "questionText": "السؤال",
     "questionWeight": "الوزن (%)",
     "questionOrder": "الترتيب",
+    "workflowPath": "مسار سير العمل",
+    "selectWorkflowPath": "اختر مسار سير العمل...",
+    "pathCannotChange": "لا يمكن تغيير المسار بعد الإنشاء",
+    "format": "التنسيق",
+    "appliedNotApplied": "مطبق / غير مطبق",
     "totalWeight": "الوزن الإجمالي",
     "remaining": "المتبقي",
     "weightComplete": "الوزن الإجمالي 100%",
     "weightIncomplete": "يجب أن يساوي الوزن الإجمالي 100%",
+    "noPathQuestions": "لا توجد أسئلة تقييم مسار بعد. أضف أسئلة لكل مسار سير عمل.",
+    "questionsCount": "سؤال",
+    "activated": "مفعّل",
+    "deactivated": "معطّل",
     "roles": "الأدوار",
     "permissions": "الصلاحيات",
     "permissionMatrix": "جدول الصلاحيات",
@@ -199,23 +260,64 @@
     "usersCount": "مستخدم",
     "rolesHavePermission": "دور"
   },
+  "evaluations": {
+    "departmentA": "تقييمات القسم أ",
+    "pathEvaluations": "تقييمات المسار",
+    "question": "السؤال",
+    "score": "النتيجة",
+    "weighted": "مرجح",
+    "weight": "الوزن",
+    "answer": "الإجابة",
+    "applied": "مطبق",
+    "notApplied": "غير مطبق",
+    "notes": "ملاحظات",
+    "evaluatedBy": "تم التقييم بواسطة",
+    "evaluatedOn": "تم التقييم في",
+    "noEvaluations": "لا توجد تقييمات"
+  },
+  "transitions": {
+    "timeline": "الخط الزمني",
+    "action": "الإجراء",
+    "by": "بواسطة",
+    "statusChange": "تغيير الحالة",
+    "from": "من",
+    "to": "إلى",
+    "department": "القسم",
+    "comments": "التعليقات",
+    "noTransitions": "لا توجد تحويلات"
+  },
   "messages": {
     "success": {
       "created": "تم الإنشاء بنجاح",
       "updated": "تم التحديث بنجاح",
       "deleted": "تم الحذف بنجاح",
       "saved": "تم الحفظ بنجاح",
-      "submitted": "تم التقديم بنجاح"
+      "submitted": "تم التقديم بنجاح",
+      "assigned": "تم التعيين بنجاح",
+      "evaluated": "تم التقييم بنجاح",
+      "accepted": "تم القبول بنجاح",
+      "rejected": "تم الرفض بنجاح",
+      "returned": "تمت الإعادة بنجاح"
     },
     "error": {
       "generic": "حدث خطأ",
       "notFound": "غير موجود",
       "unauthorized": "غير مصرح بالوصول",
-      "validation": "يرجى التحقق من المدخلات"
+      "validation": "يرجى التحقق من المدخلات",
+      "loadingFailed": "فشل التحميل",
+      "savingFailed": "فشل الحفظ"
     },
     "confirm": {
       "delete": "هل أنت متأكد من حذف هذا؟",
-      "submit": "هل أنت متأكد من التقديم؟"
+      "submit": "هل أنت متأكد من التقديم؟",
+      "accept": "هل أنت متأكد من القبول؟",
+      "reject": "هل أنت متأكد من الرفض؟"
+    },
+    "loading": {
+      "requests": "جاري تحميل الطلبات...",
+      "details": "جاري تحميل التفاصيل...",
+      "evaluations": "جاري تحميل أسئلة التقييم...",
+      "employees": "جاري تحميل الموظفين..."
     }
   }
 }
