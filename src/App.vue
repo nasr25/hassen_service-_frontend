@@ -18,9 +18,9 @@ const updateDirection = (lang) => {
 
   // Update body font for Arabic
   if (lang === 'ar') {
-    document.body.style.fontFamily = "'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', 'Arial', sans-serif"
+    document.body.style.fontFamily = "'Cairo', 'Tajawal', 'Arial', sans-serif"
   } else {
-    document.body.style.fontFamily = "'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"
+    document.body.style.fontFamily = "'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"
   }
 }
 
@@ -51,7 +51,7 @@ watch(locale, (newLocale) => {
 }
 
 body {
-  font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+  font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
     Ubuntu, Cantarell, sans-serif;
   transition: font-family 0.3s ease;
 }
