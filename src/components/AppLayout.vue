@@ -504,6 +504,24 @@ const getRoleBadgeVariant = (role) => {
 [dir="rtl"] .nav-item {
   flex-direction: row-reverse;
   text-align: right;
+  justify-content: flex-start;
+}
+
+[dir="rtl"] .nav-item svg {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+[dir="rtl"] .sidebar-collapsed .nav-item {
+  justify-content: center;
+}
+
+[dir="rtl"] .top-nav {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .top-nav-left {
+  text-align: right;
 }
 
 [dir="rtl"] .top-nav-right {
@@ -512,6 +530,11 @@ const getRoleBadgeVariant = (role) => {
 
 [dir="rtl"] .user-menu {
   flex-direction: row-reverse;
+}
+
+[dir="rtl"] .icon-button {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 [dir="rtl"] .user-dropdown {
@@ -525,7 +548,17 @@ const getRoleBadgeVariant = (role) => {
 }
 
 [dir="rtl"] .user-info {
-  align-items: flex-start;
+  align-items: flex-end;
+  text-align: right;
+}
+
+[dir="rtl"] .sidebar-footer {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .page-title {
+  text-align: right;
 }
 
 /* RTL Mobile Responsive */
