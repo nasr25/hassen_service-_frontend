@@ -94,7 +94,7 @@ router.beforeEach((to, from, next) => {
   } else if (to.meta.requiresUserRole && authStore.user?.role !== 'user') {
     // Only users with 'user' role can access this route
     next('/dashboard')
-  } else if (to.meta.requiresAdmin && authStore.user?.role !== 'admin') {
+  } else if (to.meta.requiresAdmin && authStore.user?.role?.toLowerCase() !== 'admin') {
     // Only admins can access this route
     next('/dashboard')
   } else {

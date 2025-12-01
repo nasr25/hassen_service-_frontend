@@ -167,7 +167,7 @@ const pageTitle = computed(() => {
   return titles[route.path] || t('nav.dashboard')
 })
 
-const isAdmin = computed(() => authStore.user?.role === 'Admin')
+const isAdmin = computed(() => authStore.user?.role?.toLowerCase() === 'admin')
 
 const canReview = computed(() => {
   const role = authStore.user?.role
