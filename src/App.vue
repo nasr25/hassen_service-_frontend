@@ -3,24 +3,14 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue'
+import { onMounted, watch, onBeforeMount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from './stores/auth'
 
 const authStore = useAuthStore()
 const { locale } = useI18n()
 
-onMounted(() => {
-  authStore.initializeAuth()
-  updateDirection(locale.value)
-})
-
-// Watch for locale changes and update document direction
-watch(locale, (newLocale) => {
-  updateDirection(newLocale)
-  localStorage.setItem('locale', newLocale)
-})
-
+// Set direction immediately before mounting
 const updateDirection = (lang) => {
   const dir = lang === 'ar' ? 'rtl' : 'ltr'
   document.documentElement.setAttribute('dir', dir)
@@ -33,6 +23,24 @@ const updateDirection = (lang) => {
     document.body.style.fontFamily = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"
   }
 }
+
+// Set direction immediately on script load
+updateDirection(locale.value)
+
+onBeforeMount(() => {
+  updateDirection(locale.value)
+})
+
+onMounted(() => {
+  authStore.initializeAuth()
+  updateDirection(locale.value)
+})
+
+// Watch for locale changes and update document direction
+watch(locale, (newLocale) => {
+  updateDirection(newLocale)
+  localStorage.setItem('locale', newLocale)
+})
 </script>
 
 <style>

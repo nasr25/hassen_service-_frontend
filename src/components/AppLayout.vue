@@ -474,4 +474,72 @@ const getRoleBadgeVariant = (role) => {
     padding: var(--spacing-4);
   }
 }
+
+/* RTL Support */
+[dir="rtl"] .sidebar {
+  left: auto;
+  right: 0;
+  border-right: none;
+  border-left: 1px solid var(--color-border);
+}
+
+[dir="rtl"] .main-content {
+  margin-left: 0;
+  margin-right: 260px;
+}
+
+[dir="rtl"] .sidebar-collapsed ~ .main-content {
+  margin-left: 0;
+  margin-right: 72px;
+}
+
+[dir="rtl"] .sidebar-header {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .logo {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .nav-item {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+[dir="rtl"] .top-nav-right {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .user-menu {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .user-dropdown {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .dropdown-item {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+[dir="rtl"] .user-info {
+  align-items: flex-start;
+}
+
+/* RTL Mobile Responsive */
+@media (max-width: 768px) {
+  [dir="rtl"] .sidebar {
+    transform: translateX(100%);
+  }
+
+  [dir="rtl"] .sidebar-collapsed {
+    transform: translateX(0);
+  }
+
+  [dir="rtl"] .main-content {
+    margin-right: 0;
+  }
+}
 </style>
