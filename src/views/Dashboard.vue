@@ -23,7 +23,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.totalRequests }}</div>
-            <div class="stat-label">Total Requests</div>
+            <div class="stat-label">{{ $t('dashboard.stats.totalRequests') }}</div>
           </div>
         </BaseCard>
 
@@ -35,7 +35,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.pendingRequests }}</div>
-            <div class="stat-label">Pending Requests</div>
+            <div class="stat-label">{{ $t('dashboard.stats.pendingRequests') }}</div>
           </div>
         </BaseCard>
 
@@ -47,7 +47,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.approvedRequests }}</div>
-            <div class="stat-label">Approved</div>
+            <div class="stat-label">{{ $t('dashboard.stats.approved') }}</div>
           </div>
         </BaseCard>
 
@@ -59,15 +59,15 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.rejectedRequests }}</div>
-            <div class="stat-label">Rejected</div>
+            <div class="stat-label">{{ $t('dashboard.stats.rejected') }}</div>
           </div>
         </BaseCard>
       </div>
 
       <!-- Quick Actions -->
       <div class="section-header">
-        <h2>Quick Actions</h2>
-        <p>Access frequently used features</p>
+        <h2>{{ $t('dashboard.quickActions') }}</h2>
+        <p>{{ $t('dashboard.quickActionsSubtitle') }}</p>
       </div>
 
       <div class="actions-grid">

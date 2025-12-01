@@ -30,8 +30,11 @@
     "newRequest": "طلب جديد",
     "workflowReview": "مراجعة سير العمل",
     "departmentWorkflow": "سير عمل القسم",
+    "admin": "الإدارة",
     "adminPanel": "لوحة الإدارة",
-    "allRequests": "جميع الطلبات"
+    "allRequests": "جميع الطلبات",
+    "profile": "الملف الشخصي",
+    "settings": "الإعدادات"
   },
   "auth": {
     "login": "تسجيل الدخول",
@@ -51,6 +54,13 @@
     "userInfo": "معلومات المستخدم",
     "role": "الدور",
     "quickActions": "إجراءات سريعة",
+    "quickActionsSubtitle": "الوصول إلى الميزات المستخدمة بشكل متكرر",
+    "stats": {
+      "totalRequests": "إجمالي الطلبات",
+      "pendingRequests": "الطلبات قيد الانتظار",
+      "approved": "الموافق عليها",
+      "rejected": "المرفوضة"
+    },
     "myRequests": {
       "title": "طلباتي",
       "description": "عرض وإدارة طلباتك"
