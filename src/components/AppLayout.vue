@@ -544,7 +544,6 @@ onMounted(async () => {
 }
 
 [dir="rtl"] .nav-item {
-  flex-direction: row-reverse;
   text-align: right;
   justify-content: flex-start;
 }
