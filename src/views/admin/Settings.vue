@@ -443,7 +443,6 @@ onMounted(() => {
 <style scoped>
 .settings-page {
   padding: var(--spacing-6);
-  padding-bottom: 100px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -714,21 +713,11 @@ onMounted(() => {
 
 /* Bottom Save Bar */
 .bottom-save-bar {
-  position: fixed;
-  bottom: 0;
-  left: 260px;
-  right: 0;
-  background: white;
-  border-top: 2px solid var(--color-border);
+  background: #1d7b3e;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 100;
   padding: var(--spacing-4) var(--spacing-6);
-}
-
-/* RTL Support - Bottom save bar positioning */
-[dir="rtl"] .bottom-save-bar {
-  left: 0;
-  right: 260px;
+  margin-top: var(--spacing-8);
 }
 
 .bottom-save-content {
@@ -747,7 +736,7 @@ onMounted(() => {
 
 .changes-indicator {
   font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
@@ -760,6 +749,14 @@ onMounted(() => {
   padding: var(--spacing-4) var(--spacing-6);
   font-size: var(--font-size-base);
   box-shadow: var(--shadow-md);
+  background: white;
+  color: #1d7b3e;
+  font-weight: var(--font-weight-semibold);
+}
+
+.btn-large:hover:not(:disabled) {
+  background: #f0f0f0;
+  transform: translateY(-1px);
 }
 
 .btn-large svg {
@@ -768,11 +765,6 @@ onMounted(() => {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .bottom-save-bar {
-    left: 0;
-    right: 0;
-  }
-
   .bottom-save-content {
     flex-direction: column;
     gap: var(--spacing-3);
