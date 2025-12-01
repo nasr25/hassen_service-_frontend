@@ -57,9 +57,11 @@
     "quickActionsSubtitle": "الوصول إلى الميزات المستخدمة بشكل متكرر",
     "stats": {
       "totalRequests": "إجمالي الطلبات",
-      "pendingRequests": "الطلبات قيد الانتظار",
-      "approved": "الموافق عليها",
-      "rejected": "المرفوضة"
+      "draft": "مسودة",
+      "pendingRequests": "قيد الانتظار",
+      "approved": "موافق عليها",
+      "completed": "مكتملة",
+      "rejected": "مرفوضة"
     },
     "myRequests": {
       "title": "طلباتي",

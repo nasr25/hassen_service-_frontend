@@ -45,6 +45,15 @@
     "userInfo": "User Information",
     "role": "Role",
     "quickActions": "Quick Actions",
+    "quickActionsSubtitle": "Frequently used actions and shortcuts",
+    "stats": {
+      "totalRequests": "Total Requests",
+      "draft": "Draft",
+      "pendingRequests": "Pending",
+      "approved": "Approved",
+      "completed": "Completed",
+      "rejected": "Rejected"
+    },
     "myRequests": {
       "title": "My Requests",
       "description": "View and manage your requests"
