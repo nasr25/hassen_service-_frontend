@@ -224,8 +224,17 @@ onMounted(async () => {
   flex-direction: column;
   transition: width var(--transition-base);
   position: fixed;
+  left: 0;
   height: 100vh;
   z-index: var(--z-sticky);
+}
+
+/* RTL Support - Sidebar on the right for Arabic */
+[dir="rtl"] .sidebar {
+  left: auto;
+  right: 0;
+  border-right: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-collapsed {
@@ -323,13 +332,24 @@ onMounted(async () => {
 .main-content {
   flex: 1;
   margin-left: 260px;
-  transition: margin-left var(--transition-base);
+  transition: margin-left var(--transition-base), margin-right var(--transition-base);
   display: flex;
   flex-direction: column;
 }
 
 .sidebar-collapsed ~ .main-content {
   margin-left: 72px;
+}
+
+/* RTL Support - Main content margin adjustment */
+[dir="rtl"] .main-content {
+  margin-left: 0;
+  margin-right: 260px;
+}
+
+[dir="rtl"] .sidebar-collapsed ~ .main-content {
+  margin-left: 0;
+  margin-right: 72px;
 }
 
 /* Top Navigation */

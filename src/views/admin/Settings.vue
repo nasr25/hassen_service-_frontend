@@ -725,6 +725,12 @@ onMounted(() => {
   padding: var(--spacing-4) var(--spacing-6);
 }
 
+/* RTL Support - Bottom save bar positioning */
+[dir="rtl"] .bottom-save-bar {
+  left: 0;
+  right: 260px;
+}
+
 .bottom-save-content {
   max-width: 1200px;
   margin: 0 auto;
@@ -764,6 +770,7 @@ onMounted(() => {
 @media (max-width: 768px) {
   .bottom-save-bar {
     left: 0;
+    right: 0;
   }
 
   .bottom-save-content {
