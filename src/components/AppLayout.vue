@@ -204,8 +204,8 @@ const getRoleBadgeVariant = (role) => {
 /* Sidebar */
 .sidebar {
   width: 260px;
-  background: var(--color-background);
-  border-right: 1px solid var(--color-border);
+  background: #008844;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
   transition: width var(--transition-base);
@@ -220,7 +220,7 @@ const getRoleBadgeVariant = (role) => {
 
 .sidebar-header {
   padding: var(--spacing-6);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -236,13 +236,13 @@ const getRoleBadgeVariant = (role) => {
 .logo-text {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
+  color: #ffffff;
 }
 
 .toggle-btn {
   background: none;
   border: none;
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
   padding: var(--spacing-2);
   border-radius: var(--radius-md);
@@ -253,8 +253,8 @@ const getRoleBadgeVariant = (role) => {
 }
 
 .toggle-btn:hover {
-  background: var(--color-gray-100);
-  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
 }
 
 .sidebar-nav {
@@ -268,7 +268,7 @@ const getRoleBadgeVariant = (role) => {
   align-items: center;
   gap: var(--spacing-3);
   padding: var(--spacing-3) var(--spacing-4);
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   border-radius: var(--radius-lg);
   transition: all var(--transition-fast);
@@ -279,13 +279,13 @@ const getRoleBadgeVariant = (role) => {
 }
 
 .nav-item:hover {
-  background: var(--color-gray-100);
-  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
 }
 
 .nav-item.active {
-  background: var(--color-primary-100);
-  color: var(--color-primary-700);
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
 .sidebar-collapsed .nav-item {
@@ -314,8 +314,8 @@ const getRoleBadgeVariant = (role) => {
 /* Top Navigation */
 .top-nav {
   height: 72px;
-  background: var(--color-background);
-  border-bottom: 1px solid var(--color-border);
+  background: #008844;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding: 0 var(--spacing-6);
   display: flex;
   align-items: center;
@@ -334,7 +334,7 @@ const getRoleBadgeVariant = (role) => {
 .page-title {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
+  color: #ffffff;
   margin: 0;
 }
 
@@ -352,15 +352,15 @@ const getRoleBadgeVariant = (role) => {
   justify-content: center;
   background: none;
   border: none;
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
   border-radius: var(--radius-lg);
   transition: all var(--transition-fast);
 }
 
 .icon-button:hover {
-  background: var(--color-gray-100);
-  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
 }
 
 /* User Menu */
@@ -369,8 +369,8 @@ const getRoleBadgeVariant = (role) => {
   align-items: center;
   gap: var(--spacing-3);
   padding: var(--spacing-2) var(--spacing-3);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -378,7 +378,7 @@ const getRoleBadgeVariant = (role) => {
 }
 
 .user-menu:hover {
-  background: var(--color-gray-100);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .user-avatar {
@@ -401,11 +401,12 @@ const getRoleBadgeVariant = (role) => {
 .user-name {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  color: var(--color-text-primary);
+  color: #ffffff;
 }
 
 .user-role {
   font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .user-dropdown {
