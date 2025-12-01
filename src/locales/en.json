@@ -81,6 +81,7 @@
     "currentDepartment": "Current Department",
     "workflowPath": "Workflow Path",
     "attachments": "Attachments",
+    "expectedDate": "Expected Execution Date",
     "optional": "Optional",
     "uploadedFiles": "Uploaded Files",
     "newRequest": "New Request",

@@ -32,6 +32,7 @@
               <th>Current Location</th>
               <th>Assigned To</th>
               <th>Status</th>
+              <th>Expected Date</th>
               <th>Attachments</th>
               <th>Last Updated</th>
               <th>Actions</th>
@@ -49,6 +50,12 @@
                 <span :class="['status-badge', `status-${request.status}`]">
                   {{ formatStatus(request.status) }}
                 </span>
+              </td>
+              <td class="expected-date-cell">
+                <span v-if="request.expected_execution_date" class="expected-date-badge">
+                  {{ formatDate(request.expected_execution_date) }}
+                </span>
+                <span v-else class="no-date">—</span>
               </td>
               <td class="attachments-cell">
                 <div v-if="request.attachments && request.attachments.length > 0" class="attachments-list">
@@ -377,6 +384,28 @@ h1 {
 }
 
 .no-attachments {
+  color: #999;
+  font-size: 14px;
+}
+
+/* Expected Date Cell */
+.expected-date-cell {
+  white-space: nowrap;
+}
+
+.expected-date-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #fff4e6;
+  border: 1px solid #ffb84d;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e65100;
+}
+
+.no-date {
   color: #999;
   font-size: 14px;
 }

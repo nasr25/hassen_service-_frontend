@@ -99,6 +99,13 @@
                   <span>{{ request.current_department.name }}</span>
                 </div>
 
+                <div v-if="request.expected_execution_date" class="meta-item expected-date">
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>{{ $t('request.expectedDate') }}: {{ formatDate(request.expected_execution_date) }}</span>
+                </div>
+
                 <div v-if="request.attachments && request.attachments.length > 0" class="meta-item">
                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
@@ -470,6 +477,15 @@ const truncate = (text, length) => {
 .meta-item svg {
   color: var(--color-gray-400);
   flex-shrink: 0;
+}
+
+.meta-item.expected-date {
+  color: var(--color-orange-700);
+  font-weight: var(--font-weight-medium);
+}
+
+.meta-item.expected-date svg {
+  color: var(--color-orange-500);
 }
 
 /* Attachments Section */

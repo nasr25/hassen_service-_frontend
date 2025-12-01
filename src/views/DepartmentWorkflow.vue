@@ -53,6 +53,9 @@
               <div class="meta-item">
                 <strong>Last Updated:</strong> {{ formatDate(request.updated_at) }}
               </div>
+              <div v-if="request.expected_execution_date" class="meta-item expected-date-item">
+                <strong>Expected Execution:</strong> {{ formatDate(request.expected_execution_date) }}
+              </div>
             </div>
 
             <!-- Attachments List -->
@@ -981,6 +984,17 @@ h1 {
   color: #333;
   display: block;
   margin-bottom: 2px;
+}
+
+.meta-item.expected-date-item {
+  background: #fff4e6;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ffb84d;
+}
+
+.meta-item.expected-date-item strong {
+  color: #e65100;
 }
 
 .request-actions {
