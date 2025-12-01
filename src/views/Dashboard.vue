@@ -159,39 +159,41 @@
         </BaseCard>
       </div>
 
-      <!-- Recent Activity -->
-      <div class="section-header">
-        <h2>Recent Activity</h2>
-        <p>Your latest workflow activities</p>
-      </div>
-
-      <BaseCard class="activity-card">
-        <div v-if="recentActivity.length === 0" class="empty-state">
-          <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-          <h3>No recent activity</h3>
-          <p>Start by creating your first request</p>
-          <BaseButton v-if="canCreateRequest" variant="primary" @click="goToNewRequest">
-            Create Request
-          </BaseButton>
+      <!-- Recent Activity (Temporarily Hidden) -->
+      <div v-if="false">
+        <div class="section-header">
+          <h2>Recent Activity</h2>
+          <p>Your latest workflow activities</p>
         </div>
 
-        <div v-else class="activity-list">
-          <div v-for="activity in recentActivity" :key="activity.id" class="activity-item">
-            <div class="activity-icon" :class="`activity-icon-${activity.type}`">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                <circle cx="10" cy="10" r="6"/>
-              </svg>
-            </div>
-            <div class="activity-content">
-              <div class="activity-title">{{ activity.title }}</div>
-              <div class="activity-time">{{ activity.time }}</div>
-            </div>
-            <BaseBadge :variant="activity.badgeVariant">{{ activity.status }}</BaseBadge>
+        <BaseCard class="activity-card">
+          <div v-if="recentActivity.length === 0" class="empty-state">
+            <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <h3>No recent activity</h3>
+            <p>Start by creating your first request</p>
+            <BaseButton v-if="canCreateRequest" variant="primary" @click="goToNewRequest">
+              Create Request
+            </BaseButton>
           </div>
-        </div>
-      </BaseCard>
+
+          <div v-else class="activity-list">
+            <div v-for="activity in recentActivity" :key="activity.id" class="activity-item">
+              <div class="activity-icon" :class="`activity-icon-${activity.type}`">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <circle cx="10" cy="10" r="6"/>
+                </svg>
+              </div>
+              <div class="activity-content">
+                <div class="activity-title">{{ activity.title }}</div>
+                <div class="activity-time">{{ activity.time }}</div>
+              </div>
+              <BaseBadge :variant="activity.badgeVariant">{{ activity.status }}</BaseBadge>
+            </div>
+          </div>
+        </BaseCard>
+      </div>
     </div>
   </AppLayout>
 </template>
