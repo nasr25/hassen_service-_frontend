@@ -300,6 +300,49 @@
         </div>
       </div>
     </div>
+
+    <!-- Accept for Later Modal (Manager) -->
+    <div v-if="acceptLaterModal.show" class="modal-overlay" @click="closeAcceptLaterModal">
+      <div class="modal-content" @click.stop>
+        <h2>⏰ Accept Idea for Later Implementation</h2>
+        <p class="modal-subtitle">Request: {{ acceptLaterModal.request?.title }}</p>
+
+        <div class="alert alert-info">
+          <strong>Note:</strong> This idea will be accepted but scheduled for future implementation.
+        </div>
+
+        <div class="form-group">
+          <label>Expected Execution Date *</label>
+          <input
+            type="date"
+            v-model="acceptLaterModal.expectedDate"
+            class="date-input"
+            :min="new Date().toISOString().split('T')[0]"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Comments (Optional)</label>
+          <textarea
+            v-model="acceptLaterModal.comments"
+            placeholder="Add any notes about why this is scheduled for later..."
+            rows="4"
+          ></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button @click="closeAcceptLaterModal" class="btn-secondary">Cancel</button>
+          <button
+            @click="confirmAcceptLater"
+            :disabled="!acceptLaterModal.expectedDate || acceptLaterModal.isLoading"
+            class="btn-primary"
+          >
+            {{ acceptLaterModal.isLoading ? 'Accepting...' : 'Accept for Later' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -336,6 +379,14 @@ const returnToManagerModal = ref({
 const returnToDeptAModal = ref({
   show: false,
   request: null,
+  comments: '',
+  isLoading: false
+})
+
+const acceptLaterModal = ref({
+  show: false,
+  request: null,
+  expectedDate: '',
   comments: '',
   isLoading: false
 })
@@ -683,7 +734,7 @@ const proceedWithAction = () => {
       openAssignModal(request)
       break
     case 'accept_later':
-      acceptIdeaForLater(request)
+      openAcceptLaterModal(request)
       break
     case 'reject':
       rejectIdea(request)
@@ -694,14 +745,32 @@ const proceedWithAction = () => {
   }
 }
 
-const acceptIdeaForLater = async (request) => {
-  if (!confirm(`Accept this idea for later implementation?\n\nRequest: ${request.title}`)) return
+// Accept for Later Modal
+const openAcceptLaterModal = (request) => {
+  acceptLaterModal.value.show = true
+  acceptLaterModal.value.request = request
+  acceptLaterModal.value.expectedDate = ''
+  acceptLaterModal.value.comments = ''
+}
 
+const closeAcceptLaterModal = () => {
+  acceptLaterModal.value.show = false
+  acceptLaterModal.value.request = null
+  acceptLaterModal.value.expectedDate = ''
+  acceptLaterModal.value.comments = ''
+}
+
+const confirmAcceptLater = async () => {
   try {
+    acceptLaterModal.value.isLoading = true
     error.value = null
+
     await axios.post(
-      `${API_URL}/department/requests/${request.id}/accept-later`,
-      { comments: 'Idea accepted for future implementation' },
+      `${API_URL}/department/requests/${acceptLaterModal.value.request.id}/accept-later`,
+      {
+        expected_execution_date: acceptLaterModal.value.expectedDate,
+        comments: acceptLaterModal.value.comments || 'Idea accepted for future implementation'
+      },
       {
         headers: {
           Authorization: `Bearer ${authStore.token}`
@@ -710,11 +779,20 @@ const acceptIdeaForLater = async (request) => {
     )
 
     success.value = 'Idea accepted for later implementation'
+    closeAcceptLaterModal()
     await loadRequests()
+
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || 'Failed to accept idea'
+  } finally {
+    acceptLaterModal.value.isLoading = false
   }
+}
+
+const acceptIdeaForLater = async (request) => {
+  // This function is now replaced by the modal flow
+  openAcceptLaterModal(request)
 }
 
 const rejectIdea = async (request) => {
@@ -1032,6 +1110,22 @@ h1 {
 }
 
 .form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-group .date-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.3s;
+  cursor: pointer;
+}
+
+.form-group .date-input:focus {
   outline: none;
   border-color: #667eea;
 }
