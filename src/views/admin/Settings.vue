@@ -212,6 +212,22 @@
     <div v-if="successMessage" class="alert alert-success">
       {{ successMessage }}
     </div>
+
+    <!-- Bottom Save Button (Sticky) -->
+    <div class="bottom-save-bar">
+      <div class="bottom-save-content">
+        <div class="bottom-save-info">
+          <span class="changes-indicator" v-if="!isSaving">💾 Make changes above and click save</span>
+          <span class="changes-indicator" v-else>⏳ Saving changes...</span>
+        </div>
+        <button @click="saveAllSettings" class="btn-primary btn-large" :disabled="isSaving">
+          <svg v-if="!isSaving" width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"/>
+          </svg>
+          {{ isSaving ? 'Saving Changes...' : 'Save All Changes' }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -427,6 +443,7 @@ onMounted(() => {
 <style scoped>
 .settings-page {
   padding: var(--spacing-6);
+  padding-bottom: 100px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -693,5 +710,70 @@ onMounted(() => {
 
 .btn-remove:hover {
   background: #fcc;
+}
+
+/* Bottom Save Bar */
+.bottom-save-bar {
+  position: fixed;
+  bottom: 0;
+  left: 260px;
+  right: 0;
+  background: white;
+  border-top: 2px solid var(--color-border);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  padding: var(--spacing-4) var(--spacing-6);
+}
+
+.bottom-save-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bottom-save-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.changes-indicator {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.btn-large {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4) var(--spacing-6);
+  font-size: var(--font-size-base);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-large svg {
+  flex-shrink: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .bottom-save-bar {
+    left: 0;
+  }
+
+  .bottom-save-content {
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+
+  .btn-large {
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>
