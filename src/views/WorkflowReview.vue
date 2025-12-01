@@ -108,7 +108,32 @@
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
                 </svg>
-                <span>{{ request.attachments.length }} files</span>
+                <span>{{ request.attachments.length }} {{ $t('request.attachments') }}</span>
+              </div>
+            </div>
+
+            <!-- Attachments List -->
+            <div v-if="request.attachments && request.attachments.length > 0" class="attachments-section">
+              <div class="attachments-header">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+                </svg>
+                <span>{{ $t('request.attachments') }}:</span>
+              </div>
+              <div class="attachments-list">
+                <a v-for="attachment in request.attachments" :key="attachment.id"
+                   :href="`http://localhost:8000/storage/${attachment.file_path}`"
+                   target="_blank"
+                   class="attachment-item">
+                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span class="attachment-name">{{ attachment.file_name }}</span>
+                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
+                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
+                  </svg>
+                </a>
               </div>
             </div>
 
@@ -1293,6 +1318,74 @@ const openModalForAction = (request, action) => {
 .meta-item svg {
   color: var(--color-gray-400);
   flex-shrink: 0;
+}
+
+/* Attachments Section */
+.attachments-section {
+  margin-top: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+  padding: var(--spacing-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.attachments-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-3);
+}
+
+.attachments-header svg {
+  color: var(--color-primary-600);
+}
+
+.attachments-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.attachment-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.attachment-item:hover {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-300);
+  color: var(--color-primary-700);
+}
+
+.attachment-item svg:first-child {
+  color: var(--color-gray-400);
+  flex-shrink: 0;
+}
+
+.attachment-item svg:last-child {
+  color: var(--color-primary-600);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.attachment-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Evaluation Status */

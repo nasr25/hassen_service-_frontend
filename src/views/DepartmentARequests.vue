@@ -32,6 +32,7 @@
               <th>Current Location</th>
               <th>Assigned To</th>
               <th>Status</th>
+              <th>Attachments</th>
               <th>Last Updated</th>
               <th>Actions</th>
             </tr>
@@ -48,6 +49,21 @@
                 <span :class="['status-badge', `status-${request.status}`]">
                   {{ formatStatus(request.status) }}
                 </span>
+              </td>
+              <td class="attachments-cell">
+                <div v-if="request.attachments && request.attachments.length > 0" class="attachments-list">
+                  <a v-for="attachment in request.attachments" :key="attachment.id"
+                     :href="`http://localhost:8000/storage/${attachment.file_path}`"
+                     target="_blank"
+                     class="attachment-link"
+                     :title="attachment.file_name">
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="attachment-name">{{ attachment.file_name }}</span>
+                  </a>
+                </div>
+                <span v-else class="no-attachments">—</span>
               </td>
               <td>{{ formatDate(request.updated_at) }}</td>
               <td class="actions-cell">
@@ -316,5 +332,52 @@ h1 {
 .btn-view:hover {
   background: #5568d3;
   transform: translateY(-1px);
+}
+
+/* Attachments Cell */
+.attachments-cell {
+  max-width: 250px;
+}
+
+.attachments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.attachment-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #555;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.attachment-link:hover {
+  background: #e8f0ff;
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.attachment-link svg {
+  flex-shrink: 0;
+}
+
+.attachment-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.no-attachments {
+  color: #999;
+  font-size: 14px;
 }
 </style>
