@@ -295,7 +295,7 @@ const goToAdmin = () => {
   justify-content: space-between;
   margin-bottom: var(--spacing-8);
   padding: var(--spacing-6);
-  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-secondary-600) 100%);
+  background: linear-gradient(135deg, #084 0%, #66a459 100%);
   border-radius: var(--radius-2xl);
   color: white;
 }
