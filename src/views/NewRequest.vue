@@ -122,7 +122,7 @@
                   <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                 </svg>
                 <span>Choose files or drag and drop</span>
-                <span class="file-types">PDF, JPG, JPEG, PNG (Max 4 files)</span>
+                <span class="file-types">PDF, JPG, JPEG, PNG (Max 5 files)</span>
               </label>
             </div>
             <span v-if="validationErrors.attachments" class="form-error">{{ validationErrors.attachments }}</span>
@@ -131,7 +131,7 @@
           <!-- Uploaded Files List -->
           <div v-if="uploadedFiles.length > 0" class="uploaded-files-section">
             <div class="files-header">
-              <h3>Uploaded Files ({{ uploadedFiles.length }}/4)</h3>
+              <h3>Uploaded Files ({{ uploadedFiles.length }}/5)</h3>
             </div>
             <div class="files-list">
               <div v-for="(file, index) in uploadedFiles" :key="index" class="file-item">
@@ -350,8 +350,8 @@ const handleFileChange = (event) => {
   const files = Array.from(event.target.files)
 
   // Check total file count
-  if (uploadedFiles.value.length + files.length > 4) {
-    validationErrors.value.attachments = 'Maximum 4 files allowed'
+  if (uploadedFiles.value.length + files.length > 5) {
+    validationErrors.value.attachments = 'Maximum 5 files allowed'
     return
   }
 
