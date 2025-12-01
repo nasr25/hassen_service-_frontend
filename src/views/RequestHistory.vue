@@ -74,19 +74,19 @@
 
         <!-- Department A Evaluations -->
         <div v-if="request.evaluations && request.evaluations.length > 0" class="section">
-          <h2>📊 Department A Evaluations</h2>
+          <h2>✅ Department A Evaluations</h2>
           <div class="evaluations-list">
             <div v-for="evaluation in request.evaluations" :key="evaluation.id" class="evaluation-item">
               <div class="evaluation-question">
                 <strong>{{ evaluation.question?.question }}</strong>
-                <span class="evaluation-weight">(Weight: {{ evaluation.question?.weight }}%)</span>
               </div>
-              <div class="evaluation-score">
-                <span class="score-value">Score: {{ evaluation.score }}/10</span>
-                <span class="weighted-score">Weighted: {{ (evaluation.score * evaluation.question?.weight / 10).toFixed(1) }}%</span>
+              <div class="evaluation-answer">
+                <span :class="['answer-badge', evaluation.is_applied ? 'applied' : 'not-applied']">
+                  {{ evaluation.is_applied ? '✓ Applied' : '✗ Not Applied' }}
+                </span>
               </div>
-              <div v-if="evaluation.comments" class="evaluation-comments">
-                <em>{{ evaluation.comments }}</em>
+              <div v-if="evaluation.notes" class="evaluation-notes">
+                <strong>Notes:</strong> {{ evaluation.notes }}
               </div>
               <div class="evaluation-meta">
                 Evaluated by {{ evaluation.evaluated_by?.name }} on {{ formatDate(evaluation.created_at) }}
@@ -455,29 +455,11 @@ h1 {
   margin-bottom: 10px;
 }
 
-.evaluation-weight {
-  color: #999;
-  font-size: 13px;
-  font-weight: normal;
-  margin-left: 8px;
+.evaluation-answer, .path-eval-answer {
+  margin-bottom: 10px;
 }
 
-.evaluation-score {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 8px;
-}
-
-.score-value, .weighted-score {
-  padding: 4px 10px;
-  background: #e7f5ff;
-  color: #1971c2;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.evaluation-comments, .path-eval-notes {
+.evaluation-notes, .path-eval-notes {
   color: #666;
   font-size: 13px;
   margin-top: 8px;
@@ -490,10 +472,6 @@ h1 {
   color: #999;
   font-size: 12px;
   margin-top: 8px;
-}
-
-.path-eval-answer {
-  margin-bottom: 10px;
 }
 
 .answer-badge {

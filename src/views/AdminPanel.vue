@@ -147,19 +147,9 @@
         <!-- Department A Evaluation Questions Section -->
         <div class="evaluation-section">
           <div class="section-header">
-            <h2>📊 Department A Evaluation Questions (Rating 1-10)</h2>
-            <div class="weight-display">
-              <span class="weight-label">Total Weight:</span>
-              <span :class="['weight-value', totalWeight === 100 ? 'complete' : 'incomplete']">
-                {{ totalWeight }}%
-              </span>
-              <span class="weight-remaining">({{ 100 - totalWeight }}% remaining)</span>
-            </div>
+            <h2>✅ Department A Evaluation Questions (Applied/Not Applied)</h2>
+            <p class="subtitle">Questions for Department A to evaluate incoming requests</p>
             <button @click="openQuestionModal()" class="btn-primary">➕ Add Question</button>
-          </div>
-
-          <div v-if="totalWeight !== 100" class="alert alert-warning">
-            ⚠️ Total weight must equal 100% before evaluation questions can be used.
           </div>
 
           <div v-if="isLoading" class="loading">Loading...</div>
@@ -177,7 +167,7 @@
               <div class="question-body">
                 <p class="question-text">{{ question.question }}</p>
                 <div class="question-meta">
-                  <span class="weight-badge">Weight: {{ question.weight }}%</span>
+                  <span class="format-badge">Applied / Not Applied</span>
                   <span class="question-date">Created: {{ formatDate(question.created_at) }}</span>
                 </div>
               </div>
@@ -341,12 +331,8 @@
         <h2>{{ questionModal.isEdit ? 'Edit' : 'Add' }} Evaluation Question</h2>
         <div class="form-group">
           <label>Question *</label>
-          <textarea v-model="questionModal.form.question" rows="3" required placeholder="Enter the evaluation question..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>Weight (%) *</label>
-          <input v-model.number="questionModal.form.weight" type="number" min="0" max="100" step="0.01" required />
-          <small>Current total: {{ totalWeight }}% | Available: {{ questionModal.availableWeight }}%</small>
+          <textarea v-model="questionModal.form.question" rows="3" required placeholder="Enter the evaluation question (Applied/Not Applied format)..."></textarea>
+          <small>Department A will answer Applied or Not Applied to this question</small>
         </div>
         <div class="form-group">
           <label>Display Order</label>
@@ -616,7 +602,7 @@ const departmentModal = ref({ show: false, isEdit: false, isLoading: false, form
 const userModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', email: '', password: '', role: 'employee', is_active: true }, editId: null })
 const assignmentModal = ref({ show: false, isLoading: false, form: { user_id: '', department_id: '', role: 'employee' } })
 const editRoleModal = ref({ show: false, isLoading: false, user: null, department: null, newRole: 'employee' })
-const questionModal = ref({ show: false, isEdit: false, isLoading: false, form: { question: '', weight: 0, order: 0, is_active: true }, editId: null, availableWeight: 100 })
+const questionModal = ref({ show: false, isEdit: false, isLoading: false, form: { question: '', order: 0, is_active: true }, editId: null })
 const pathQuestionModal = ref({ show: false, isEdit: false, isLoading: false, form: { workflow_path_id: '', question: '', order: 0, is_active: true }, editId: null })
 const roleModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', permissions: [] }, editId: null })
 const userRoleModal = ref({ show: false, isLoading: false, user: null, form: { user_id: '', role_name: '' } })
@@ -872,27 +858,24 @@ const openQuestionModal = (question = null) => {
       isLoading: false,
       form: {
         question: question.question,
-        weight: parseFloat(question.weight),
         order: question.order,
         is_active: question.is_active
       },
-      editId: question.id,
-      availableWeight: 100 - totalWeight.value + parseFloat(question.weight)
+      editId: question.id
     }
   } else {
     questionModal.value = {
       show: true,
       isEdit: false,
       isLoading: false,
-      form: { question: '', weight: 0, order: evaluationQuestions.value.length, is_active: true },
-      editId: null,
-      availableWeight: 100 - totalWeight.value
+      form: { question: '', order: evaluationQuestions.value.length, is_active: true },
+      editId: null
     }
   }
 }
 
 const closeQuestionModal = () => {
-  questionModal.value = { show: false, isEdit: false, isLoading: false, form: { question: '', weight: 0, order: 0, is_active: true }, editId: null, availableWeight: 100 }
+  questionModal.value = { show: false, isEdit: false, isLoading: false, form: { question: '', order: 0, is_active: true }, editId: null }
 }
 
 const saveQuestion = async () => {

@@ -257,21 +257,26 @@
           <div v-for="(question, index) in evaluationQuestions" :key="question.id" class="evaluation-question">
             <div class="question-header">
               <BaseBadge variant="primary">Q{{ index + 1 }}</BaseBadge>
-              <BaseBadge variant="gray">Weight: {{ question.weight }}%</BaseBadge>
+              <BaseBadge variant="gray">Applied / Not Applied</BaseBadge>
             </div>
             <p class="question-text">{{ question.question }}</p>
 
             <div class="answer-section">
-              <label>Answer (1-10) *</label>
-              <div class="rating-scale">
+              <label>Answer *</label>
+              <div class="toggle-buttons">
                 <button
-                  v-for="rating in 10"
-                  :key="rating"
                   type="button"
-                  :class="['rating-btn', { active: evaluationModal.answers[question.id]?.answer === rating }]"
-                  @click="setAnswer(question.id, rating)"
+                  :class="['toggle-btn', 'toggle-applied', { active: evaluationModal.answers[question.id]?.is_applied === true }]"
+                  @click="setAnswer(question.id, true)"
                 >
-                  {{ rating }}
+                  ✓ Applied
+                </button>
+                <button
+                  type="button"
+                  :class="['toggle-btn', 'toggle-not-applied', { active: evaluationModal.answers[question.id]?.is_applied === false }]"
+                  @click="setAnswer(question.id, false)"
+                >
+                  ✗ Not Applied
                 </button>
               </div>
             </div>
@@ -611,7 +616,7 @@ const evaluationModal = ref({
 })
 
 const answeredCount = computed(() => {
-  return Object.values(evaluationModal.value.answers).filter(a => a.answer).length
+  return Object.values(evaluationModal.value.answers).filter(a => a.is_applied !== null && a.is_applied !== undefined).length
 })
 
 const allQuestionsAnswered = computed(() => {
@@ -998,7 +1003,7 @@ const openEvaluationModal = async (request, nextAction) => {
     response.data.questions.forEach(q => {
       const existing = response.data.evaluations[q.id]
       answers[q.id] = {
-        answer: existing?.score ? Math.round((existing.score / q.weight) * 10) : null,
+        is_applied: existing?.is_applied !== undefined ? existing.is_applied : null,
         notes: existing?.notes || ''
       }
     })
@@ -1024,11 +1029,11 @@ const closeEvaluationModal = () => {
   evaluationQuestions.value = []
 }
 
-const setAnswer = (questionId, rating) => {
+const setAnswer = (questionId, isApplied) => {
   if (!evaluationModal.value.answers[questionId]) {
-    evaluationModal.value.answers[questionId] = { answer: null, notes: '' }
+    evaluationModal.value.answers[questionId] = { is_applied: null, notes: '' }
   }
-  evaluationModal.value.answers[questionId].answer = rating
+  evaluationModal.value.answers[questionId].is_applied = isApplied
 }
 
 const submitEvaluationAndProceed = async () => {
@@ -1039,7 +1044,7 @@ const submitEvaluationAndProceed = async () => {
     // Format evaluations for API
     const evaluations = Object.keys(evaluationModal.value.answers).map(questionId => ({
       question_id: parseInt(questionId),
-      answer: evaluationModal.value.answers[questionId].answer,
+      is_applied: evaluationModal.value.answers[questionId].is_applied,
       notes: evaluationModal.value.answers[questionId].notes
     }))
 
@@ -1495,36 +1500,64 @@ const openModalForAction = (request, action) => {
   font-size: var(--font-size-sm);
 }
 
-.rating-scale {
+.toggle-buttons {
   display: flex;
-  gap: var(--spacing-2);
-  flex-wrap: wrap;
+  gap: var(--spacing-3);
 }
 
-.rating-btn {
-  width: 45px;
-  height: 45px;
+.toggle-btn {
+  flex: 1;
+  padding: var(--spacing-4);
   border: 2px solid var(--color-border);
   background: var(--color-background);
-  color: var(--color-text-secondary);
   border-radius: var(--radius-lg);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
   transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
 }
 
-.rating-btn:hover {
-  border-color: var(--color-primary-500);
-  background: var(--color-primary-50);
+.toggle-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-applied {
+  color: var(--color-success-700);
+  border-color: var(--color-success-200);
+}
+
+.toggle-applied:hover {
+  background: var(--color-success-50);
+  border-color: var(--color-success-300);
+}
+
+.toggle-applied.active {
+  background: var(--color-success-600);
+  color: white;
+  border-color: var(--color-success-600);
   transform: scale(1.05);
 }
 
-.rating-btn.active {
-  background: var(--color-primary-600);
+.toggle-not-applied {
+  color: var(--color-error-700);
+  border-color: var(--color-error-200);
+}
+
+.toggle-not-applied:hover {
+  background: var(--color-error-50);
+  border-color: var(--color-error-300);
+}
+
+.toggle-not-applied.active {
+  background: var(--color-error-600);
   color: white;
-  border-color: var(--color-primary-600);
-  transform: scale(1.1);
+  border-color: var(--color-error-600);
+  transform: scale(1.05);
 }
 
 .notes-section label {
@@ -1574,8 +1607,8 @@ const openModalForAction = (request, action) => {
     flex-direction: column;
   }
 
-  .rating-scale {
-    justify-content: center;
+  .toggle-buttons {
+    flex-direction: column;
   }
 }
 </style>
