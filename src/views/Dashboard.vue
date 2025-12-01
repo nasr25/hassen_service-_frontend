@@ -172,26 +172,55 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import AppLayout from '../components/AppLayout.vue'
 import BaseCard from '../components/BaseCard.vue'
 import BaseButton from '../components/BaseButton.vue'
 import BaseBadge from '../components/BaseBadge.vue'
+import axios from 'axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
 const user = computed(() => authStore.user)
 
-// Mock stats data (replace with actual API calls)
+// Real stats data from API
 const stats = ref({
-  totalRequests: 24,
-  pendingRequests: 5,
-  approvedRequests: 16,
-  rejectedRequests: 3
+  totalRequests: 0,
+  pendingRequests: 0,
+  approvedRequests: 0,
+  rejectedRequests: 0
 })
+
+// Load statistics on mount
+onMounted(async () => {
+  await loadStatistics()
+})
+
+// Fetch statistics from API
+const loadStatistics = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/dashboard/statistics', {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    })
+
+    if (response.data.stats) {
+      stats.value = {
+        totalRequests: response.data.stats.totalRequests || 0,
+        pendingRequests: response.data.stats.pendingRequests || 0,
+        approvedRequests: response.data.stats.approvedRequests || 0,
+        rejectedRequests: response.data.stats.rejectedRequests || 0
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load statistics:', error)
+    // Keep stats at 0 if there's an error
+  }
+}
 
 // Mock recent activity (replace with actual API calls)
 const recentActivity = ref([])
