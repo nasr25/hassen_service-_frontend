@@ -4,7 +4,9 @@
     <aside class="sidebar" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
       <div class="sidebar-header">
         <div class="logo">
-          <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+          <!-- Use custom logo if available, otherwise show default SVG -->
+          <img v-if="logo" :src="logo" alt="Logo" class="logo-image" />
+          <svg v-else width="32" height="32" viewBox="0 0 48 48" fill="none">
             <rect width="48" height="48" rx="12" fill="url(#gradient)" />
             <path d="M24 14L34 20V28L24 34L14 28V20L24 14Z" fill="white" opacity="0.9" />
             <defs>
@@ -14,7 +16,7 @@
               </linearGradient>
             </defs>
           </svg>
-          <span v-if="!sidebarCollapsed" class="logo-text">Workflow</span>
+          <span v-if="!sidebarCollapsed" class="logo-text">{{ displaySiteName }}</span>
         </div>
         <button @click="toggleSidebar" class="toggle-btn" :title="sidebarCollapsed ? 'Expand' : 'Collapse'">
           <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -137,17 +139,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useI18n } from 'vue-i18n'
+import { useSettings } from '../composables/useSettings'
 import BaseBadge from './BaseBadge.vue'
 import LanguageSwitcher from './LanguageSwitcher.vue'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const { siteName, siteNameAr, logo, fetchPublicSettings } = useSettings()
 
 const sidebarCollapsed = ref(false)
 const userMenuOpen = ref(false)
@@ -192,6 +196,16 @@ const getRoleBadgeVariant = (role) => {
   }
   return variants[role] || 'gray'
 }
+
+// Computed property to get the site name based on current locale
+const displaySiteName = computed(() => {
+  return locale.value === 'ar' ? siteNameAr.value : siteName.value
+})
+
+// Fetch settings on mount
+onMounted(async () => {
+  await fetchPublicSettings()
+})
 </script>
 
 <style scoped>
@@ -231,6 +245,13 @@ const getRoleBadgeVariant = (role) => {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
+}
+
+.logo-image {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: var(--radius-md);
 }
 
 .logo-text {

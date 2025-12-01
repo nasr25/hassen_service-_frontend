@@ -28,6 +28,9 @@
         <button :class="['tab', { active: activeTab === 'permissions' }]" @click="activeTab = 'permissions'">
           🔐 Permissions & Roles
         </button>
+        <router-link to="/admin/settings" class="tab tab-link">
+          ⚙️ Settings
+        </router-link>
       </div>
 
       <div v-if="activeTab === 'departments'" class="tab-content">
@@ -1163,6 +1166,7 @@ h1 { color: #333; font-size: 28px; margin: 0; }
 .tab { padding: 12px 24px; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; font-size: 15px; font-weight: 500; color: #666; transition: all 0.3s; }
 .tab:hover { color: #667eea; }
 .tab.active { color: #667eea; border-bottom-color: #667eea; }
+.tab-link { text-decoration: none; display: flex; align-items: center; }
 .tab-content { animation: fadeIn 0.3s; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
