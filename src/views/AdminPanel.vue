@@ -144,51 +144,105 @@
 
       <!-- Evaluation Questions Tab -->
       <div v-if="activeTab === 'evaluations'" class="tab-content">
-        <div class="section-header">
-          <h2>Evaluation Questions</h2>
-          <div class="weight-display">
-            <span class="weight-label">Total Weight:</span>
-            <span :class="['weight-value', totalWeight === 100 ? 'complete' : 'incomplete']">
-              {{ totalWeight }}%
-            </span>
-            <span class="weight-remaining">({{ 100 - totalWeight }}% remaining)</span>
-          </div>
-          <button @click="openQuestionModal()" class="btn-primary">➕ Add Question</button>
-        </div>
-
-        <div v-if="totalWeight !== 100" class="alert alert-warning">
-          ⚠️ Total weight must equal 100% before evaluation questions can be used.
-        </div>
-
-        <div v-if="isLoading" class="loading">Loading...</div>
-        <div v-else-if="evaluationQuestions.length === 0" class="empty-state">
-          <p>No evaluation questions yet. Add your first question above.</p>
-        </div>
-        <div v-else class="questions-list">
-          <div v-for="question in evaluationQuestions" :key="question.id" class="question-card">
-            <div class="question-header">
-              <span class="question-order">#{{ question.order }}</span>
-              <span :class="['question-status', question.is_active ? 'active' : 'inactive']">
-                {{ question.is_active ? 'Active' : 'Inactive' }}
+        <!-- Department A Evaluation Questions Section -->
+        <div class="evaluation-section">
+          <div class="section-header">
+            <h2>📊 Department A Evaluation Questions (Rating 1-10)</h2>
+            <div class="weight-display">
+              <span class="weight-label">Total Weight:</span>
+              <span :class="['weight-value', totalWeight === 100 ? 'complete' : 'incomplete']">
+                {{ totalWeight }}%
               </span>
+              <span class="weight-remaining">({{ 100 - totalWeight }}% remaining)</span>
             </div>
-            <div class="question-body">
-              <p class="question-text">{{ question.question }}</p>
-              <div class="question-meta">
-                <span class="weight-badge">Weight: {{ question.weight }}%</span>
-                <span class="question-date">Created: {{ formatDate(question.created_at) }}</span>
+            <button @click="openQuestionModal()" class="btn-primary">➕ Add Question</button>
+          </div>
+
+          <div v-if="totalWeight !== 100" class="alert alert-warning">
+            ⚠️ Total weight must equal 100% before evaluation questions can be used.
+          </div>
+
+          <div v-if="isLoading" class="loading">Loading...</div>
+          <div v-else-if="evaluationQuestions.length === 0" class="empty-state">
+            <p>No evaluation questions yet. Add your first question above.</p>
+          </div>
+          <div v-else class="questions-list">
+            <div v-for="question in evaluationQuestions" :key="question.id" class="question-card">
+              <div class="question-header">
+                <span class="question-order">#{{ question.order }}</span>
+                <span :class="['question-status', question.is_active ? 'active' : 'inactive']">
+                  {{ question.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+              <div class="question-body">
+                <p class="question-text">{{ question.question }}</p>
+                <div class="question-meta">
+                  <span class="weight-badge">Weight: {{ question.weight }}%</span>
+                  <span class="question-date">Created: {{ formatDate(question.created_at) }}</span>
+                </div>
+              </div>
+              <div class="question-actions">
+                <button @click="openQuestionModal(question)" class="btn-icon">✏️ Edit</button>
+                <button
+                  @click="toggleQuestionStatus(question)"
+                  class="btn-icon"
+                  :title="question.is_active ? 'Deactivate' : 'Activate'"
+                >
+                  {{ question.is_active ? '⏸️' : '▶️' }}
+                </button>
+                <button @click="deleteQuestion(question)" class="btn-icon btn-danger">🗑️ Delete</button>
               </div>
             </div>
-            <div class="question-actions">
-              <button @click="openQuestionModal(question)" class="btn-icon">✏️ Edit</button>
-              <button
-                @click="toggleQuestionStatus(question)"
-                class="btn-icon"
-                :title="question.is_active ? 'Deactivate' : 'Activate'"
-              >
-                {{ question.is_active ? '⏸️' : '▶️' }}
-              </button>
-              <button @click="deleteQuestion(question)" class="btn-icon btn-danger">🗑️ Delete</button>
+          </div>
+        </div>
+
+        <!-- Path Evaluation Questions Section -->
+        <div class="evaluation-section" style="margin-top: 3rem;">
+          <div class="section-header">
+            <h2>✅ Path Evaluation Questions (Applied/Not Applied)</h2>
+            <p class="subtitle">Questions for department managers to evaluate requests before assigning to employees</p>
+            <button @click="openPathQuestionModal()" class="btn-primary">➕ Add Path Question</button>
+          </div>
+
+          <div v-if="isLoadingPathQuestions" class="loading">Loading path questions...</div>
+          <div v-else-if="groupedPathQuestions.length === 0" class="empty-state">
+            <p>No path evaluation questions yet. Add questions for each workflow path.</p>
+          </div>
+          <div v-else>
+            <div v-for="group in groupedPathQuestions" :key="group.pathId" class="path-questions-group">
+              <h3 class="path-title">
+                <span class="path-icon">🔀</span>
+                {{ group.pathName }}
+                <span class="badge badge-info">{{ group.questions.length }} questions</span>
+              </h3>
+              <div class="questions-list">
+                <div v-for="question in group.questions" :key="question.id" class="question-card path-question-card">
+                  <div class="question-header">
+                    <span class="question-order">#{{ question.order }}</span>
+                    <span :class="['question-status', question.is_active ? 'active' : 'inactive']">
+                      {{ question.is_active ? 'Active' : 'Inactive' }}
+                    </span>
+                  </div>
+                  <div class="question-body">
+                    <p class="question-text">{{ question.question }}</p>
+                    <div class="question-meta">
+                      <span class="format-badge">Applied / Not Applied</span>
+                      <span class="question-date">Created: {{ formatDate(question.created_at) }}</span>
+                    </div>
+                  </div>
+                  <div class="question-actions">
+                    <button @click="openPathQuestionModal(question)" class="btn-icon">✏️ Edit</button>
+                    <button
+                      @click="togglePathQuestionStatus(question)"
+                      class="btn-icon"
+                      :title="question.is_active ? 'Deactivate' : 'Activate'"
+                    >
+                      {{ question.is_active ? '⏸️' : '▶️' }}
+                    </button>
+                    <button @click="deletePathQuestion(question)" class="btn-icon btn-danger">🗑️ Delete</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -305,6 +359,41 @@
           <button @click="closeQuestionModal" class="btn-secondary">Cancel</button>
           <button @click="saveQuestion" :disabled="questionModal.isLoading" class="btn-primary">
             {{ questionModal.isLoading ? 'Saving...' : 'Save' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Path Question Modal -->
+    <div v-if="pathQuestionModal.show" class="modal-overlay" @click="closePathQuestionModal">
+      <div class="modal-content" @click.stop>
+        <h2>{{ pathQuestionModal.isEdit ? 'Edit' : 'Add' }} Path Evaluation Question</h2>
+        <div class="form-group">
+          <label>Workflow Path *</label>
+          <select v-model="pathQuestionModal.form.workflow_path_id" required :disabled="pathQuestionModal.isEdit">
+            <option value="">Select a workflow path...</option>
+            <option v-for="path in workflowPaths" :key="path.id" :value="path.id">
+              {{ path.name }}
+            </option>
+          </select>
+          <small v-if="pathQuestionModal.isEdit">Path cannot be changed after creation</small>
+        </div>
+        <div class="form-group">
+          <label>Question *</label>
+          <textarea v-model="pathQuestionModal.form.question" rows="3" required placeholder="Enter the evaluation question (Applied/Not Applied format)..."></textarea>
+          <small>Department managers will answer Applied or Not Applied to this question</small>
+        </div>
+        <div class="form-group">
+          <label>Display Order</label>
+          <input v-model.number="pathQuestionModal.form.order" type="number" min="0" />
+        </div>
+        <div class="form-group">
+          <label><input v-model="pathQuestionModal.form.is_active" type="checkbox" /> Active</label>
+        </div>
+        <div class="modal-actions">
+          <button @click="closePathQuestionModal" class="btn-secondary">Cancel</button>
+          <button @click="savePathQuestion" :disabled="pathQuestionModal.isLoading" class="btn-primary">
+            {{ pathQuestionModal.isLoading ? 'Saving...' : 'Save' }}
           </button>
         </div>
       </div>
@@ -512,11 +601,14 @@ const activeTab = ref('departments')
 const departments = ref([])
 const users = ref([])
 const evaluationQuestions = ref([])
+const pathEvaluationQuestions = ref([])
+const workflowPaths = ref([])
 const roles = ref([])
 const permissions = ref([])
 const error = ref(null)
 const success = ref(null)
 const isLoading = ref(true)
+const isLoadingPathQuestions = ref(false)
 
 const API_URL = 'http://localhost:8000/api'
 
@@ -525,6 +617,7 @@ const userModal = ref({ show: false, isEdit: false, isLoading: false, form: { na
 const assignmentModal = ref({ show: false, isLoading: false, form: { user_id: '', department_id: '', role: 'employee' } })
 const editRoleModal = ref({ show: false, isLoading: false, user: null, department: null, newRole: 'employee' })
 const questionModal = ref({ show: false, isEdit: false, isLoading: false, form: { question: '', weight: 0, order: 0, is_active: true }, editId: null, availableWeight: 100 })
+const pathQuestionModal = ref({ show: false, isEdit: false, isLoading: false, form: { workflow_path_id: '', question: '', order: 0, is_active: true }, editId: null })
 const roleModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', permissions: [] }, editId: null })
 const userRoleModal = ref({ show: false, isLoading: false, user: null, form: { user_id: '', role_name: '' } })
 
@@ -532,6 +625,23 @@ const totalWeight = computed(() => {
   return evaluationQuestions.value
     .filter(q => q.is_active)
     .reduce((sum, q) => sum + parseFloat(q.weight || 0), 0)
+})
+
+const groupedPathQuestions = computed(() => {
+  const groups = {}
+  pathEvaluationQuestions.value.forEach(q => {
+    const pathId = q.workflow_path_id
+    if (!groups[pathId]) {
+      const path = workflowPaths.value.find(p => p.id === pathId)
+      groups[pathId] = {
+        pathId,
+        pathName: path?.name || 'Unknown Path',
+        questions: []
+      }
+    }
+    groups[pathId].questions.push(q)
+  })
+  return Object.values(groups)
 })
 
 const groupedPermissions = computed(() => {
@@ -566,16 +676,20 @@ const loadData = async () => {
   isLoading.value = true
   error.value = null
   try {
-    const [deptsRes, usersRes, questionsRes, rolesRes, permsRes] = await Promise.all([
+    const [deptsRes, usersRes, questionsRes, pathQuestionsRes, pathsRes, rolesRes, permsRes] = await Promise.all([
       axios.get(`${API_URL}/admin/departments`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/admin/users`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/admin/evaluation-questions`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
+      axios.get(`${API_URL}/admin/path-evaluation-questions`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
+      axios.get(`${API_URL}/workflow/paths`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/permissions/roles`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/permissions/list`, { headers: { Authorization: `Bearer ${authStore.token}` } })
     ])
     departments.value = deptsRes.data.departments
     users.value = usersRes.data.users
     evaluationQuestions.value = questionsRes.data.questions
+    pathEvaluationQuestions.value = pathQuestionsRes.data.questions
+    workflowPaths.value = pathsRes.data.paths
     roles.value = rolesRes.data.roles
     permissions.value = permsRes.data.permissions
   } catch (err) {
@@ -976,6 +1090,79 @@ const formatDate = (dateString) => {
     day: 'numeric'
   })
 }
+
+// Path Evaluation Question Functions
+const openPathQuestionModal = (question = null) => {
+  pathQuestionModal.value = question ? {
+    show: true, isEdit: true, isLoading: false,
+    form: {
+      workflow_path_id: question.workflow_path_id,
+      question: question.question,
+      order: question.order || 0,
+      is_active: question.is_active
+    },
+    editId: question.id
+  } : {
+    show: true, isEdit: false, isLoading: false,
+    form: { workflow_path_id: '', question: '', order: 0, is_active: true },
+    editId: null
+  }
+}
+
+const closePathQuestionModal = () => {
+  pathQuestionModal.value.show = false
+}
+
+const savePathQuestion = async () => {
+  try {
+    pathQuestionModal.value.isLoading = true
+    error.value = null
+    const url = pathQuestionModal.value.isEdit
+      ? `${API_URL}/admin/path-evaluation-questions/${pathQuestionModal.value.editId}`
+      : `${API_URL}/admin/path-evaluation-questions`
+    const method = pathQuestionModal.value.isEdit ? 'put' : 'post'
+    await axios[method](url, pathQuestionModal.value.form, {
+      headers: { Authorization: `Bearer ${authStore.token}` }
+    })
+    success.value = `Path question ${pathQuestionModal.value.isEdit ? 'updated' : 'created'}`
+    closePathQuestionModal()
+    await loadData()
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to save path question'
+  } finally {
+    pathQuestionModal.value.isLoading = false
+  }
+}
+
+const togglePathQuestionStatus = async (question) => {
+  try {
+    await axios.put(
+      `${API_URL}/admin/path-evaluation-questions/${question.id}`,
+      { is_active: !question.is_active },
+      { headers: { Authorization: `Bearer ${authStore.token}` } }
+    )
+    success.value = `Question ${!question.is_active ? 'activated' : 'deactivated'}`
+    await loadData()
+    setTimeout(() => (success.value = null), 3000)
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to toggle status'
+  }
+}
+
+const deletePathQuestion = async (question) => {
+  if (!confirm(`Delete this path evaluation question?`)) return
+  try {
+    await axios.delete(`${API_URL}/admin/path-evaluation-questions/${question.id}`, {
+      headers: { Authorization: `Bearer ${authStore.token}` }
+    })
+    success.value = 'Path question deleted'
+    await loadData()
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to delete'
+  }
+}
 </script>
 
 <style scoped>
@@ -1364,5 +1551,59 @@ h1 { color: #333; font-size: 28px; margin: 0; }
 .checkbox-label span {
   color: #333;
   font-family: 'Courier New', monospace;
+}
+
+/* Path Evaluation Questions Styles */
+.evaluation-section {
+  margin-bottom: 3rem;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.path-questions-group {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 10px;
+  border: 2px solid #e0e0e0;
+}
+
+.path-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.path-icon {
+  font-size: 1.5rem;
+}
+
+.path-question-card {
+  background: #fafafa;
+}
+
+.format-badge {
+  padding: 0.25rem 0.75rem;
+  background: #e7f5ff;
+  color: #1971c2;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.empty-state p {
+  margin: 0;
+  font-style: italic;
 }
 </style>
