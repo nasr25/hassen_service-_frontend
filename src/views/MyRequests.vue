@@ -5,14 +5,22 @@
       <div class="page-header">
         <div>
           <h1>{{ $t('nav.myRequests') }}</h1>
-          <p>View and manage all your requests</p>
+          <p>{{ $t('dashboard.myRequests.description') }}</p>
         </div>
-        <BaseButton variant="primary" @click="createNew">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
-          </svg>
-          {{ $t('request.newRequest') }}
-        </BaseButton>
+        <div class="header-actions">
+          <BaseButton variant="secondary" @click="loadRequests">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+            </svg>
+            {{ $t('common.refresh') }}
+          </BaseButton>
+          <BaseButton variant="primary" @click="createNew">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
+            </svg>
+            {{ $t('request.newRequest') }}
+          </BaseButton>
+        </div>
       </div>
 
       <!-- Error Alert -->
@@ -33,7 +41,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
           </svg>
           <h2>{{ $t('request.noRequests') }}</h2>
-          <p>You haven't created any requests yet. Start by creating your first request.</p>
+          <p>{{ $t('request.noRequestsMessage') }}</p>
           <BaseButton variant="primary" size="lg" @click="createNew">
             {{ $t('request.newRequest') }}
           </BaseButton>
@@ -250,6 +258,12 @@ const truncate = (text, length) => {
   font-size: var(--font-size-base);
   color: var(--color-text-secondary);
   margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--spacing-3);
+  align-items: center;
 }
 
 /* Loading State */

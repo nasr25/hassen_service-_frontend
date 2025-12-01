@@ -2,12 +2,12 @@
   <div class="page-container">
     <div class="page-card">
       <div class="header">
-        <button @click="goBack" class="btn-back">← Back</button>
-        <h1>All Requests</h1>
-        <button @click="loadRequests" class="btn-refresh">🔄 Refresh</button>
+        <button @click="goBack" class="btn-back">{{ $t('common.back') }}</button>
+        <h1>{{ $t('workflow.allRequestsTitle') }}</h1>
+        <button @click="loadRequests" class="btn-refresh">{{ $t('common.refresh') }}</button>
       </div>
 
-      <p class="subtitle">View all requests and their current status</p>
+      <p class="subtitle">{{ $t('workflow.allRequestsSubtitle') }}</p>
 
       <div v-if="error" class="alert alert-error">
         {{ error }}

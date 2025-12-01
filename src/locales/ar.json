@@ -123,6 +123,7 @@
     "transitionHistory": "سجل التحويلات",
     "noHistory": "لا يوجد سجل لسير العمل بعد",
     "noRequests": "لم تقدم أي طلبات بعد.",
+    "noRequestsMessage": "لم تقم بإنشاء أي طلبات بعد. ابدأ بإنشاء طلبك الأول.",
     "noRequestsFound": "لم يتم العثور على طلبات.",
     "uploadFile": "رفع ملف",
     "removeFile": "إزالة الملف",

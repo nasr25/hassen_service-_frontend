@@ -2,12 +2,12 @@
   <div class="page-container">
     <div class="page-card">
       <div class="header">
-        <button @click="goBack" class="btn-back">← Back</button>
-        <h1>Department Workflow</h1>
-        <button @click="loadRequests" class="btn-refresh">🔄 Refresh</button>
+        <button @click="goBack" class="btn-back">{{ $t('common.back') }}</button>
+        <h1>{{ $t('nav.departmentWorkflow') }}</h1>
+        <button @click="loadRequests" class="btn-refresh">{{ $t('common.refresh') }}</button>
       </div>
 
-      <p class="subtitle">Manage requests assigned to your department</p>
+      <p class="subtitle">{{ $t('dashboard.departmentWorkflow.description') }}</p>
 
       <div v-if="error" class="alert alert-error">
         {{ error }}
