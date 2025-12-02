@@ -352,7 +352,20 @@
     "displayOrder": "Display Order",
     "enterQuestionPlaceholder": "Enter the evaluation question (Applied/Not Applied format)...",
     "deptAWillAnswer": "Department A will answer Applied or Not Applied to this question",
-    "deptManagersWillAnswer": "Department managers will answer Applied or Not Applied to this question"
+    "deptManagersWillAnswer": "Department managers will answer Applied or Not Applied to this question",
+    "ideaTypes": "Idea Types",
+    "ideaType": "Idea Type",
+    "addIdeaType": "Add Idea Type",
+    "editIdeaType": "Edit Idea Type",
+    "deleteIdeaType": "Delete Idea Type",
+    "color": "Color",
+    "arabic": "Arabic",
+    "ideaTypeNamePlaceholder": "e.g., Innovation",
+    "ideaTypeNameArPlaceholder": "مثلاً، الابتكار",
+    "ideaTypeDescriptionPlaceholder": "Brief description of this idea type...",
+    "ideaTypeDescriptionArPlaceholder": "وصف مختصر لهذا النوع من الأفكار...",
+    "colorPlaceholder": "#22c55e",
+    "colorHint": "Choose a color to represent this idea type"
   },
   "evaluations": {
     "departmentA": "Department A Evaluations",

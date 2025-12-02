@@ -201,7 +201,7 @@ import BaseSelect from '../components/BaseSelect.vue'
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const API_URL = 'http://localhost:8000/api'
 
@@ -223,13 +223,15 @@ const isDraftSave = ref(false)
 const validationErrors = ref({})
 const isEditMode = ref(false)
 const departments = ref([])
+const ideaTypes = ref([])
 
-// Idea Type Options
-const ideaTypeOptions = [
-  { value: 'x', label: 'Process Improvement' },
-  { value: 'y', label: 'Cost Reduction' },
-  { value: 'z', label: 'Innovation' }
-]
+// Idea Type Options (computed from fetched data with bilingual support)
+const ideaTypeOptions = computed(() => {
+  return ideaTypes.value.map(type => ({
+    value: type.id.toString(),
+    label: locale.value === 'ar' ? type.name_ar : type.name
+  }))
+})
 
 // Department Options (will be loaded from API + Unknown)
 const departmentOptions = computed(() => {
@@ -257,7 +259,10 @@ const isFormValid = computed(() => {
 })
 
 onMounted(async () => {
-  await loadDepartments()
+  await Promise.all([
+    loadDepartments(),
+    loadIdeaTypes()
+  ])
 
   // Check if editing existing request
   if (route.params.id) {
@@ -288,6 +293,20 @@ const loadDepartments = async () => {
   }
 }
 
+const loadIdeaTypes = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/idea-types`, {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    })
+    ideaTypes.value = response.data.ideaTypes || []
+  } catch (err) {
+    console.error('Failed to load idea types:', err)
+    ideaTypes.value = []
+  }
+}
+
 const loadRequest = async (id) => {
   try {
     const response = await axios.get(`${API_URL}/requests/${id}`, {
@@ -300,8 +319,8 @@ const loadRequest = async (id) => {
     form.value = {
       title: request.title || '',
       description: request.description || '',
-      idea_type: request.idea_type || '',
-      department: request.department_id?.toString() || '',
+      idea_type: request.idea_type_id?.toString() || '',
+      department: request.department_id?.toString() || 'unknown',
       benefits: request.benefits || '',
       additional_details: request.additional_details || ''
     }

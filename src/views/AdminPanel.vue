@@ -34,6 +34,9 @@
         <button :class="['tab', { active: activeTab === 'permissions' }]" @click="activeTab = 'permissions'">
           🔐 {{ $t('admin.permissionsRoles') }}
         </button>
+        <button :class="['tab', { active: activeTab === 'ideaTypes' }]" @click="activeTab = 'ideaTypes'">
+          💡 {{ $t('admin.ideaTypes') }}
+        </button>
         <router-link to="/admin/settings" class="tab tab-link">
           ⚙️ {{ $t('nav.settings') }}
         </router-link>
@@ -332,6 +335,59 @@
           </div>
         </div>
       </div>
+
+      <!-- Idea Types Tab -->
+      <div v-if="activeTab === 'ideaTypes'" class="tab-content">
+        <div class="section-header">
+          <h2>{{ $t('admin.ideaTypes') }} ({{ ideaTypes.length }})</h2>
+          <button @click="openIdeaTypeModal()" class="btn-primary">➕ {{ $t('admin.addIdeaType') }}</button>
+        </div>
+        <div v-if="isLoading" class="loading">{{ $t('common.loading') }}</div>
+        <div v-else class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ $t('admin.order') }}</th>
+                <th>{{ $t('admin.name') }}</th>
+                <th>{{ $t('admin.description') }}</th>
+                <th>{{ $t('admin.color') }}</th>
+                <th>{{ $t('admin.status') }}</th>
+                <th>{{ $t('admin.actions') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="ideaType in ideaTypes" :key="ideaType.id">
+                <td><span class="badge badge-info">#{{ ideaType.order }}</span></td>
+                <td>
+                  <strong>{{ ideaType.name }}</strong><br>
+                  <small class="text-muted">{{ ideaType.name_ar }}</small>
+                </td>
+                <td>
+                  <div v-if="ideaType.description">{{ ideaType.description.substring(0, 50) }}{{ ideaType.description.length > 50 ? '...' : '' }}</div>
+                  <div v-else class="text-muted">-</div>
+                </td>
+                <td>
+                  <div class="color-preview" :style="{ backgroundColor: ideaType.color }">
+                    <code>{{ ideaType.color }}</code>
+                  </div>
+                </td>
+                <td>
+                  <span :class="['badge', ideaType.is_active ? 'badge-success' : 'badge-inactive']">
+                    {{ ideaType.is_active ? $t('admin.active') : $t('admin.inactive') }}
+                  </span>
+                </td>
+                <td class="actions">
+                  <button @click="openIdeaTypeModal(ideaType)" class="btn-icon" :title="$t('common.edit')">✏️</button>
+                  <button @click="toggleIdeaTypeStatus(ideaType)" class="btn-icon" :title="ideaType.is_active ? $t('admin.deactivate') : $t('admin.activate')">
+                    {{ ideaType.is_active ? '⏸️' : '▶️' }}
+                  </button>
+                  <button @click="deleteIdeaType(ideaType)" class="btn-icon btn-danger" :title="$t('common.delete')">🗑️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- Question Modal -->
@@ -618,6 +674,50 @@
         </div>
       </div>
     </div>
+
+    <!-- Idea Type Modal -->
+    <div v-if="ideaTypeModal.show" class="modal-overlay" @click="closeIdeaTypeModal">
+      <div class="modal-content" @click.stop>
+        <h2>{{ ideaTypeModal.isEdit ? $t('common.edit') : $t('common.add') }} {{ $t('admin.ideaType') }}</h2>
+        <div class="form-group">
+          <label>{{ $t('admin.name') }} (English) {{ $t('admin.required') }}</label>
+          <input v-model="ideaTypeModal.form.name" type="text" required :placeholder="$t('admin.ideaTypeNamePlaceholder')" />
+        </div>
+        <div class="form-group">
+          <label>{{ $t('admin.name') }} ({{ $t('admin.arabic') }}) {{ $t('admin.required') }}</label>
+          <input v-model="ideaTypeModal.form.name_ar" type="text" required :placeholder="$t('admin.ideaTypeNameArPlaceholder')" />
+        </div>
+        <div class="form-group">
+          <label>{{ $t('admin.description') }} (English)</label>
+          <textarea v-model="ideaTypeModal.form.description" rows="3" :placeholder="$t('admin.ideaTypeDescriptionPlaceholder')"></textarea>
+        </div>
+        <div class="form-group">
+          <label>{{ $t('admin.description') }} ({{ $t('admin.arabic') }})</label>
+          <textarea v-model="ideaTypeModal.form.description_ar" rows="3" :placeholder="$t('admin.ideaTypeDescriptionArPlaceholder')"></textarea>
+        </div>
+        <div class="form-group">
+          <label>{{ $t('admin.color') }} {{ $t('admin.required') }}</label>
+          <div class="color-input-group">
+            <input v-model="ideaTypeModal.form.color" type="color" class="color-picker" />
+            <input v-model="ideaTypeModal.form.color" type="text" class="color-text" pattern="^#[0-9A-Fa-f]{6}$" :placeholder="$t('admin.colorPlaceholder')" />
+          </div>
+          <small class="form-hint">{{ $t('admin.colorHint') }}</small>
+        </div>
+        <div class="form-group">
+          <label>{{ $t('admin.displayOrder') }}</label>
+          <input v-model.number="ideaTypeModal.form.order" type="number" min="0" />
+        </div>
+        <div class="form-group">
+          <label><input v-model="ideaTypeModal.form.is_active" type="checkbox" /> {{ $t('admin.active') }}</label>
+        </div>
+        <div class="modal-actions">
+          <button @click="closeIdeaTypeModal" class="btn-secondary">{{ $t('common.cancel') }}</button>
+          <button @click="saveIdeaType" :disabled="ideaTypeModal.isLoading" class="btn-primary">
+            {{ ideaTypeModal.isLoading ? $t('common.saving') : $t('common.save') }}
+          </button>
+        </div>
+      </div>
+    </div>
   </AppLayout>
 </template>
 
@@ -639,6 +739,7 @@ const pathEvaluationQuestions = ref([])
 const workflowPaths = ref([])
 const roles = ref([])
 const permissions = ref([])
+const ideaTypes = ref([])
 const error = ref(null)
 const success = ref(null)
 const isLoading = ref(true)
@@ -655,6 +756,7 @@ const questionModal = ref({ show: false, isEdit: false, isLoading: false, form: 
 const pathQuestionModal = ref({ show: false, isEdit: false, isLoading: false, form: { workflow_path_id: '', question: '', order: 0, is_active: true }, editId: null })
 const roleModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', permissions: [] }, editId: null })
 const userRoleModal = ref({ show: false, isLoading: false, user: null, form: { user_id: '', role_name: '' } })
+const ideaTypeModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', name_ar: '', description: '', description_ar: '', color: '#22c55e', is_active: true, order: 0 }, editId: null })
 
 const totalWeight = computed(() => {
   return evaluationQuestions.value
@@ -711,14 +813,15 @@ const loadData = async () => {
   isLoading.value = true
   error.value = null
   try {
-    const [deptsRes, usersRes, questionsRes, pathQuestionsRes, pathsRes, rolesRes, permsRes] = await Promise.all([
+    const [deptsRes, usersRes, questionsRes, pathQuestionsRes, pathsRes, rolesRes, permsRes, ideaTypesRes] = await Promise.all([
       axios.get(`${API_URL}/admin/departments`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/admin/users`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/admin/evaluation-questions`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/admin/path-evaluation-questions`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/workflow/paths`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/permissions/roles`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
-      axios.get(`${API_URL}/permissions/list`, { headers: { Authorization: `Bearer ${authStore.token}` } })
+      axios.get(`${API_URL}/permissions/list`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
+      axios.get(`${API_URL}/admin/idea-types`, { headers: { Authorization: `Bearer ${authStore.token}` } })
     ])
     departments.value = deptsRes.data.departments
     users.value = usersRes.data.users
@@ -727,6 +830,7 @@ const loadData = async () => {
     workflowPaths.value = pathsRes.data.paths
     roles.value = rolesRes.data.roles
     permissions.value = permsRes.data.permissions
+    ideaTypes.value = ideaTypesRes.data.ideaTypes
   } catch (err) {
     error.value = err.response?.data?.message || 'Failed to load data'
   } finally {
@@ -1260,6 +1364,118 @@ const deletePathQuestion = async (question) => {
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || 'Failed to delete'
+  }
+}
+
+// ===== IDEA TYPES MANAGEMENT =====
+const openIdeaTypeModal = (ideaType = null) => {
+  if (ideaType) {
+    ideaTypeModal.value = {
+      show: true,
+      isEdit: true,
+      isLoading: false,
+      form: {
+        name: ideaType.name,
+        name_ar: ideaType.name_ar,
+        description: ideaType.description || '',
+        description_ar: ideaType.description_ar || '',
+        color: ideaType.color,
+        is_active: ideaType.is_active,
+        order: ideaType.order
+      },
+      editId: ideaType.id
+    }
+  } else {
+    ideaTypeModal.value = {
+      show: true,
+      isEdit: false,
+      isLoading: false,
+      form: {
+        name: '',
+        name_ar: '',
+        description: '',
+        description_ar: '',
+        color: '#22c55e',
+        is_active: true,
+        order: ideaTypes.value.length
+      },
+      editId: null
+    }
+  }
+}
+
+const closeIdeaTypeModal = () => {
+  ideaTypeModal.value = {
+    show: false,
+    isEdit: false,
+    isLoading: false,
+    form: {
+      name: '',
+      name_ar: '',
+      description: '',
+      description_ar: '',
+      color: '#22c55e',
+      is_active: true,
+      order: 0
+    },
+    editId: null
+  }
+}
+
+const saveIdeaType = async () => {
+  try {
+    ideaTypeModal.value.isLoading = true
+    error.value = null
+
+    if (ideaTypeModal.value.isEdit) {
+      await axios.put(`${API_URL}/admin/idea-types/${ideaTypeModal.value.editId}`, ideaTypeModal.value.form, {
+        headers: { Authorization: `Bearer ${authStore.token}` }
+      })
+      success.value = 'Idea type updated successfully'
+    } else {
+      await axios.post(`${API_URL}/admin/idea-types`, ideaTypeModal.value.form, {
+        headers: { Authorization: `Bearer ${authStore.token}` }
+      })
+      success.value = 'Idea type created successfully'
+    }
+
+    closeIdeaTypeModal()
+    await loadData()
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to save idea type'
+  } finally {
+    ideaTypeModal.value.isLoading = false
+  }
+}
+
+const toggleIdeaTypeStatus = async (ideaType) => {
+  if (!confirm(`Are you sure you want to ${ideaType.is_active ? 'deactivate' : 'activate'} this idea type?`)) return
+
+  try {
+    await axios.post(`${API_URL}/admin/idea-types/${ideaType.id}/toggle-status`, {}, {
+      headers: { Authorization: `Bearer ${authStore.token}` }
+    })
+    success.value = `Idea type ${ideaType.is_active ? 'deactivated' : 'activated'}`
+    await loadData()
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to update idea type'
+  }
+}
+
+const deleteIdeaType = async (ideaType) => {
+  if (!confirm(`Are you sure you want to delete "${ideaType.name}"? This cannot be undone.`)) return
+
+  try {
+    await axios.delete(`${API_URL}/admin/idea-types/${ideaType.id}`, {
+      headers: { Authorization: `Bearer ${authStore.token}` }
+    })
+    success.value = 'Idea type deleted successfully'
+    await loadData()
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to delete idea type'
   }
 }
 </script>
@@ -2030,5 +2246,58 @@ html[dir="rtl"] .autocomplete-input {
 html[dir="rtl"] .autocomplete-item-name,
 html[dir="rtl"] .autocomplete-item-details {
   text-align: right;
+}
+
+/* Idea Types Styles */
+.color-preview {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.color-preview code {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.color-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.color-picker {
+  width: 60px;
+  height: 40px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.color-text {
+  flex: 1;
+  padding: 10px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.color-text:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* RTL Support for color input group */
+html[dir="rtl"] .color-input-group {
+  flex-direction: row-reverse;
 }
 </style>

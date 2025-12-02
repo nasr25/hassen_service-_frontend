@@ -352,7 +352,20 @@
     "displayOrder": "ترتيب العرض",
     "enterQuestionPlaceholder": "أدخل سؤال التقييم (تنسيق مطبق / غير مطبق)...",
     "deptAWillAnswer": "القسم أ سيجيب بمطبق أو غير مطبق على هذا السؤال",
-    "deptManagersWillAnswer": "مديرو الأقسام سيجيبون بمطبق أو غير مطبق على هذا السؤال"
+    "deptManagersWillAnswer": "مديرو الأقسام سيجيبون بمطبق أو غير مطبق على هذا السؤال",
+    "ideaTypes": "أنواع الأفكار",
+    "ideaType": "نوع الفكرة",
+    "addIdeaType": "إضافة نوع فكرة",
+    "editIdeaType": "تعديل نوع الفكرة",
+    "deleteIdeaType": "حذف نوع الفكرة",
+    "color": "اللون",
+    "arabic": "العربية",
+    "ideaTypeNamePlaceholder": "مثلاً، الابتكار",
+    "ideaTypeNameArPlaceholder": "مثلاً، الابتكار",
+    "ideaTypeDescriptionPlaceholder": "وصف مختصر لهذا النوع من الأفكار...",
+    "ideaTypeDescriptionArPlaceholder": "وصف مختصر لهذا النوع من الأفكار...",
+    "colorPlaceholder": "#22c55e",
+    "colorHint": "اختر لوناً يمثل هذا النوع من الأفكار"
   },
   "evaluations": {
     "departmentA": "تقييمات القسم أ",
