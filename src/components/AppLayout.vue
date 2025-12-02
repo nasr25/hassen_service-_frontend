@@ -79,11 +79,66 @@
 
         <div class="top-nav-right">
           <!-- Notifications -->
-          <button class="icon-button" title="Notifications">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
-            </svg>
-          </button>
+          <div class="notifications-wrapper">
+            <button class="icon-button" @click="toggleNotifications" :title="$t('nav.notifications')">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+              </svg>
+              <span v-if="unreadCount > 0" class="notification-badge">{{ unreadCount }}</span>
+            </button>
+
+            <!-- Notifications Dropdown -->
+            <div v-if="notificationsOpen" class="notifications-dropdown">
+              <div class="notifications-header">
+                <h3>{{ $t('nav.notifications') }}</h3>
+                <button v-if="notifications.length > 0" @click="markAllAsRead" class="mark-all-read">
+                  {{ $t('notifications.markAllRead') }}
+                </button>
+              </div>
+
+              <div v-if="loadingNotifications" class="notifications-loading">
+                <div class="spinner-small"></div>
+                <span>{{ $t('common.loading') }}</span>
+              </div>
+
+              <div v-else-if="notifications.length === 0" class="notifications-empty">
+                <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                <p>{{ $t('notifications.noNotifications') }}</p>
+              </div>
+
+              <div v-else class="notifications-list">
+                <div
+                  v-for="notification in notifications"
+                  :key="notification.id"
+                  class="notification-item"
+                  :class="{ 'unread': !notification.read_at }"
+                  @click="handleNotificationClick(notification)"
+                >
+                  <div class="notification-icon">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div class="notification-content">
+                    <div class="notification-title">{{ notification.title }}</div>
+                    <div class="notification-message">{{ notification.message }}</div>
+                    <div class="notification-time">{{ formatTime(notification.created_at) }}</div>
+                  </div>
+                  <button
+                    @click.stop="deleteNotification(notification.id)"
+                    class="notification-delete"
+                    :title="$t('common.delete')"
+                  >
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <!-- User Menu -->
           <div class="user-menu" @click="toggleUserMenu">
@@ -139,11 +194,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useI18n } from 'vue-i18n'
 import { useSettings } from '../composables/useSettings'
+import axios from 'axios'
 import BaseBadge from './BaseBadge.vue'
 import LanguageSwitcher from './LanguageSwitcher.vue'
 
@@ -155,6 +211,13 @@ const { siteName, siteNameAr, logo, fetchPublicSettings } = useSettings()
 
 const sidebarCollapsed = ref(false)
 const userMenuOpen = ref(false)
+
+// Notification state
+const notificationsOpen = ref(false)
+const notifications = ref([])
+const unreadCount = ref(0)
+const loadingNotifications = ref(false)
+let notificationInterval = null
 
 const pageTitle = computed(() => {
   const titles = {
@@ -202,9 +265,131 @@ const displaySiteName = computed(() => {
   return locale.value === 'ar' ? siteNameAr.value : siteName.value
 })
 
+// Notification functions
+const toggleNotifications = async () => {
+  notificationsOpen.value = !notificationsOpen.value
+  if (notificationsOpen.value) {
+    await fetchNotifications()
+  }
+}
+
+const fetchNotifications = async () => {
+  try {
+    loadingNotifications.value = true
+    const response = await axios.get('http://localhost:8000/api/notifications', {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    })
+    notifications.value = response.data.notifications
+  } catch (error) {
+    console.error('Failed to fetch notifications:', error)
+  } finally {
+    loadingNotifications.value = false
+  }
+}
+
+const fetchUnreadCount = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/notifications/unread-count', {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    })
+    unreadCount.value = response.data.count
+  } catch (error) {
+    console.error('Failed to fetch unread count:', error)
+  }
+}
+
+const handleNotificationClick = async (notification) => {
+  // Mark as read
+  if (!notification.read_at) {
+    try {
+      await axios.post(`http://localhost:8000/api/notifications/${notification.id}/read`, {}, {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      })
+      // Update local state
+      notification.read_at = new Date()
+      unreadCount.value = Math.max(0, unreadCount.value - 1)
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error)
+    }
+  }
+
+  // Navigate to request if available
+  if (notification.request_id) {
+    router.push(`/requests/${notification.request_id}`)
+    notificationsOpen.value = false
+  }
+}
+
+const markAllAsRead = async () => {
+  try {
+    await axios.post('http://localhost:8000/api/notifications/read-all', {}, {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    })
+    // Update local state
+    notifications.value.forEach(n => n.read_at = new Date())
+    unreadCount.value = 0
+  } catch (error) {
+    console.error('Failed to mark all as read:', error)
+  }
+}
+
+const deleteNotification = async (id) => {
+  try {
+    await axios.delete(`http://localhost:8000/api/notifications/${id}`, {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    })
+    // Remove from local state
+    const index = notifications.value.findIndex(n => n.id === id)
+    if (index !== -1) {
+      const wasUnread = !notifications.value[index].read_at
+      notifications.value.splice(index, 1)
+      if (wasUnread) {
+        unreadCount.value = Math.max(0, unreadCount.value - 1)
+      }
+    }
+  } catch (error) {
+    console.error('Failed to delete notification:', error)
+  }
+}
+
+const formatTime = (dateString) => {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diff = now - date
+  const minutes = Math.floor(diff / 60000)
+  const hours = Math.floor(diff / 3600000)
+  const days = Math.floor(diff / 86400000)
+
+  if (minutes < 1) return t('common.justNow')
+  if (minutes < 60) return t('common.minutesAgo', { count: minutes })
+  if (hours < 24) return t('common.hoursAgo', { count: hours })
+  if (days < 7) return t('common.daysAgo', { count: days })
+  return date.toLocaleDateString()
+}
+
 // Fetch settings on mount
 onMounted(async () => {
   await fetchPublicSettings()
+  // Fetch initial unread count
+  await fetchUnreadCount()
+  // Poll for new notifications every 30 seconds
+  notificationInterval = setInterval(fetchUnreadCount, 30000)
+})
+
+onBeforeUnmount(() => {
+  if (notificationInterval) {
+    clearInterval(notificationInterval)
+  }
 })
 </script>
 
@@ -218,7 +403,7 @@ onMounted(async () => {
 /* Sidebar */
 .sidebar {
   width: 260px;
-  background: #008844;
+  background: #005028;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
@@ -355,7 +540,7 @@ onMounted(async () => {
 /* Top Navigation */
 .top-nav {
   height: 72px;
-  background: #008844;
+  background: #005028;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding: 0 var(--spacing-6);
   display: flex;
@@ -614,6 +799,239 @@ onMounted(async () => {
 
   [dir="rtl"] .main-content {
     margin-right: 0;
+  }
+}
+
+/* Notifications */
+.notifications-wrapper {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  padding: 2px 5px;
+  border-radius: var(--radius-full);
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.notifications-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  width: 400px;
+  max-height: 600px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: var(--z-dropdown);
+}
+
+.notifications-header {
+  padding: var(--spacing-4) var(--spacing-5);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-surface);
+}
+
+.notifications-header h3 {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.mark-all-read {
+  background: none;
+  border: none;
+  color: #22c55e;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  padding: var(--spacing-2);
+  transition: opacity var(--transition-fast);
+}
+
+.mark-all-read:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.notifications-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-12);
+  gap: var(--spacing-3);
+  color: var(--color-text-secondary);
+}
+
+.spinner-small {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-border);
+  border-top-color: #22c55e;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.notifications-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-12);
+  gap: var(--spacing-3);
+  color: var(--color-text-secondary);
+}
+
+.notifications-empty svg {
+  opacity: 0.3;
+}
+
+.notifications-empty p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.notifications-list {
+  overflow-y: auto;
+  max-height: 500px;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  position: relative;
+}
+
+.notification-item:hover {
+  background: var(--color-surface);
+}
+
+.notification-item.unread {
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.notification-item.unread::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #22c55e;
+}
+
+.notification-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-1);
+}
+
+.notification-message {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.notification-time {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.notification-delete {
+  background: none;
+  border: none;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  padding: var(--spacing-1);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  opacity: 0;
+}
+
+.notification-item:hover .notification-delete {
+  opacity: 1;
+}
+
+.notification-delete:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* RTL Notifications */
+[dir="rtl"] .notifications-dropdown {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .notifications-header {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .notification-item {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .notification-item.unread::before {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] .notification-content {
+  text-align: right;
+}
+
+@media (max-width: 480px) {
+  .notifications-dropdown {
+    width: 340px;
   }
 }
 </style>

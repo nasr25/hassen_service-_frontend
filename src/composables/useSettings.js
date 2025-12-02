@@ -6,7 +6,7 @@ const settings = ref({
   site_name_ar: 'نظام إدارة سير العمل',
   logo: null,
   favicon: null,
-  primary_color: '#008844',
+  primary_color: '#005028',
   secondary_color: '#0066cc'
 })
 
@@ -53,7 +53,7 @@ export function useSettings() {
   const siteNameAr = computed(() => settings.value.site_name_ar || 'نظام إدارة سير العمل')
   const logo = computed(() => settings.value.logo ? getImageUrl(settings.value.logo) : null)
   const favicon = computed(() => settings.value.favicon ? getImageUrl(settings.value.favicon) : null)
-  const primaryColor = computed(() => settings.value.primary_color || '#008844')
+  const primaryColor = computed(() => settings.value.primary_color || '#005028')
   const secondaryColor = computed(() => settings.value.secondary_color || '#0066cc')
 
   return {

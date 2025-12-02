@@ -1,31 +1,28 @@
 <template>
   <div class="login-container">
+    <!-- Language Switcher -->
     <div class="language-switcher-wrapper">
       <LanguageSwitcher />
     </div>
 
-    <div class="login-content">
-      <!-- Login Card -->
-      <div class="login-card">
+    <!-- Left Panel: White Background with Login Form -->
+    <div class="login-panel">
+      <div class="login-content">
         <div class="login-header">
-          <div class="logo-section">
-            <div class="logo-icon">
-              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                <rect width="48" height="48" rx="12" fill="url(#gradient)" />
-                <path d="M24 14L34 20V28L24 34L14 28V20L24 14Z" fill="white" opacity="0.9" />
-                <defs>
-                  <linearGradient id="gradient" x1="0" y1="0" x2="48" y2="48">
-                    <stop offset="0%" stop-color="#2563eb" />
-                    <stop offset="100%" stop-color="#7c3aed" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-            <div>
-              <h1>{{ $t('auth.login') }}</h1>
-              <p class="subtitle">{{ $t('dashboard.subtitle') }}</p>
-            </div>
+          <div class="logo-icon">
+            <svg width="56" height="56" viewBox="0 0 48 48" fill="none">
+              <rect width="48" height="48" rx="12" fill="url(#gradient)" />
+              <path d="M24 14L34 20V28L24 34L14 28V20L24 14Z" fill="white" opacity="0.9" />
+              <defs>
+                <linearGradient id="gradient" x1="0" y1="0" x2="48" y2="48">
+                  <stop offset="0%" stop-color="#084" />
+                  <stop offset="100%" stop-color="#66a459" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
+          <h1>{{ $t('auth.login') }}</h1>
+          <p class="subtitle">{{ $t('dashboard.subtitle') }}</p>
         </div>
 
         <div v-if="error" class="alert alert-error">
@@ -69,59 +66,17 @@
             <h3>Test Accounts</h3>
           </div>
 
-          <!-- Admin & User -->
-          <div class="account-category">
-            <h4>System Users</h4>
-            <div class="accounts-grid">
-              <div
-                v-for="account in testAccounts.filter(a => ['Admin', 'User'].includes(a.category))"
-                :key="account.email"
-                class="test-account"
-                @click="fillLogin(account.email)"
-              >
-                <span class="account-icon">{{ account.icon }}</span>
-                <div class="account-info">
-                  <strong>{{ account.role }}</strong>
-                  <code>{{ account.email }}</code>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Managers -->
-          <div class="account-category">
-            <h4>Managers</h4>
-            <div class="accounts-grid">
-              <div
-                v-for="account in testAccounts.filter(a => a.category === 'Managers')"
-                :key="account.email"
-                class="test-account"
-                @click="fillLogin(account.email)"
-              >
-                <span class="account-icon">{{ account.icon }}</span>
-                <div class="account-info">
-                  <strong>{{ account.role }}</strong>
-                  <code>{{ account.email }}</code>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Employees -->
-          <div class="account-category">
-            <h4>Employees</h4>
-            <div class="accounts-grid">
-              <div
-                v-for="account in testAccounts.filter(a => a.category === 'Employees')"
-                :key="account.email"
-                class="test-account"
-                @click="fillLogin(account.email)"
-              >
-                <span class="account-icon">{{ account.icon }}</span>
-                <div class="account-info">
-                  <strong>{{ account.role }}</strong>
-                  <code>{{ account.email }}</code>
-                </div>
+          <div class="accounts-compact">
+            <div
+              v-for="account in testAccounts"
+              :key="account.email"
+              class="test-account"
+              @click="fillLogin(account.email)"
+            >
+              <span class="account-icon">{{ account.icon }}</span>
+              <div class="account-info">
+                <strong>{{ account.role }}</strong>
+                <code>{{ account.email }}</code>
               </div>
             </div>
           </div>
@@ -134,19 +89,33 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Feature Highlights (Optional) -->
-      <div class="features-section">
-        <h2>Workflow Management System</h2>
-        <div class="features-grid">
+    <!-- Right Panel: Green Background with Welcome -->
+    <div class="welcome-panel">
+      <div class="welcome-content">
+        <div class="welcome-icon">
+          <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+            <circle cx="60" cy="60" r="60" fill="rgba(255, 255, 255, 0.1)" />
+            <path d="M60 30L80 42V66L60 78L40 66V42L60 30Z" fill="white" opacity="0.9" stroke="white" stroke-width="2"/>
+            <circle cx="60" cy="54" r="24" fill="none" stroke="white" stroke-width="2" opacity="0.5"/>
+          </svg>
+        </div>
+
+        <h1 class="welcome-title">{{ $t('auth.welcome') || 'مرحباً' }}</h1>
+        <p class="welcome-description">{{ $t('auth.welcomeMessage') || 'نظام إدارة سير العمل' }}</p>
+
+        <div class="features-list">
           <div class="feature-item">
             <div class="feature-icon">
               <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
               </svg>
             </div>
-            <h3>Request Management</h3>
-            <p>Create and track workflow requests efficiently</p>
+            <div class="feature-text">
+              <h3>{{ $t('auth.feature1Title') || 'إدارة الطلبات' }}</h3>
+              <p>{{ $t('auth.feature1Desc') || 'إنشاء وتتبع طلبات سير العمل بكفاءة' }}</p>
+            </div>
           </div>
 
           <div class="feature-item">
@@ -155,8 +124,10 @@
                 <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
               </svg>
             </div>
-            <h3>Multi-Department</h3>
-            <p>Collaborative approval workflows across teams</p>
+            <div class="feature-text">
+              <h3>{{ $t('auth.feature2Title') || 'متعدد الأقسام' }}</h3>
+              <p>{{ $t('auth.feature2Desc') || 'سير عمل تعاوني للموافقات عبر الفرق' }}</p>
+            </div>
           </div>
 
           <div class="feature-item">
@@ -165,8 +136,10 @@
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
               </svg>
             </div>
-            <h3>Real-time Updates</h3>
-            <p>Get instant notifications on status changes</p>
+            <div class="feature-text">
+              <h3>{{ $t('auth.feature3Title') || 'تحديثات فورية' }}</h3>
+              <p>{{ $t('auth.feature3Desc') || 'احصل على إشعارات فورية عند تغيير الحالة' }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -236,12 +209,15 @@ const fillLogin = (email) => {
 <style scoped>
 .login-container {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: var(--spacing-8);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   position: relative;
+  direction: inherit;
+}
+
+/* RTL Support - Swap panels for RTL */
+html[dir="rtl"] .login-container {
+  direction: rtl;
 }
 
 .language-switcher-wrapper {
@@ -256,42 +232,30 @@ html[dir="rtl"] .language-switcher-wrapper {
   left: var(--spacing-6);
 }
 
-.login-content {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--spacing-8);
-  max-width: 1200px;
-  width: 100%;
-}
-
-@media (min-width: 1024px) {
-  .login-content {
-    grid-template-columns: 500px 1fr;
-    align-items: start;
-  }
-}
-
-.login-card {
-  background: var(--color-background);
-  border-radius: var(--radius-2xl);
-  padding: var(--spacing-10);
-  box-shadow: var(--shadow-2xl);
-  max-height: 90vh;
+/* Left Panel - White Background with Login Form */
+.login-panel {
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
   overflow-y: auto;
 }
 
+.login-content {
+  width: 100%;
+  max-width: 480px;
+}
+
 .login-header {
+  text-align: center;
   margin-bottom: var(--spacing-8);
 }
 
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-4);
-}
-
 .logo-icon {
-  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-4);
 }
 
 .login-header h1 {
@@ -306,8 +270,21 @@ html[dir="rtl"] .language-switcher-wrapper {
   margin: 0;
 }
 
+.alert {
+  padding: var(--spacing-3);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-4);
+  font-size: var(--font-size-sm);
+}
+
+.alert-error {
+  background: var(--color-error-50);
+  color: var(--color-error-700);
+  border: 1px solid var(--color-error-200);
+}
+
 .login-form {
-  margin-bottom: var(--spacing-8);
+  margin-bottom: var(--spacing-6);
 }
 
 .login-button {
@@ -319,7 +296,7 @@ html[dir="rtl"] .language-switcher-wrapper {
 .test-accounts {
   background: var(--color-surface);
   border-radius: var(--radius-xl);
-  padding: var(--spacing-6);
+  padding: var(--spacing-5);
   border: 1px solid var(--color-border);
 }
 
@@ -327,47 +304,30 @@ html[dir="rtl"] .language-switcher-wrapper {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  color: var(--color-primary-600);
-  margin-bottom: var(--spacing-5);
+  color: var(--color-success-600);
+  margin-bottom: var(--spacing-4);
   justify-content: center;
 }
 
 .test-accounts-header h3 {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
   margin: 0;
 }
 
-.account-category {
-  margin-bottom: var(--spacing-5);
-}
-
-.account-category:last-of-type {
-  margin-bottom: var(--spacing-4);
-}
-
-.account-category h4 {
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: var(--spacing-3);
-  padding-bottom: var(--spacing-2);
-  border-bottom: 2px solid var(--color-border);
-}
-
-.accounts-grid {
+.accounts-compact {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: var(--spacing-2);
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: var(--spacing-4);
 }
 
 .test-account {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
-  padding: var(--spacing-3);
+  padding: var(--spacing-2) var(--spacing-3);
   background: var(--color-background);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -376,21 +336,25 @@ html[dir="rtl"] .language-switcher-wrapper {
 }
 
 .test-account:hover {
-  border-color: var(--color-primary-500);
-  background: var(--color-primary-50);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  border-color: var(--color-success-500);
+  background: var(--color-success-50);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+html[dir="rtl"] .test-account:hover {
+  transform: translateX(-4px);
 }
 
 .account-icon {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
   flex-shrink: 0;
 }
 
 .account-info {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-1);
+  gap: 2px;
   min-width: 0;
   flex: 1;
 }
@@ -406,8 +370,8 @@ html[dir="rtl"] .language-switcher-wrapper {
 
 .account-info code {
   font-size: 10px;
-  color: var(--color-primary-700);
-  background: var(--color-primary-100);
+  color: var(--color-success-700);
+  background: var(--color-success-100);
   padding: 2px var(--spacing-2);
   border-radius: var(--radius-sm);
   font-family: var(--font-family-mono);
@@ -421,12 +385,12 @@ html[dir="rtl"] .language-switcher-wrapper {
   align-items: center;
   justify-content: center;
   gap: var(--spacing-2);
-  padding: var(--spacing-3);
+  padding: var(--spacing-2);
   background: var(--color-warning-50);
   border: 1px solid var(--color-warning-200);
   color: var(--color-warning-700);
   border-radius: var(--radius-lg);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   text-align: center;
 }
 
@@ -435,79 +399,137 @@ html[dir="rtl"] .language-switcher-wrapper {
   font-weight: var(--font-weight-semibold);
 }
 
-/* Features Section */
-.features-section {
-  color: white;
-  padding: var(--spacing-8) 0;
-}
-
-.features-section h2 {
-  font-size: var(--font-size-4xl);
-  margin-bottom: var(--spacing-8);
-  color: white;
-  text-align: center;
-}
-
-.features-grid {
-  display: grid;
-  gap: var(--spacing-6);
-}
-
-.feature-item {
-  text-align: center;
-}
-
-.feature-icon {
-  width: 60px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border-radius: var(--radius-xl);
+/* Right Panel - Green Background with Welcome */
+.welcome-panel {
+  background: linear-gradient(135deg, #084 0%, #66a459 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto var(--spacing-4);
+  padding: var(--spacing-8);
   color: white;
+  overflow-y: auto;
 }
 
-.feature-item h3 {
+.welcome-content {
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.welcome-icon {
+  margin-bottom: var(--spacing-8);
+  display: flex;
+  justify-content: center;
+}
+
+.welcome-title {
+  font-size: var(--font-size-5xl);
+  font-weight: var(--font-weight-bold);
+  color: white;
+  margin-bottom: var(--spacing-4);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-description {
   font-size: var(--font-size-xl);
-  margin-bottom: var(--spacing-2);
-  color: white;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: var(--spacing-10);
+  line-height: 1.6;
 }
 
-.feature-item p {
+/* Features List */
+.features-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  text-align: right;
+}
+
+html[dir="ltr"] .features-list {
+  text-align: left;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all var(--transition-base);
+}
+
+.feature-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.feature-text {
+  flex: 1;
+}
+
+.feature-text h3 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: white;
+  margin-bottom: var(--spacing-2);
+}
+
+.feature-text p {
   font-size: var(--font-size-sm);
   color: rgba(255, 255, 255, 0.9);
   margin: 0;
+  line-height: 1.5;
 }
 
-@media (max-width: 1023px) {
-  .features-section {
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .login-container {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-panel {
     display: none;
+  }
+
+  .login-panel {
+    padding: var(--spacing-6);
   }
 }
 
 @media (max-width: 640px) {
   .login-container {
+    padding: 0;
+  }
+
+  .login-panel {
     padding: var(--spacing-4);
   }
 
-  .login-card {
-    padding: var(--spacing-6);
-  }
-
-  .logo-section {
-    flex-direction: column;
-    text-align: center;
+  .login-content {
+    max-width: 100%;
   }
 
   .login-header h1 {
     font-size: var(--font-size-2xl);
   }
 
-  .accounts-grid {
-    grid-template-columns: 1fr;
+  .accounts-compact {
+    max-height: 200px;
   }
 }
 </style>

@@ -317,6 +317,7 @@ const goToAdmin = () => {
 .dashboard {
   max-width: 1400px;
   margin: 0 auto;
+  direction: inherit;
 }
 
 /* Welcome Section */
@@ -329,6 +330,11 @@ const goToAdmin = () => {
   background: linear-gradient(135deg, #084 0%, #66a459 100%);
   border-radius: var(--radius-2xl);
   color: white;
+}
+
+/* RTL Support for welcome section */
+html[dir="rtl"] .welcome-section {
+  direction: rtl;
 }
 
 .welcome-section h1 {
@@ -367,6 +373,12 @@ const goToAdmin = () => {
   gap: var(--spacing-4);
   padding: var(--spacing-6);
   cursor: default;
+}
+
+/* RTL Support for stat cards */
+html[dir="rtl"] .stat-card {
+  flex-direction: row-reverse;
+  text-align: right;
 }
 
 .stat-card:hover {
@@ -435,6 +447,11 @@ const goToAdmin = () => {
   margin-bottom: var(--spacing-6);
 }
 
+/* RTL Support for section headers */
+html[dir="rtl"] .section-header {
+  text-align: right;
+}
+
 .section-header h2 {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-semibold);
@@ -461,6 +478,11 @@ const goToAdmin = () => {
   cursor: pointer;
   transition: all var(--transition-base);
   padding: var(--spacing-8);
+}
+
+/* RTL Support for action cards */
+html[dir="rtl"] .action-card {
+  direction: rtl;
 }
 
 .action-card:hover {
@@ -559,6 +581,12 @@ const goToAdmin = () => {
   transition: background var(--transition-fast);
 }
 
+/* RTL Support for activity items */
+html[dir="rtl"] .activity-item {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
 .activity-item:hover {
   background: var(--color-surface);
 }
@@ -604,11 +632,36 @@ const goToAdmin = () => {
   color: var(--color-text-secondary);
 }
 
+/* Override RTL for Dashboard - Force LTR */
+[dir="rtl"] .welcome-section {
+  direction: ltr !important;
+  flex-direction: row !important;
+}
+
+[dir="rtl"] .card {
+  direction: ltr !important;
+}
+
+[dir="rtl"] .stat-card {
+  flex-direction: row !important;
+}
+
+/* RTL Support for empty state */
+html[dir="rtl"] .empty-state {
+  direction: rtl;
+}
+
 @media (max-width: 768px) {
   .welcome-section {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-4);
+  }
+
+  /* Override RTL for mobile - Keep LTR */
+  [dir="rtl"] .welcome-section {
+    direction: ltr !important;
+    align-items: flex-start !important;
   }
 
   .stats-grid {
