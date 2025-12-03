@@ -414,6 +414,7 @@ import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import { useAuthStore } from '../../stores/auth'
 import AppLayout from '../../components/AppLayout.vue'
+import { API_URL, BASE_URL } from '../../config/api'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -465,7 +466,7 @@ const fetchSettings = async () => {
     loading.value = true
     error.value = null
 
-    const response = await axios.get('http://localhost:8000/api/settings', {
+    const response = await axios.get(`${API_URL}/settings`, {
       headers: {
         Authorization: `Bearer ${authStore.token}`
       }
@@ -485,10 +486,10 @@ const fetchSettings = async () => {
 
       // Set image previews
       if (settingsData.value.logo) {
-        logoPreview.value = `http://localhost:8000/storage/${settingsData.value.logo}`
+        logoPreview.value = `${BASE_URL}/storage/${settingsData.value.logo}`
       }
       if (settingsData.value.favicon) {
-        faviconPreview.value = `http://localhost:8000/storage/${settingsData.value.favicon}`
+        faviconPreview.value = `${BASE_URL}/storage/${settingsData.value.favicon}`
       }
     }
   } catch (err) {
@@ -588,7 +589,7 @@ const saveAllSettings = async () => {
       formData.append('key', 'logo')
       formData.append('image', logoFile.value)
 
-      await axios.post('http://localhost:8000/api/settings/upload-image', formData, {
+      await axios.post(`${API_URL}/settings/upload-image`, formData, {
         headers: {
           Authorization: `Bearer ${authStore.token}`,
           'Content-Type': 'multipart/form-data'
@@ -602,7 +603,7 @@ const saveAllSettings = async () => {
       formData.append('key', 'favicon')
       formData.append('image', faviconFile.value)
 
-      await axios.post('http://localhost:8000/api/settings/upload-image', formData, {
+      await axios.post(`${API_URL}/settings/upload-image`, formData, {
         headers: {
           Authorization: `Bearer ${authStore.token}`,
           'Content-Type': 'multipart/form-data'
@@ -622,7 +623,7 @@ const saveAllSettings = async () => {
       }
     })
 
-    await axios.put('http://localhost:8000/api/settings/bulk', {
+    await axios.put(`${API_URL}/settings/bulk`, {
       settings: settingsToUpdate
     }, {
       headers: {
@@ -661,10 +662,10 @@ const fetchEmailTemplates = async () => {
     console.log('Auth token:', authStore.token ? 'Present' : 'Missing')
 
     const [templatesRes, configRes] = await Promise.all([
-      axios.get('http://localhost:8000/api/email-templates', {
+      axios.get(`${API_URL}/email-templates`, {
         headers: { Authorization: `Bearer ${authStore.token}` }
       }),
-      axios.get('http://localhost:8000/api/email-templates/config', {
+      axios.get(`${API_URL}/email-templates/config`, {
         headers: { Authorization: `Bearer ${authStore.token}` }
       })
     ])
@@ -720,7 +721,7 @@ const saveTemplate = async () => {
     templateEditorModal.value.isSaving = true
 
     await axios.put(
-      `http://localhost:8000/api/email-templates/${templateEditorModal.value.template.id}`,
+      `${API_URL}/email-templates/${templateEditorModal.value.template.id}`,
       templateEditorModal.value.form,
       {
         headers: { Authorization: `Bearer ${authStore.token}` }
@@ -745,7 +746,7 @@ const saveTemplate = async () => {
 const toggleTemplateStatus = async (template) => {
   try {
     await axios.post(
-      `http://localhost:8000/api/email-templates/${template.id}/toggle-status`,
+      `${API_URL}/email-templates/${template.id}/toggle-status`,
       {},
       {
         headers: { Authorization: `Bearer ${authStore.token}` }
@@ -787,7 +788,7 @@ const sendTestEmail = async () => {
     testEmailModal.value.error = null
 
     await axios.post(
-      `http://localhost:8000/api/email-templates/${testEmailModal.value.template.id}/send-test`,
+      `${API_URL}/email-templates/${testEmailModal.value.template.id}/send-test`,
       {
         recipient_email: testEmailModal.value.email,
         language: testEmailModal.value.language

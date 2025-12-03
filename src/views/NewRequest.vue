@@ -11,8 +11,8 @@
             {{ $t('common.back') }}
           </BaseButton>
           <div>
-            <h1>{{ isEditMode ? $t('request.editRequest') : 'Submit New Idea' }}</h1>
-            <p class="subtitle">{{ isEditMode ? 'Update your idea details and resubmit' : 'Share your innovative idea with us' }}</p>
+            <h1>{{ isEditMode ? $t('request.editRequest') : $t('request.submitNewIdea') }}</h1>
+            <p class="subtitle">{{ isEditMode ? $t('request.updateIdeaDetails') : $t('request.shareInnovativeIdea') }}</p>
           </div>
         </div>
       </div>
@@ -39,55 +39,151 @@
           <BaseInput
             v-model="form.title"
             type="text"
-            label="Idea Title"
-            placeholder="Enter a clear and concise title for your idea"
+            :label="$t('request.ideaTitle')"
+            :placeholder="$t('request.ideaTitlePlaceholder')"
             required
             :error="validationErrors.title"
-            :help="!validationErrors.title ? `${form.title.length}/200 characters` : ''"
+            :help="!validationErrors.title ? $t('request.ideaTitleCharCount', { count: form.title.length }) : ''"
           />
 
           <!-- Idea Description -->
           <BaseInput
             v-model="form.description"
             type="textarea"
-            label="Idea Description"
-            placeholder="Describe your idea in detail (minimum 25 characters)"
+            :label="$t('request.ideaDescription')"
+            :placeholder="$t('request.ideaDescriptionPlaceholder')"
             :rows="6"
             required
             :error="validationErrors.description"
-            :help="!validationErrors.description ? `${form.description.length} characters (minimum 25 required)` : ''"
+            :help="!validationErrors.description ? $t('request.ideaDescriptionCharCount', { count: form.description.length }) : ''"
           />
 
           <!-- Idea Type -->
           <BaseSelect
             v-model="form.idea_type"
-            label="Idea Type"
-            placeholder="Select an idea type"
+            :label="$t('request.ideaType')"
+            :placeholder="$t('request.ideaTypePlaceholder')"
             required
             :options="ideaTypeOptions"
             :error="validationErrors.idea_type"
-            help="Choose the category that best fits your idea"
+            :help="$t('request.ideaTypeHelp')"
           />
 
           <!-- Department -->
           <BaseSelect
             v-model="form.department"
-            label="Department"
-            placeholder="Select a department"
+            :label="$t('request.department')"
+            :placeholder="$t('request.departmentPlaceholder')"
             required
             :options="departmentOptions"
             :error="validationErrors.department"
-            help="Select the department related to your idea, or choose 'Unknown' if unsure"
+            :help="$t('request.departmentHelp')"
           />
+
+          <!-- Idea Ownership Type -->
+          <div class="form-group">
+            <label class="form-label">{{ $t('request.ideaOwnership') }}</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input
+                  type="radio"
+                  v-model="form.idea_ownership_type"
+                  value="individual"
+                  class="radio-input"
+                />
+                <span>{{ $t('request.individualIdea') }}</span>
+              </label>
+              <label class="radio-label">
+                <input
+                  type="radio"
+                  v-model="form.idea_ownership_type"
+                  value="shared"
+                  class="radio-input"
+                />
+                <span>{{ $t('request.sharedIdea') }}</span>
+              </label>
+            </div>
+            <span class="form-help">{{ $t('request.ideaOwnershipHelp') }}</span>
+          </div>
+
+          <!-- Employee Search (Shared Ideas Only) -->
+          <div v-if="form.idea_ownership_type === 'shared'" class="form-group">
+            <label class="form-label">
+              {{ $t('request.collaboratingEmployees') }}
+              <span class="optional-text">{{ $t('request.searchEmployeesAD') }}</span>
+            </label>
+            <div class="employee-search-container">
+              <input
+                type="text"
+                v-model="employeeSearchQuery"
+                @input="searchEmployees"
+                :placeholder="$t('request.searchEmployeesPlaceholder')"
+                class="employee-search-input"
+              />
+
+              <!-- Search Results -->
+              <div v-if="employeeSearchResults.length > 0 && employeeSearchQuery.length > 1" class="search-results">
+                <div
+                  v-for="employee in employeeSearchResults"
+                  :key="employee.id"
+                  @click="addEmployee(employee)"
+                  class="search-result-item"
+                >
+                  <div class="employee-info">
+                    <strong>{{ employee.name }}</strong>
+                    <span class="employee-meta">{{ employee.email }} • {{ employee.department }}</span>
+                  </div>
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div v-if="employeeSearchQuery.length > 1 && employeeSearchResults.length === 0 && !isSearching" class="no-results">
+                  {{ $t('request.noEmployeesFound') }}
+                </div>
+              </div>
+              <div v-if="isSearching" class="searching-indicator">
+                {{ $t('request.searching') }}
+              </div>
+            </div>
+
+            <!-- Selected Employees -->
+            <div v-if="form.employees.length > 0" class="selected-employees">
+              <div class="employees-header">
+                <h4>{{ $t('request.selectedEmployees', { count: form.employees.length }) }}</h4>
+              </div>
+              <div class="employees-list">
+                <div v-for="(employee, index) in form.employees" :key="index" class="employee-item">
+                  <div class="employee-details">
+                    <strong>{{ employee.employee_name }}</strong>
+                    <div class="employee-meta-info">
+                      <span v-if="employee.employee_email">{{ employee.employee_email }}</span>
+                      <span v-if="employee.employee_department">{{ employee.employee_department }}</span>
+                      <span v-if="employee.employee_title">{{ employee.employee_title }}</span>
+                    </div>
+                  </div>
+                  <BaseButton
+                    variant="ghost"
+                    size="sm"
+                    @click="removeEmployee(index)"
+                    type="button"
+                  >
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                  </BaseButton>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <!-- Benefits -->
           <BaseInput
             v-model="form.benefits"
             type="textarea"
-            label="Benefits"
-            placeholder="Describe the potential benefits of implementing this idea (optional)"
+            :label="$t('request.benefits')"
+            :placeholder="$t('request.benefitsPlaceholder')"
             :rows="4"
-            :help="'Optional: Explain how this idea will benefit the organization'"
+            :help="$t('request.benefitsHelp')"
           />
 
           <!-- Additional Details (Edit Mode Only) -->
@@ -95,17 +191,17 @@
             v-if="isEditMode"
             v-model="form.additional_details"
             type="textarea"
-            label="Additional Details"
-            placeholder="Add any additional information requested by the reviewer"
+            :label="$t('request.additionalDetailsLabel')"
+            :placeholder="$t('request.additionalDetailsRequestPlaceholder')"
             :rows="4"
-            help="Provide any clarifications or additional information requested"
+            :help="$t('request.additionalDetailsRequestHelp')"
           />
 
           <!-- File Upload Section -->
           <div class="form-group">
             <label class="form-label">
-              Attachments
-              <span class="optional-text">(Optional - Max 4 files)</span>
+              {{ $t('request.attachmentsOptional') }}
+              <span class="optional-text">{{ $t('request.attachmentsOptionalMax') }}</span>
             </label>
             <div class="file-upload-container">
               <input
@@ -121,8 +217,8 @@
                 <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                 </svg>
-                <span>Choose files or drag and drop</span>
-                <span class="file-types">PDF, JPG, JPEG, PNG (Max 5 files)</span>
+                <span>{{ $t('request.chooseFilesOrDrag') }}</span>
+                <span class="file-types">{{ $t('request.allowedFileTypes') }}</span>
               </label>
             </div>
             <span v-if="validationErrors.attachments" class="form-error">{{ validationErrors.attachments }}</span>
@@ -131,7 +227,7 @@
           <!-- Uploaded Files List -->
           <div v-if="uploadedFiles.length > 0" class="uploaded-files-section">
             <div class="files-header">
-              <h3>Uploaded Files ({{ uploadedFiles.length }}/5)</h3>
+              <h3>{{ $t('request.uploadedFilesCount', { count: uploadedFiles.length }) }}</h3>
             </div>
             <div class="files-list">
               <div v-for="(file, index) in uploadedFiles" :key="index" class="file-item">
@@ -168,7 +264,7 @@
               :disabled="isLoading || isDraftSave"
               :loading="isDraftSave"
             >
-              Save as Draft
+              {{ $t('request.saveAsDraft') }}
             </BaseButton>
             <BaseButton
               type="submit"
@@ -177,7 +273,7 @@
               :disabled="isLoading || isDraftSave || !isFormValid"
               :loading="isLoading && !isDraftSave"
             >
-              {{ isEditMode ? 'Update & Resubmit' : 'Submit Idea' }}
+              {{ isEditMode ? $t('request.updateResubmit') : $t('request.submitIdea') }}
             </BaseButton>
           </div>
         </form>
@@ -197,13 +293,12 @@ import BaseCard from '../components/BaseCard.vue'
 import BaseButton from '../components/BaseButton.vue'
 import BaseInput from '../components/BaseInput.vue'
 import BaseSelect from '../components/BaseSelect.vue'
+import { API_URL } from '../config/api'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 const { t, locale } = useI18n()
-
-const API_URL = 'http://localhost:8000/api'
 
 const form = ref({
   title: '',
@@ -211,7 +306,9 @@ const form = ref({
   idea_type: '',
   department: '',
   benefits: '',
-  additional_details: ''
+  additional_details: '',
+  idea_ownership_type: 'individual',
+  employees: []
 })
 
 const uploadedFiles = ref([])
@@ -224,6 +321,10 @@ const validationErrors = ref({})
 const isEditMode = ref(false)
 const departments = ref([])
 const ideaTypes = ref([])
+const employeeSearchQuery = ref('')
+const employeeSearchResults = ref([])
+const isSearching = ref(false)
+let searchTimeout = null
 
 // Idea Type Options (computed from fetched data with bilingual support)
 const ideaTypeOptions = computed(() => {
@@ -242,7 +343,7 @@ const departmentOptions = computed(() => {
 
   return [
     ...deptList,
-    { value: 'unknown', label: 'Unknown' }
+    { value: 'unknown', label: t('common.unknown') }
   ]
 })
 
@@ -322,11 +423,67 @@ const loadRequest = async (id) => {
       idea_type: request.idea_type_id?.toString() || '',
       department: request.department_id?.toString() || 'unknown',
       benefits: request.benefits || '',
-      additional_details: request.additional_details || ''
+      additional_details: request.additional_details || '',
+      idea_ownership_type: request.idea_type || 'individual',
+      employees: request.employees || []
     }
   } catch (err) {
-    error.value = 'Failed to load request details'
+    error.value = t('request.errorMessages.loadRequestFailed')
   }
+}
+
+// Employee search function
+const searchEmployees = async () => {
+  if (employeeSearchQuery.value.length < 2) {
+    employeeSearchResults.value = []
+    return
+  }
+
+  // Debounce search
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(async () => {
+    isSearching.value = true
+    try {
+      const response = await axios.get(`${API_URL}/employees/search`, {
+        params: { query: employeeSearchQuery.value },
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      })
+      employeeSearchResults.value = response.data.data || []
+    } catch (err) {
+      console.error('Failed to search employees:', err)
+      employeeSearchResults.value = []
+    } finally {
+      isSearching.value = false
+    }
+  }, 300)
+}
+
+// Add employee to the list
+const addEmployee = (employee) => {
+  // Check if employee already added
+  const exists = form.value.employees.some(
+    emp => emp.employee_email === employee.email
+  )
+
+  if (!exists) {
+    form.value.employees.push({
+      employee_name: employee.name,
+      employee_email: employee.email,
+      employee_department: employee.department,
+      employee_title: employee.title
+    })
+  }
+
+  // Clear search
+  employeeSearchQuery.value = ''
+  employeeSearchResults.value = []
+}
+
+// Remove employee from the list
+const removeEmployee = (index) => {
+  form.value.employees.splice(index, 1)
 }
 
 const validateForm = () => {
@@ -334,31 +491,31 @@ const validateForm = () => {
 
   // Title validation
   if (!form.value.title) {
-    errors.title = 'Idea title is required'
+    errors.title = t('request.validationErrors.titleRequired')
   } else if (form.value.title.length > 200) {
-    errors.title = 'Title must not exceed 200 characters'
+    errors.title = t('request.validationErrors.titleTooLong')
   }
 
   // Description validation
   if (!form.value.description) {
-    errors.description = 'Idea description is required'
+    errors.description = t('request.validationErrors.descriptionRequired')
   } else if (form.value.description.length < 25) {
-    errors.description = 'Description must be at least 25 characters'
+    errors.description = t('request.validationErrors.descriptionTooShort')
   }
 
   // Idea Type validation
   if (!form.value.idea_type) {
-    errors.idea_type = 'Please select an idea type'
+    errors.idea_type = t('request.validationErrors.ideaTypeRequired')
   }
 
   // Department validation
   if (!form.value.department) {
-    errors.department = 'Please select a department'
+    errors.department = t('request.validationErrors.departmentRequired')
   }
 
   // File validation
   if (uploadedFiles.value.length > 4) {
-    errors.attachments = 'Maximum 4 files allowed'
+    errors.attachments = t('request.validationErrors.maxFilesExceeded', { max: 4 })
   }
 
   validationErrors.value = errors
@@ -370,7 +527,7 @@ const handleFileChange = (event) => {
 
   // Check total file count
   if (uploadedFiles.value.length + files.length > 5) {
-    validationErrors.value.attachments = 'Maximum 5 files allowed'
+    validationErrors.value.attachments = t('request.validationErrors.maxFilesExceeded', { max: 5 })
     return
   }
 
@@ -379,7 +536,7 @@ const handleFileChange = (event) => {
   const invalidFiles = files.filter(file => !allowedTypes.includes(file.type))
 
   if (invalidFiles.length > 0) {
-    validationErrors.value.attachments = 'Only PDF, JPG, JPEG, and PNG files are allowed'
+    validationErrors.value.attachments = t('request.validationErrors.invalidFileType')
     return
   }
 
@@ -399,16 +556,16 @@ const removeFile = (index) => {
 }
 
 const formatFileSize = (bytes) => {
-  if (bytes === 0) return '0 Bytes'
+  if (bytes === 0) return t('common.zeroBytes')
   const k = 1024
-  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  const sizes = [t('common.bytes'), t('common.kb'), t('common.mb'), t('common.gb')]
   const i = Math.floor(Math.log(bytes) / Math.log(k))
   return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
 }
 
 const handleSubmit = async () => {
   if (!validateForm()) {
-    error.value = 'Please fix the validation errors'
+    error.value = t('request.validationErrors.fixValidationErrors')
     return
   }
 
@@ -424,9 +581,20 @@ const handleSubmit = async () => {
     formData.append('department', form.value.department)
     formData.append('benefits', form.value.benefits || '')
     formData.append('status', 'pending')
+    formData.append('idea_ownership_type', form.value.idea_ownership_type)
 
     if (isEditMode.value && form.value.additional_details) {
       formData.append('additional_details', form.value.additional_details)
+    }
+
+    // Append employees if shared idea
+    if (form.value.idea_ownership_type === 'shared' && form.value.employees.length > 0) {
+      form.value.employees.forEach((employee, index) => {
+        formData.append(`employees[${index}][employee_name]`, employee.employee_name)
+        formData.append(`employees[${index}][employee_email]`, employee.employee_email || '')
+        formData.append(`employees[${index}][employee_department]`, employee.employee_department || '')
+        formData.append(`employees[${index}][employee_title]`, employee.employee_title || '')
+      })
     }
 
     // Append files
@@ -451,14 +619,14 @@ const handleSubmit = async () => {
       })
     }
 
-    success.value = isEditMode.value ? 'Idea updated successfully!' : 'Idea submitted successfully!'
+    success.value = isEditMode.value ? t('request.successMessages.ideaUpdated') : t('request.successMessages.ideaSubmitted')
 
     setTimeout(() => {
       router.push('/requests')
     }, 2000)
 
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to submit idea. Please try again.'
+    error.value = err.response?.data?.message || t('request.errorMessages.submitFailed')
   } finally {
     isLoading.value = false
   }
@@ -466,7 +634,7 @@ const handleSubmit = async () => {
 
 const saveDraft = async () => {
   if (!form.value.title || !form.value.description) {
-    error.value = 'Title and description are required to save as draft'
+    error.value = t('request.validationErrors.draftRequiresTitle')
     return
   }
 
@@ -482,6 +650,17 @@ const saveDraft = async () => {
     formData.append('department', form.value.department || '')
     formData.append('benefits', form.value.benefits || '')
     formData.append('status', 'draft')
+    formData.append('idea_ownership_type', form.value.idea_ownership_type)
+
+    // Append employees if shared idea
+    if (form.value.idea_ownership_type === 'shared' && form.value.employees.length > 0) {
+      form.value.employees.forEach((employee, index) => {
+        formData.append(`employees[${index}][employee_name]`, employee.employee_name)
+        formData.append(`employees[${index}][employee_email]`, employee.employee_email || '')
+        formData.append(`employees[${index}][employee_department]`, employee.employee_department || '')
+        formData.append(`employees[${index}][employee_title]`, employee.employee_title || '')
+      })
+    }
 
     // Append files
     uploadedFiles.value.forEach((file, index) => {
@@ -495,14 +674,14 @@ const saveDraft = async () => {
       }
     })
 
-    success.value = 'Draft saved successfully!'
+    success.value = t('request.successMessages.draftSaved')
 
     setTimeout(() => {
       router.push('/requests')
     }, 2000)
 
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to save draft'
+    error.value = err.response?.data?.message || t('request.errorMessages.draftFailed')
   } finally {
     isDraftSave.value = false
   }
@@ -684,6 +863,170 @@ const goBack = () => {
 .file-size {
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
+}
+
+/* Radio Group */
+.radio-group {
+  display: flex;
+  gap: var(--spacing-6);
+  margin-top: var(--spacing-2);
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+}
+
+.radio-input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--color-primary-600);
+}
+
+.form-help {
+  display: block;
+  margin-top: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Employee Search */
+.employee-search-container {
+  position: relative;
+  margin-top: var(--spacing-2);
+}
+
+.employee-search-input {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  transition: all var(--transition-fast);
+}
+
+.employee-search-input:focus {
+  outline: none;
+  border-color: var(--color-primary-400);
+  box-shadow: 0 0 0 3px var(--color-primary-100);
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: var(--spacing-2);
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3) var(--spacing-4);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background: var(--color-primary-50);
+}
+
+.employee-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.employee-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.no-results {
+  padding: var(--spacing-4);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.searching-indicator {
+  padding: var(--spacing-2);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* Selected Employees */
+.selected-employees {
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.employees-header h4 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-3) 0;
+}
+
+.employees-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.employee-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3);
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.employee-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.employee-details strong {
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+}
+
+.employee-meta-info {
+  display: flex;
+  gap: var(--spacing-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.employee-meta-info span:not(:last-child)::after {
+  content: '•';
+  margin-left: var(--spacing-3);
 }
 
 /* Form Actions */

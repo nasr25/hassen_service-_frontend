@@ -202,6 +202,7 @@ import { useSettings } from '../composables/useSettings'
 import axios from 'axios'
 import BaseBadge from './BaseBadge.vue'
 import LanguageSwitcher from './LanguageSwitcher.vue'
+import { API_URL } from '../config/api'
 
 const router = useRouter()
 const route = useRoute()
@@ -276,7 +277,7 @@ const toggleNotifications = async () => {
 const fetchNotifications = async () => {
   try {
     loadingNotifications.value = true
-    const response = await axios.get('http://localhost:8000/api/notifications', {
+    const response = await axios.get(`${API_URL}/notifications`, {
       headers: {
         Authorization: `Bearer ${authStore.token}`
       }
@@ -291,7 +292,7 @@ const fetchNotifications = async () => {
 
 const fetchUnreadCount = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/notifications/unread-count', {
+    const response = await axios.get(`${API_URL}/notifications/unread-count`, {
       headers: {
         Authorization: `Bearer ${authStore.token}`
       }
@@ -306,7 +307,7 @@ const handleNotificationClick = async (notification) => {
   // Mark as read
   if (!notification.read_at) {
     try {
-      await axios.post(`http://localhost:8000/api/notifications/${notification.id}/read`, {}, {
+      await axios.post(`${API_URL}/notifications/${notification.id}/read`, {}, {
         headers: {
           Authorization: `Bearer ${authStore.token}`
         }
@@ -328,7 +329,7 @@ const handleNotificationClick = async (notification) => {
 
 const markAllAsRead = async () => {
   try {
-    await axios.post('http://localhost:8000/api/notifications/read-all', {}, {
+    await axios.post(`${API_URL}/notifications/read-all`, {}, {
       headers: {
         Authorization: `Bearer ${authStore.token}`
       }
@@ -343,7 +344,7 @@ const markAllAsRead = async () => {
 
 const deleteNotification = async (id) => {
   try {
-    await axios.delete(`http://localhost:8000/api/notifications/${id}`, {
+    await axios.delete(`${API_URL}/notifications/${id}`, {
       headers: {
         Authorization: `Bearer ${authStore.token}`
       }

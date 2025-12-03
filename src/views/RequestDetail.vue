@@ -151,6 +151,51 @@
           </div>
         </BaseCard>
 
+        <!-- Collaborating Employees Section -->
+        <BaseCard v-if="request.idea_type === 'shared' && request.employees && request.employees.length > 0" class="employees-card">
+          <template #header>
+            <div class="section-header">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+              </svg>
+              <h3>Collaborating Employees</h3>
+              <BaseBadge variant="blue">{{ request.employees.length }}</BaseBadge>
+            </div>
+          </template>
+
+          <div class="employees-grid">
+            <div v-for="(employee, index) in request.employees" :key="index" class="employee-card">
+              <div class="employee-avatar">
+                <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <div class="employee-info-section">
+                <div class="employee-name">{{ employee.employee_name }}</div>
+                <div v-if="employee.employee_email" class="employee-detail">
+                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                  </svg>
+                  {{ employee.employee_email }}
+                </div>
+                <div v-if="employee.employee_department" class="employee-detail">
+                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+                  </svg>
+                  {{ employee.employee_department }}
+                </div>
+                <div v-if="employee.employee_title" class="employee-detail">
+                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/><path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
+                  </svg>
+                  {{ employee.employee_title }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </BaseCard>
+
         <!-- Attachments Section -->
         <BaseCard v-if="request.attachments && request.attachments.length > 0" class="attachments-card">
           <template #header>
@@ -275,6 +320,7 @@ import AppLayout from '../components/AppLayout.vue'
 import BaseCard from '../components/BaseCard.vue'
 import BaseButton from '../components/BaseButton.vue'
 import BaseBadge from '../components/BaseBadge.vue'
+import { API_URL } from '../config/api'
 
 const router = useRouter()
 const route = useRoute()
@@ -283,8 +329,6 @@ const authStore = useAuthStore()
 const request = ref(null)
 const error = ref(null)
 const isLoading = ref(true)
-
-const API_URL = 'http://localhost:8000/api'
 
 onMounted(async () => {
   await loadRequest()
@@ -840,6 +884,72 @@ const getDepartmentName = (deptId) => {
   border-radius: var(--radius-md);
   border-left: 3px solid var(--color-primary-300);
   margin: 0;
+}
+
+/* Employees Section */
+.employees-card {
+  margin-top: var(--spacing-6);
+}
+
+.employees-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-4);
+}
+
+.employee-card {
+  display: flex;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.employee-card:hover {
+  border-color: var(--color-primary-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.employee-avatar {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-100);
+  border-radius: var(--radius-full);
+  color: var(--color-primary-600);
+}
+
+.employee-info-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
+.employee-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+}
+
+.employee-detail {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-tight);
+}
+
+.employee-detail svg {
+  flex-shrink: 0;
+  color: var(--color-gray-400);
 }
 
 /* Responsive */

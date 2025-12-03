@@ -745,7 +745,7 @@ const success = ref(null)
 const isLoading = ref(true)
 const isLoadingPathQuestions = ref(false)
 
-const API_URL = 'http://localhost:8000/api'
+import { API_URL } from '../config/api'
 
 const departmentModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', code: '', description: '', is_active: true, is_department_a: false }, editId: null })
 const userModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', email: '', password: '', role: 'employee', is_active: true, external_user_number: '' }, editId: null })

@@ -181,7 +181,7 @@ const request = ref(null)
 const error = ref(null)
 const isLoading = ref(true)
 
-const API_URL = 'http://localhost:8000/api'
+import { API_URL } from '../config/api'
 
 onMounted(async () => {
   await loadRequest()

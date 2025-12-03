@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import axios from 'axios'
+import { API_URL, BASE_URL } from '../config/api'
 
 const settings = ref({
   site_name: 'Workflow Management System',
@@ -21,7 +22,7 @@ export function useSettings() {
 
     try {
       isLoading.value = true
-      const response = await axios.get('http://localhost:8000/api/settings/public')
+      const response = await axios.get(`${API_URL}/settings/public')
 
       if (response.data.settings) {
         settings.value = {
@@ -45,7 +46,7 @@ export function useSettings() {
 
   const getImageUrl = (path) => {
     if (!path) return null
-    return `http://localhost:8000/storage/${path}`
+    return `${BASE_URL}/storage/${path}`
   }
 
   // Computed properties for commonly used settings

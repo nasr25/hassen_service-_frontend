@@ -199,6 +199,7 @@
 </template>
 
 <script setup>
+import { API_URL, BASE_URL } from '../config/api'
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
@@ -231,7 +232,7 @@ onMounted(async () => {
 // Fetch statistics from API
 const loadStatistics = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/dashboard/statistics', {
+    const response = await axios.get('${API_URL}/dashboard/statistics', {
       headers: {
         Authorization: `Bearer ${authStore.token}`
       }

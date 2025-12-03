@@ -277,6 +277,7 @@
 </template>
 
 <script setup>
+import { API_URL, BASE_URL } from '../config/api'
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
@@ -315,7 +316,7 @@ const fetchSettings = async () => {
     loading.value = true
     error.value = null
 
-    const response = await axios.get('http://localhost:8000/api/user/settings', {
+    const response = await axios.get('${API_URL}/user/settings', {
       headers: {
         Authorization: `Bearer ${authStore.token}`
       }
@@ -341,7 +342,7 @@ const saveSettings = async () => {
     successMessage.value = null
     error.value = null
 
-    await axios.post('http://localhost:8000/api/user/settings', {
+    await axios.post('${API_URL}/user/settings', {
       settings: settings.value
     }, {
       headers: {

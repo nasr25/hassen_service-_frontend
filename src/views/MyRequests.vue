@@ -124,7 +124,7 @@
                 </div>
                 <div class="attachments-list">
                   <a v-for="attachment in request.attachments" :key="attachment.id"
-                     :href="`http://localhost:8000/storage/${attachment.file_path}`"
+                     :href="`${BASE_URL}/storage/${attachment.file_path}`"
                      target="_blank"
                      class="attachment-item">
                     <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
@@ -173,7 +173,7 @@ const error = ref(null)
 const isLoading = ref(true)
 const filterStatus = ref('all')
 
-const API_URL = 'http://localhost:8000/api'
+import { API_URL } from '../config/api'
 
 const getStatusCount = (status) => {
   if (status === 'all') return requests.value.length
@@ -251,7 +251,7 @@ const formatStatus = (status) => {
 }
 
 const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
+  if (!dateString) return t('common.notAvailable')
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', {
     year: 'numeric',

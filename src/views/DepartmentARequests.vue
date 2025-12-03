@@ -60,7 +60,7 @@
               <td class="attachments-cell">
                 <div v-if="request.attachments && request.attachments.length > 0" class="attachments-list">
                   <a v-for="attachment in request.attachments" :key="attachment.id"
-                     :href="`http://localhost:8000/storage/${attachment.file_path}`"
+                     :href="`${BASE_URL}/storage/${attachment.file_path}`"
                      target="_blank"
                      class="attachment-link"
                      :title="attachment.file_name">
@@ -99,7 +99,7 @@ const requests = ref([])
 const error = ref(null)
 const isLoading = ref(true)
 
-const API_URL = 'http://localhost:8000/api'
+import { API_URL } from '../config/api'
 
 onMounted(async () => {
   await loadRequests()
