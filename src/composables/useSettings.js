@@ -22,7 +22,7 @@ export function useSettings() {
 
     try {
       isLoading.value = true
-      const response = await axios.get(`${API_URL}/settings/public')
+      const response = await axios.get(`${API_URL}/settings/public`)
 
       if (response.data.settings) {
         settings.value = {
