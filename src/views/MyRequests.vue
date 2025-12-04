@@ -173,7 +173,7 @@ const error = ref(null)
 const isLoading = ref(true)
 const filterStatus = ref('all')
 
-import { API_URL } from '../config/api'
+import { API_URL, BASE_URL } from '../config/api'
 
 const getStatusCount = (status) => {
   if (status === 'all') return requests.value.length
