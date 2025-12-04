@@ -73,7 +73,7 @@
                 type="file"
                 ref="logoInput"
                 @change="handleLogoUpload"
-                accept="image/png,image/jpeg,image/svg+xml"
+                accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
                 class="file-input"
               />
               <button @click="$refs.logoInput.click()" class="btn-secondary">
@@ -97,7 +97,7 @@
                 type="file"
                 ref="faviconInput"
                 @change="handleFaviconUpload"
-                accept="image/png,image/x-icon"
+                accept="image/png,image/x-icon,image/svg+xml,image/webp"
                 class="file-input"
               />
               <button @click="$refs.faviconInput.click()" class="btn-secondary">
