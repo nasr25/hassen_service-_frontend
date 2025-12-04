@@ -3,19 +3,21 @@
     <!-- Sidebar -->
     <aside class="sidebar" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
       <div class="sidebar-header">
-        <div class="logo">
-          <!-- Use custom logo if available, otherwise show default SVG -->
-          <img v-if="logo" :src="logo" alt="Logo" class="logo-image" />
-          <svg v-else width="32" height="32" viewBox="0 0 48 48" fill="none">
-            <rect width="48" height="48" rx="12" fill="url(#gradient)" />
-            <path d="M24 14L34 20V28L24 34L14 28V20L24 14Z" fill="white" opacity="0.9" />
-            <defs>
-              <linearGradient id="gradient" x1="0" y1="0" x2="48" y2="48">
-                <stop offset="0%" stop-color="#2563eb" />
-                <stop offset="100%" stop-color="#7c3aed" />
-              </linearGradient>
-            </defs>
-          </svg>
+        <div class="logo-container">
+          <div class="logo">
+            <!-- Use custom logo if available, otherwise show default SVG -->
+            <img v-if="logo" :src="logo" alt="Logo" class="logo-image" />
+            <svg v-else width="32" height="32" viewBox="0 0 48 48" fill="none">
+              <rect width="48" height="48" rx="12" fill="url(#gradient)" />
+              <path d="M24 14L34 20V28L24 34L14 28V20L24 14Z" fill="white" opacity="0.9" />
+              <defs>
+                <linearGradient id="gradient" x1="0" y1="0" x2="48" y2="48">
+                  <stop offset="0%" stop-color="#2563eb" />
+                  <stop offset="100%" stop-color="#7c3aed" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
           <span v-if="!sidebarCollapsed" class="logo-text">{{ displaySiteName }}</span>
         </div>
         <button @click="toggleSidebar" class="toggle-btn" :title="sidebarCollapsed ? 'Expand' : 'Collapse'">
@@ -428,26 +430,46 @@ onBeforeUnmount(() => {
 }
 
 .sidebar-header {
-  padding: var(--spacing-6);
+  padding: var(--spacing-4) var(--spacing-6);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: fit-content;
+}
+
+.sidebar-collapsed .sidebar-header {
   min-height: 72px;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-3);
+  width: 100%;
+  flex: 1;
 }
 
 .logo {
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: var(--spacing-3);
+  width: 100%;
 }
 
 .logo-image {
-  width: 40px;
-  height: 40px;
+  width: 100%;
+  max-width: 180px;
+  height: auto;
   object-fit: contain;
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.1);
+  padding: var(--spacing-3);
+}
+
+.sidebar-collapsed .logo-image {
+  max-width: 40px;
   padding: 4px;
 }
 
@@ -455,6 +477,8 @@ onBeforeUnmount(() => {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: #ffffff;
+  text-align: center;
+  width: 100%;
 }
 
 .toggle-btn {
@@ -727,8 +751,14 @@ onBeforeUnmount(() => {
   flex-direction: row-reverse;
 }
 
+[dir="rtl"] .logo-container {
+  flex-direction: column;
+  align-items: center;
+}
+
 [dir="rtl"] .logo {
-  flex-direction: row-reverse;
+  flex-direction: row;
+  justify-content: center;
 }
 
 [dir="rtl"] .nav-item {
