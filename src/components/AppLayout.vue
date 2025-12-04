@@ -464,7 +464,7 @@ onBeforeUnmount(() => {
   height: auto;
   object-fit: contain;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.1);
+  background: #fff;
   padding: var(--spacing-3);
 }
 
