@@ -443,10 +443,12 @@ onBeforeUnmount(() => {
 }
 
 .logo-image {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
   border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px;
 }
 
 .logo-text {
