@@ -355,7 +355,7 @@ const isFormValid = computed(() => {
     form.value.description.length >= 25 &&
     form.value.idea_type !== '' &&
     form.value.department !== '' &&
-    uploadedFiles.value.length <= 4
+    uploadedFiles.value.length <= 5
   )
 })
 
@@ -514,8 +514,8 @@ const validateForm = () => {
   }
 
   // File validation
-  if (uploadedFiles.value.length > 4) {
-    errors.attachments = t('request.validationErrors.maxFilesExceeded', { max: 4 })
+  if (uploadedFiles.value.length > 5) {
+    errors.attachments = t('request.validationErrors.maxFilesExceeded', { max: 5 })
   }
 
   validationErrors.value = errors
