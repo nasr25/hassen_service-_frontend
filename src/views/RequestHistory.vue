@@ -54,6 +54,10 @@
               <strong>Submitted At:</strong>
               <span>{{ formatDate(request.submitted_at) }}</span>
             </div>
+            <div v-if="request.expected_execution_date" class="info-item">
+              <strong>Expected Execution Date:</strong>
+              <span>{{ formatDate(request.expected_execution_date) }}</span>
+            </div>
             <div class="info-item info-full">
               <strong>Description:</strong>
               <p class="description">{{ request.description }}</p>
@@ -68,6 +72,45 @@
             <div v-for="attachment in request.attachments" :key="attachment.id" class="attachment-item">
               <span class="attachment-name">{{ attachment.file_name }}</span>
               <a :href="attachment.file_path" target="_blank" class="btn-download">Download</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Collaborating Employees -->
+        <div v-if="request.employees && request.employees.length > 0" class="section">
+          <h2>👥 Collaborating Employees ({{ request.employees.length }})</h2>
+          <div class="employees-list">
+            <div v-for="employee in request.employees" :key="employee.id" class="employee-item">
+              <div class="employee-avatar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="employee-info">
+                <div class="employee-name">{{ employee.employee_name }}</div>
+                <div v-if="employee.employee_email" class="employee-detail">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                  {{ employee.employee_email }}
+                </div>
+                <div v-if="employee.employee_department" class="employee-detail">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                  {{ employee.employee_department }}
+                </div>
+                <div v-if="employee.employee_title" class="employee-detail">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                  </svg>
+                  {{ employee.employee_title }}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -592,5 +635,65 @@ h1 {
   font-size: 13px;
   color: #666;
   margin-top: 5px;
+}
+
+.employees-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.employee-item {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  transition: all 0.2s;
+}
+
+.employee-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+}
+
+.employee-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.employee-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.employee-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.employee-detail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #666;
+  font-size: 13px;
+}
+
+.employee-detail svg {
+  flex-shrink: 0;
+  opacity: 0.7;
 }
 </style>
