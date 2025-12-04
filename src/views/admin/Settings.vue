@@ -563,17 +563,39 @@ const handleFaviconUpload = (event) => {
 }
 
 // Remove logo
-const removeLogo = () => {
-  logoPreview.value = null
-  logoFile.value = null
-  settingsData.value.logo = null
+const removeLogo = async () => {
+  try {
+    logoPreview.value = null
+    logoFile.value = null
+    settingsData.value.logo = null
+
+    // Delete the logo from backend
+    await axios.delete(`${API_URL}/settings/logo`, {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    })
+  } catch (err) {
+    console.error('Failed to delete logo:', err)
+  }
 }
 
 // Remove favicon
-const removeFavicon = () => {
-  faviconPreview.value = null
-  faviconFile.value = null
-  settingsData.value.favicon = null
+const removeFavicon = async () => {
+  try {
+    faviconPreview.value = null
+    faviconFile.value = null
+    settingsData.value.favicon = null
+
+    // Delete the favicon from backend
+    await axios.delete(`${API_URL}/settings/favicon`, {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    })
+  } catch (err) {
+    console.error('Failed to delete favicon:', err)
+  }
 }
 
 // Save all settings
@@ -589,12 +611,18 @@ const saveAllSettings = async () => {
       formData.append('key', 'logo')
       formData.append('image', logoFile.value)
 
-      await axios.post(`${API_URL}/settings/upload-image`, formData, {
+      const response = await axios.post(`${API_URL}/settings/upload-image`, formData, {
         headers: {
           Authorization: `Bearer ${authStore.token}`,
           'Content-Type': 'multipart/form-data'
         }
       })
+
+      // Update preview immediately with uploaded image URL
+      if (response.data.url) {
+        logoPreview.value = `${BASE_URL}${response.data.url}`
+        settingsData.value.logo = response.data.setting.value
+      }
     }
 
     // Upload favicon if changed
@@ -603,12 +631,18 @@ const saveAllSettings = async () => {
       formData.append('key', 'favicon')
       formData.append('image', faviconFile.value)
 
-      await axios.post(`${API_URL}/settings/upload-image`, formData, {
+      const response = await axios.post(`${API_URL}/settings/upload-image`, formData, {
         headers: {
           Authorization: `Bearer ${authStore.token}`,
           'Content-Type': 'multipart/form-data'
         }
       })
+
+      // Update preview immediately with uploaded image URL
+      if (response.data.url) {
+        faviconPreview.value = `${BASE_URL}${response.data.url}`
+        settingsData.value.favicon = response.data.setting.value
+      }
     }
 
     // Update text settings
