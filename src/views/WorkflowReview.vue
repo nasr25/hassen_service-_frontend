@@ -143,6 +143,30 @@
               </div>
             </div>
 
+            <!-- Collaborating Employees Section -->
+            <div v-if="request.employees && request.employees.length > 0" class="employees-section">
+              <div class="employees-header">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                </svg>
+                <span>{{ $t('request.collaboratingEmployees') }} ({{ request.employees.length }}):</span>
+              </div>
+              <div class="employees-list">
+                <div v-for="employee in request.employees" :key="employee.id" class="employee-item">
+                  <div class="employee-avatar">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div class="employee-info">
+                    <span class="employee-name">{{ employee.employee_name }}</span>
+                    <span v-if="employee.employee_email" class="employee-detail">{{ employee.employee_email }}</span>
+                    <span v-if="employee.employee_department" class="employee-detail">{{ employee.employee_department }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Evaluation Status -->
             <div class="evaluation-status">
               <div v-if="!requestEvaluationStatus[request.id]" class="evaluation-warning">
@@ -1401,6 +1425,82 @@ const openModalForAction = (request, action) => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Employees Section */
+.employees-section {
+  margin-top: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+  padding: var(--spacing-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.employees-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-3);
+}
+
+.employees-header svg {
+  color: var(--color-primary-600);
+}
+
+.employees-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.employee-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.employee-item:hover {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-300);
+}
+
+.employee-avatar {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-100);
+  border-radius: var(--radius-full);
+  color: var(--color-primary-600);
+  flex-shrink: 0;
+}
+
+.employee-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  flex: 1;
+}
+
+.employee-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.employee-detail {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
 }
 
 /* Evaluation Status */
