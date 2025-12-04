@@ -71,7 +71,7 @@
           <div class="attachments-list">
             <div v-for="attachment in request.attachments" :key="attachment.id" class="attachment-item">
               <span class="attachment-name">{{ attachment.file_name }}</span>
-              <a :href="attachment.file_path" target="_blank" class="btn-download">Download</a>
+              <a :href="`${BASE_URL}/storage/${attachment.file_path}`" target="_blank" class="btn-download">Download</a>
             </div>
           </div>
         </div>
@@ -224,7 +224,7 @@ const request = ref(null)
 const error = ref(null)
 const isLoading = ref(true)
 
-import { API_URL } from '../config/api'
+import { API_URL, BASE_URL } from '../config/api'
 
 onMounted(async () => {
   await loadRequest()

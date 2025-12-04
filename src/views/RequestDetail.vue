@@ -227,9 +227,14 @@
                 </svg>
               </div>
               <div class="attachment-info">
-                <div class="attachment-name">{{ attachment.original_name }}</div>
+                <div class="attachment-name">{{ attachment.file_name }}</div>
                 <div class="attachment-size">{{ formatFileSize(attachment.file_size) }}</div>
               </div>
+              <a :href="`${BASE_URL}/storage/${attachment.file_path}`" target="_blank" class="attachment-download">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+              </a>
             </div>
           </div>
         </BaseCard>
@@ -331,7 +336,7 @@ import AppLayout from '../components/AppLayout.vue'
 import BaseCard from '../components/BaseCard.vue'
 import BaseButton from '../components/BaseButton.vue'
 import BaseBadge from '../components/BaseBadge.vue'
-import { API_URL } from '../config/api'
+import { API_URL, BASE_URL } from '../config/api'
 
 const router = useRouter()
 const route = useRoute()
@@ -709,6 +714,24 @@ const getDepartmentName = (deptId) => {
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
   margin-top: var(--spacing-1);
+}
+
+.attachment-download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-50);
+  color: var(--color-primary-600);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.attachment-download:hover {
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
 }
 
 /* History Card */
