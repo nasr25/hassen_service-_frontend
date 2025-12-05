@@ -726,8 +726,26 @@ const fetchEmailTemplates = async () => {
 }
 
 const formatEventType = (eventType) => {
+  if (!eventType) return ''
+
+  // Convert event type to translation key format
+  // e.g., 'request.created' -> 'emailEvents.requestCreated'
+  // e.g., 'admin.request_assigned' -> 'emailEvents.adminRequestAssigned'
+  const eventKey = eventType
+    .replace(/\./g, '_')  // Replace dots with underscores
+    .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())  // Convert to camelCase
+
+  const translationKey = `emailEvents.${eventKey}`
+  const translated = t(translationKey)
+
+  // If translation exists, use it; otherwise, fallback to formatted text
+  if (translated !== translationKey) {
+    return translated
+  }
+
+  // Fallback: format the event type nicely
   return eventType
-    .replace('request.', '')
+    .replace(/^(request|admin|manager)\./, '')
     .replace(/_/g, ' ')
     .replace(/\b\w/g, char => char.toUpperCase())
 }

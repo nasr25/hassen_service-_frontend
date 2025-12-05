@@ -66,6 +66,12 @@ const routes = [
     meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
+    path: '/admin/email-templates',
+    name: 'EmailTemplates',
+    component: () => import('../views/admin/EmailTemplates.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
     path: '/profile',
     name: 'Profile',
     component: () => import('../views/Profile.vue'),

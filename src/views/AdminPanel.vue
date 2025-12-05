@@ -40,6 +40,9 @@
         <router-link to="/admin/settings" class="tab tab-link">
           ⚙️ {{ $t('nav.settings') }}
         </router-link>
+        <router-link to="/admin/email-templates" class="tab tab-link">
+          📧 {{ $t('admin.emailTemplates') }}
+        </router-link>
       </div>
 
       <div v-if="activeTab === 'departments'" class="tab-content">
