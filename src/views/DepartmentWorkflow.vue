@@ -1,37 +1,60 @@
 <template>
-  <div class="page-container">
-    <div class="page-card">
-      <div class="header">
-        <button @click="goBack" class="btn-back">{{ $t('common.back') }}</button>
-        <h1>{{ $t('nav.departmentWorkflow') }}</h1>
-        <button @click="loadRequests" class="btn-refresh">{{ $t('common.refresh') }}</button>
+  <AppLayout>
+    <div class="department-workflow">
+      <!-- Page Header -->
+      <div class="page-header">
+        <BaseButton variant="secondary" @click="goBack">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+          </svg>
+          {{ $t('common.back') }}
+        </BaseButton>
+        <div class="header-content">
+          <h1>{{ $t('nav.departmentWorkflow') }}</h1>
+          <p>{{ $t('dashboard.departmentWorkflow.description') }}</p>
+        </div>
+        <BaseButton variant="secondary" @click="loadRequests">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+          </svg>
+          {{ $t('common.refresh') }}
+        </BaseButton>
       </div>
 
-      <p class="subtitle">{{ $t('dashboard.departmentWorkflow.description') }}</p>
-
+      <!-- Error Alert -->
       <div v-if="error" class="alert alert-error">
         {{ error }}
       </div>
 
+      <!-- Success Alert -->
       <div v-if="success" class="alert alert-success">
         {{ success }}
       </div>
 
-      <div v-if="isLoading" class="loading">
-        Loading department requests...
+      <!-- Loading State -->
+      <div v-if="isLoading" class="loading-state">
+        <div class="spinner"></div>
+        <p>{{ $t('department.loading') }}</p>
       </div>
 
-      <div v-else-if="requests.length === 0" class="empty-state">
-        <p>No requests assigned to your department.</p>
-      </div>
+      <!-- Empty State -->
+      <BaseCard v-else-if="requests.length === 0" class="empty-state-card">
+        <div class="empty-state">
+          <svg width="96" height="96" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          </svg>
+          <h2>{{ $t('department.noRequestsAssigned') }}</h2>
+        </div>
+      </BaseCard>
 
+      <!-- Requests List -->
       <div v-else class="requests-grid">
-        <div v-for="request in requests" :key="request.id" class="request-card">
+        <BaseCard v-for="request in requests" :key="request.id" class="request-card">
           <div class="request-header">
             <h3>{{ request.title }}</h3>
-            <span :class="['badge', `badge-${request.status}`]">
-              {{ formatStatus(request.status) }}
-            </span>
+            <BaseBadge :variant="getStatusVariant(request.status)">
+              {{ $t('status.' + request.status) }}
+            </BaseBadge>
           </div>
 
           <div class="request-body">
@@ -39,22 +62,28 @@
 
             <div class="request-meta">
               <div class="meta-item">
-                <strong>Submitted by:</strong> {{ request.user?.name }}
+                <strong>{{ $t('department.submittedBy') }}:</strong>
+                <span>{{ request.user?.name }}</span>
               </div>
               <div class="meta-item">
-                <strong>Department:</strong> {{ request.current_department?.name }}
+                <strong>{{ $t('request.department') }}:</strong>
+                <span>{{ request.current_department?.name }}</span>
               </div>
               <div class="meta-item">
-                <strong>Workflow Path:</strong> {{ request.workflow_path?.name }}
+                <strong>{{ $t('department.workflowPath') }}:</strong>
+                <span>{{ request.workflow_path?.name }}</span>
               </div>
               <div v-if="request.current_assignee" class="meta-item">
-                <strong>Assigned to:</strong> {{ request.current_assignee?.name }}
+                <strong>{{ $t('department.assignedTo') }}:</strong>
+                <span>{{ request.current_assignee?.name }}</span>
               </div>
               <div class="meta-item">
-                <strong>Last Updated:</strong> {{ formatDate(request.updated_at) }}
+                <strong>{{ $t('department.lastUpdated') }}:</strong>
+                <span>{{ formatDate(request.updated_at) }}</span>
               </div>
               <div v-if="request.expected_execution_date" class="meta-item expected-date-item">
-                <strong>Expected Execution:</strong> {{ formatDate(request.expected_execution_date) }}
+                <strong>{{ $t('department.expectedExecution') }}:</strong>
+                <span>{{ formatDate(request.expected_execution_date) }}</span>
               </div>
             </div>
 
@@ -82,46 +111,113 @@
                 </a>
               </div>
             </div>
+
+            <!-- Evaluation Results -->
+            <div v-if="request.path_evaluations && request.path_evaluations.length > 0" class="evaluation-section">
+              <div class="evaluation-header" @click="toggleEvaluation(request.id)">
+                <div class="evaluation-header-content">
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>{{ $t('department.evaluationResults') }}</span>
+                  <BaseBadge variant="success" size="sm">{{ request.path_evaluations.length }} {{ $t('department.evaluationsCompleted') }}</BaseBadge>
+                </div>
+                <svg
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  :class="['expand-icon', { expanded: expandedEvaluations[request.id] }]"
+                >
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+
+              <div v-if="expandedEvaluations[request.id]" class="evaluation-results-list">
+                <div v-for="(evaluation, index) in request.path_evaluations" :key="evaluation.id" class="evaluation-result-item">
+                  <div class="evaluation-question">
+                    <span class="question-number">{{ index + 1 }}</span>
+                    <span class="question-text">{{ evaluation.question?.question }}</span>
+                  </div>
+                  <div class="evaluation-answer">
+                    <BaseBadge :variant="evaluation.is_applied ? 'success' : 'danger'" size="sm">
+                      {{ evaluation.is_applied ? $t('department.applied') : $t('department.notApplied') }}
+                    </BaseBadge>
+                  </div>
+                  <div v-if="evaluation.notes" class="evaluation-notes">
+                    <strong>{{ $t('department.notes') }}:</strong>
+                    <p>{{ evaluation.notes }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="request-actions">
             <!-- Manager Actions (only for unassigned requests) -->
             <template v-if="isManager && !request.current_user_id">
-              <button @click="openPathEvaluationModal(request, 'accept')" class="btn-action btn-accept">
-                ✓ Accept Idea
-              </button>
-              <button @click="openPathEvaluationModal(request, 'accept_later')" class="btn-action btn-accept-later">
-                ⏰ Accept for Later
-              </button>
-              <button @click="openPathEvaluationModal(request, 'reject')" class="btn-action btn-reject">
-                ✗ Reject Idea
-              </button>
-              <button @click="openPathEvaluationModal(request, 'return')" class="btn-action btn-return">
-                ↩️ Return to Dept A
-              </button>
+              <!-- Show Evaluate button if evaluation is required but not completed -->
+              <template v-if="request.requires_evaluation && !request.has_evaluated">
+                <BaseButton variant="primary" @click="openPathEvaluationModal(request, null)">
+                  {{ $t('department.evaluateRequest') }}
+                </BaseButton>
+                <div class="evaluation-required-message">
+                  {{ $t('department.evaluationRequiredMessage') }}
+                </div>
+              </template>
+
+              <!-- Show action buttons only after evaluation is complete or not required -->
+              <template v-else>
+                <!-- If was previously assigned to employee and returned, show Return to Employee -->
+                <BaseButton
+                  v-if="request.was_assigned_to_employee && request.last_assigned_user_id"
+                  variant="primary"
+                  @click="returnToEmployee(request)"
+                >
+                  {{ $t('department.returnToEmployee') }}
+                </BaseButton>
+                <!-- Otherwise show Accept Idea -->
+                <BaseButton
+                  v-else
+                  variant="success"
+                  @click="openPathEvaluationModal(request, 'accept')"
+                >
+                  {{ $t('department.acceptIdea') }}
+                </BaseButton>
+
+                <BaseButton variant="warning" @click="openPathEvaluationModal(request, 'accept_later')">
+                  {{ $t('department.acceptForLater') }}
+                </BaseButton>
+                <BaseButton variant="danger" @click="openPathEvaluationModal(request, 'reject')">
+                  {{ $t('department.rejectIdea') }}
+                </BaseButton>
+                <BaseButton variant="info" @click="openPathEvaluationModal(request, 'return')">
+                  {{ $t('department.returnToDeptA') }}
+                </BaseButton>
+              </template>
             </template>
 
             <!-- Employee: Return to Manager -->
-            <button
+            <BaseButton
               v-if="isEmployee(request) && request.current_user_id === authStore.user?.id"
+              variant="warning"
               @click="openReturnToManagerModal(request)"
-              class="btn-action btn-return-manager"
             >
-              ↩️ Return to Manager
-            </button>
+              {{ $t('department.returnToManager') }}
+            </BaseButton>
           </div>
-        </div>
+        </BaseCard>
       </div>
     </div>
 
     <!-- Assign to Employee Modal -->
     <div v-if="assignModal.show" class="modal-overlay" @click="closeAssignModal">
       <div class="modal-content" @click.stop>
-        <h2>Assign to Employee</h2>
-        <p class="modal-subtitle">Request: {{ assignModal.request?.title }}</p>
+        <h2>{{ $t('department.assignToEmployee') }}</h2>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ assignModal.request?.title }}</p>
 
         <div class="form-group">
-          <label>Select Employee *</label>
+          <label>{{ $t('department.selectEmployee') }} *</label>
           <div class="employees-list">
             <div
               v-for="employee in employees"
@@ -136,23 +232,25 @@
         </div>
 
         <div class="form-group">
-          <label>Comments (Optional)</label>
+          <label>{{ $t('department.commentsOptional') }}</label>
           <textarea
             v-model="assignModal.comments"
-            placeholder="Add any instructions for the employee..."
+            :placeholder="$t('department.addInstructions')"
             rows="3"
           ></textarea>
         </div>
 
         <div class="modal-actions">
-          <button @click="closeAssignModal" class="btn-secondary">Cancel</button>
-          <button
+          <BaseButton variant="secondary" @click="closeAssignModal">
+            {{ $t('common.cancel') }}
+          </BaseButton>
+          <BaseButton
+            variant="primary"
             @click="confirmAssign"
             :disabled="!assignModal.employeeId || assignModal.isLoading"
-            class="btn-primary"
           >
-            {{ assignModal.isLoading ? 'Assigning...' : 'Assign to Employee' }}
-          </button>
+            {{ assignModal.isLoading ? $t('department.assigning') : $t('department.assignToEmployee') }}
+          </BaseButton>
         </div>
       </div>
     </div>
@@ -160,32 +258,34 @@
     <!-- Return to Manager Modal (Employee) -->
     <div v-if="returnToManagerModal.show" class="modal-overlay" @click="closeReturnToManagerModal">
       <div class="modal-content" @click.stop>
-        <h2>Return to Manager</h2>
-        <p class="modal-subtitle">Request: {{ returnToManagerModal.request?.title }}</p>
+        <h2>{{ $t('department.returnToManager') }}</h2>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ returnToManagerModal.request?.title }}</p>
 
         <div class="alert alert-info">
-          <strong>Note:</strong> This will return the request to your department manager for review.
+          <strong>{{ $t('evaluations.notes') }}:</strong> {{ $t('department.returnRequestNote') }}
         </div>
 
         <div class="form-group">
-          <label>Work Summary / Comments *</label>
+          <label>{{ $t('department.workSummary') }} *</label>
           <textarea
             v-model="returnToManagerModal.comments"
-            placeholder="Describe the work completed and any findings..."
+            :placeholder="$t('department.describeWork')"
             rows="5"
             required
           ></textarea>
         </div>
 
         <div class="modal-actions">
-          <button @click="closeReturnToManagerModal" class="btn-secondary">Cancel</button>
-          <button
+          <BaseButton variant="secondary" @click="closeReturnToManagerModal">
+            {{ $t('common.cancel') }}
+          </BaseButton>
+          <BaseButton
+            variant="primary"
             @click="confirmReturnToManager"
             :disabled="!returnToManagerModal.comments || returnToManagerModal.isLoading"
-            class="btn-primary"
           >
-            {{ returnToManagerModal.isLoading ? 'Returning...' : 'Return to Manager' }}
-          </button>
+            {{ returnToManagerModal.isLoading ? $t('department.returning') : $t('department.returnToManager') }}
+          </BaseButton>
         </div>
       </div>
     </div>
@@ -193,28 +293,29 @@
     <!-- Path Evaluation Modal (Manager) -->
     <div v-if="pathEvaluationModal.show" class="modal-overlay" @click="closePathEvaluationModal">
       <div class="modal-content path-evaluation-modal" @click.stop>
-        <h2>✅ Path Evaluation Required</h2>
-        <p class="modal-subtitle">Request: {{ pathEvaluationModal.request?.title }}</p>
+        <h2>{{ $t('department.pathEvaluationRequired') }}</h2>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ pathEvaluationModal.request?.title }}</p>
 
-        <div class="alert alert-info">
-          <strong>Action:</strong>
-          <span v-if="pathEvaluationModal.action === 'accept'">Accept Idea - Assign to employee</span>
-          <span v-else-if="pathEvaluationModal.action === 'accept_later'">Accept for Later - Schedule for future assignment</span>
-          <span v-else-if="pathEvaluationModal.action === 'reject'">Reject Idea - Decline this request</span>
-          <span v-else-if="pathEvaluationModal.action === 'return'">Return to Department A for validation</span>
+        <div v-if="pathEvaluationModal.action" class="alert alert-info">
+          <strong>{{ $t('department.action') }}:</strong>
+          <span v-if="pathEvaluationModal.action === 'accept'">{{ $t('department.acceptIdeaAction') }}</span>
+          <span v-else-if="pathEvaluationModal.action === 'accept_later'">{{ $t('department.acceptLaterAction') }}</span>
+          <span v-else-if="pathEvaluationModal.action === 'reject'">{{ $t('department.rejectIdeaAction') }}</span>
+          <span v-else-if="pathEvaluationModal.action === 'return'">{{ $t('department.returnToDeptAAction') }}</span>
         </div>
 
         <div class="alert alert-info">
-          <strong>Note:</strong> Please evaluate this request before proceeding.
+          <strong>{{ $t('evaluations.notes') }}:</strong> {{ $t('department.evaluateNote') }}
         </div>
 
-        <div v-if="pathEvaluationModal.isLoading" class="loading">
-          Loading evaluation questions...
+        <div v-if="pathEvaluationModal.isLoading" class="loading-state">
+          <div class="spinner"></div>
+          <p>{{ $t('department.loadingQuestions') }}</p>
         </div>
 
         <div v-else-if="pathEvaluationModal.questions.length === 0" class="alert alert-info">
-          <strong>No evaluation questions configured for this workflow path.</strong>
-          <p style="margin-top: 8px; font-size: 13px;">You can proceed directly to assign this request.</p>
+          <strong>{{ $t('department.noQuestions') }}</strong>
+          <p style="margin-top: 8px; font-size: 13px;">{{ $t('department.canProceed') }}</p>
         </div>
 
         <div v-else class="evaluation-questions-list">
@@ -229,21 +330,21 @@
                 :class="['toggle-btn', 'applied', { active: pathEvaluationModal.evaluations[question.id]?.is_applied === true }]"
                 @click="setEvaluation(question.id, true)"
               >
-                ✓ Applied
+                {{ $t('department.applied') }}
               </button>
               <button
                 :class="['toggle-btn', 'not-applied', { active: pathEvaluationModal.evaluations[question.id]?.is_applied === false }]"
                 @click="setEvaluation(question.id, false)"
               >
-                ✗ Not Applied
+                {{ $t('department.notApplied') }}
               </button>
             </div>
 
             <div class="form-group">
-              <label>Notes (Optional)</label>
+              <label>{{ $t('department.notes') }}</label>
               <textarea
                 v-model="pathEvaluationModal.evaluations[question.id].notes"
-                placeholder="Add any additional comments or context..."
+                :placeholder="$t('department.addComments')"
                 rows="2"
               ></textarea>
             </div>
@@ -251,22 +352,24 @@
         </div>
 
         <div class="modal-actions">
-          <button @click="closePathEvaluationModal" class="btn-secondary">Cancel</button>
-          <button
+          <BaseButton variant="secondary" @click="closePathEvaluationModal">
+            {{ $t('common.cancel') }}
+          </BaseButton>
+          <BaseButton
             v-if="pathEvaluationModal.questions.length === 0"
+            variant="primary"
             @click="proceedWithAction"
-            class="btn-primary"
           >
             {{ getActionButtonText() }}
-          </button>
-          <button
+          </BaseButton>
+          <BaseButton
             v-else
+            variant="primary"
             @click="submitPathEvaluation"
             :disabled="!isEvaluationComplete || pathEvaluationModal.isSaving"
-            class="btn-primary"
           >
-            {{ pathEvaluationModal.isSaving ? 'Saving...' : 'Save Evaluation & Continue' }}
-          </button>
+            {{ pathEvaluationModal.isSaving ? $t('department.saving') : $t('department.saveAndContinue') }}
+          </BaseButton>
         </div>
       </div>
     </div>
@@ -274,32 +377,34 @@
     <!-- Return to Department A Modal (Manager) -->
     <div v-if="returnToDeptAModal.show" class="modal-overlay" @click="closeReturnToDeptAModal">
       <div class="modal-content" @click.stop>
-        <h2>Return to Department A</h2>
-        <p class="modal-subtitle">Request: {{ returnToDeptAModal.request?.title }}</p>
+        <h2>{{ $t('department.returnToDeptA') }}</h2>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ returnToDeptAModal.request?.title }}</p>
 
         <div class="alert alert-info">
-          <strong>Note:</strong> This will send the request back to Department A for final validation.
+          <strong>{{ $t('evaluations.notes') }}:</strong> {{ $t('department.returnToDeptANote') }}
         </div>
 
         <div class="form-group">
-          <label>Validation Summary / Comments *</label>
+          <label>{{ $t('department.validationSummary') }} *</label>
           <textarea
             v-model="returnToDeptAModal.comments"
-            placeholder="Confirm work completion and provide validation notes..."
+            :placeholder="$t('department.confirmWork')"
             rows="5"
             required
           ></textarea>
         </div>
 
         <div class="modal-actions">
-          <button @click="closeReturnToDeptAModal" class="btn-secondary">Cancel</button>
-          <button
+          <BaseButton variant="secondary" @click="closeReturnToDeptAModal">
+            {{ $t('common.cancel') }}
+          </BaseButton>
+          <BaseButton
+            variant="primary"
             @click="confirmReturnToDeptA"
             :disabled="!returnToDeptAModal.comments || returnToDeptAModal.isLoading"
-            class="btn-primary"
           >
-            {{ returnToDeptAModal.isLoading ? 'Returning...' : 'Return to Dept A' }}
-          </button>
+            {{ returnToDeptAModal.isLoading ? $t('department.returning') : $t('department.returnToDeptA') }}
+          </BaseButton>
         </div>
       </div>
     </div>
@@ -307,15 +412,15 @@
     <!-- Accept for Later Modal (Manager) -->
     <div v-if="acceptLaterModal.show" class="modal-overlay" @click="closeAcceptLaterModal">
       <div class="modal-content" @click.stop>
-        <h2>⏰ Accept Idea for Later Implementation</h2>
-        <p class="modal-subtitle">Request: {{ acceptLaterModal.request?.title }}</p>
+        <h2>{{ $t('department.acceptForLater') }}</h2>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ acceptLaterModal.request?.title }}</p>
 
         <div class="alert alert-info">
-          <strong>Note:</strong> This idea will be accepted but scheduled for future implementation.
+          <strong>{{ $t('evaluations.notes') }}:</strong> {{ $t('department.acceptLaterNote') }}
         </div>
 
         <div class="form-group">
-          <label>Expected Execution Date *</label>
+          <label>{{ $t('department.expectedDate') }} *</label>
           <input
             type="date"
             v-model="acceptLaterModal.expectedDate"
@@ -326,43 +431,53 @@
         </div>
 
         <div class="form-group">
-          <label>Comments (Optional)</label>
+          <label>{{ $t('department.commentsOptional') }}</label>
           <textarea
             v-model="acceptLaterModal.comments"
-            placeholder="Add any notes about why this is scheduled for later..."
+            :placeholder="$t('department.scheduleReason')"
             rows="4"
           ></textarea>
         </div>
 
         <div class="modal-actions">
-          <button @click="closeAcceptLaterModal" class="btn-secondary">Cancel</button>
-          <button
+          <BaseButton variant="secondary" @click="closeAcceptLaterModal">
+            {{ $t('common.cancel') }}
+          </BaseButton>
+          <BaseButton
+            variant="primary"
             @click="confirmAcceptLater"
             :disabled="!acceptLaterModal.expectedDate || acceptLaterModal.isLoading"
-            class="btn-primary"
           >
-            {{ acceptLaterModal.isLoading ? 'Accepting...' : 'Accept for Later' }}
-          </button>
+            {{ acceptLaterModal.isLoading ? $t('department.accepting') : $t('department.acceptForLater') }}
+          </BaseButton>
         </div>
       </div>
     </div>
-  </div>
+  </AppLayout>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { useI18n } from 'vue-i18n'
 import axios from 'axios'
+import AppLayout from '../components/AppLayout.vue'
+import BaseCard from '../components/BaseCard.vue'
+import BaseButton from '../components/BaseButton.vue'
+import BaseBadge from '../components/BaseBadge.vue'
+import { API_URL, BASE_URL } from '../config/api'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const requests = ref([])
 const employees = ref([])
 const error = ref(null)
 const success = ref(null)
 const isLoading = ref(true)
+const expandedEvaluations = ref({})
 
 const assignModal = ref({
   show: false,
@@ -404,8 +519,6 @@ const pathEvaluationModal = ref({
   isSaving: false
 })
 
-import { API_URL } from '../config/api'
-
 const isManager = computed(() => authStore.user?.role === 'manager')
 
 const isEmployee = (request) => {
@@ -433,7 +546,7 @@ const loadRequests = async () => {
 
     requests.value = response.data.requests
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to load requests'
+    error.value = err.response?.data?.message || t('messages.error.failedToLoadRequests')
   } finally {
     isLoading.value = false
   }
@@ -457,11 +570,21 @@ const goBack = () => {
   router.push('/dashboard')
 }
 
-const formatStatus = (status) => {
-  return status
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
+const toggleEvaluation = (requestId) => {
+  expandedEvaluations.value[requestId] = !expandedEvaluations.value[requestId]
+}
+
+const getStatusVariant = (status) => {
+  const variants = {
+    draft: 'gray',
+    pending: 'warning',
+    in_review: 'info',
+    need_more_details: 'warning',
+    approved: 'success',
+    rejected: 'error',
+    completed: 'success'
+  }
+  return variants[status] || 'gray'
 }
 
 const formatDate = (dateString) => {
@@ -509,15 +632,47 @@ const confirmAssign = async () => {
       }
     )
 
-    success.value = 'Request assigned to employee successfully'
+    success.value = t('messages.success.requestAssigned')
     closeAssignModal()
     await loadRequests()
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to assign to employee'
+    error.value = err.response?.data?.message || t('messages.error.failedToAssign')
   } finally {
     assignModal.value.isLoading = false
+  }
+}
+
+// Return request to the previously assigned employee
+const returnToEmployee = async (request) => {
+  if (!request.last_assigned_user_id) {
+    error.value = t('messages.error.noPreviousEmployee')
+    return
+  }
+
+  try {
+    error.value = null
+
+    await axios.post(
+      `${API_URL}/department/requests/${request.id}/assign-employee`,
+      {
+        employee_id: request.last_assigned_user_id,
+        comments: t('department.returnedToEmployee')
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      }
+    )
+
+    success.value = t('messages.success.requestReturnedToEmployee')
+    await loadRequests()
+
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || t('messages.error.failedToAssign')
   }
 }
 
@@ -551,13 +706,13 @@ const confirmReturnToManager = async () => {
       }
     )
 
-    success.value = 'Request returned to manager successfully'
+    success.value = t('messages.success.requestReturned')
     closeReturnToManagerModal()
     await loadRequests()
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to return request'
+    error.value = err.response?.data?.message || t('messages.error.failedToReturn')
   } finally {
     returnToManagerModal.value.isLoading = false
   }
@@ -593,13 +748,13 @@ const confirmReturnToDeptA = async () => {
       }
     )
 
-    success.value = 'Request returned to Department A successfully'
+    success.value = t('messages.success.requestReturnedDeptA')
     closeReturnToDeptAModal()
     await loadRequests()
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to return request'
+    error.value = err.response?.data?.message || t('messages.error.failedToReturn')
   } finally {
     returnToDeptAModal.value.isLoading = false
   }
@@ -616,6 +771,14 @@ const isEvaluationComplete = computed(() => {
 })
 
 const openPathEvaluationModal = async (request, action) => {
+  // If request is already evaluated and an action is specified, skip modal and proceed directly
+  if (request.has_evaluated && action) {
+    pathEvaluationModal.value.request = request
+    pathEvaluationModal.value.action = action
+    proceedWithAction()
+    return
+  }
+
   pathEvaluationModal.value.show = true
   pathEvaluationModal.value.request = request
   pathEvaluationModal.value.action = action
@@ -655,7 +818,7 @@ const openPathEvaluationModal = async (request, action) => {
       })
     }
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to load evaluation questions'
+    error.value = err.response?.data?.message || t('messages.error.failedToLoadQuestions')
     closePathEvaluationModal()
   } finally {
     pathEvaluationModal.value.isLoading = false
@@ -700,13 +863,18 @@ const submitPathEvaluation = async () => {
       }
     )
 
-    success.value = 'Evaluation submitted successfully'
+    success.value = t('messages.success.evaluationSubmitted')
     setTimeout(() => (success.value = null), 3000)
 
-    // Proceed with the selected action
-    proceedWithAction()
+    // If there's an action, proceed with it, otherwise just reload and close
+    if (pathEvaluationModal.value.action) {
+      proceedWithAction()
+    } else {
+      closePathEvaluationModal()
+      await loadRequests() // Reload to get updated evaluation status
+    }
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to submit evaluation'
+    error.value = err.response?.data?.message || t('messages.error.failedToSubmitEvaluation')
   } finally {
     pathEvaluationModal.value.isSaving = false
   }
@@ -715,15 +883,15 @@ const submitPathEvaluation = async () => {
 const getActionButtonText = () => {
   switch (pathEvaluationModal.value.action) {
     case 'accept':
-      return 'Proceed to Assign Employee'
+      return t('department.proceedToAssign')
     case 'accept_later':
-      return 'Accept for Later'
+      return t('department.acceptForLater')
     case 'reject':
-      return 'Reject Idea'
+      return t('department.rejectIdea')
     case 'return':
-      return 'Return to Dept A'
+      return t('department.returnToDeptA')
     default:
-      return 'Continue'
+      return t('common.continue')
   }
 }
 
@@ -781,25 +949,20 @@ const confirmAcceptLater = async () => {
       }
     )
 
-    success.value = 'Idea accepted for later implementation'
+    success.value = t('messages.success.ideaAccepted')
     closeAcceptLaterModal()
     await loadRequests()
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to accept idea'
+    error.value = err.response?.data?.message || t('messages.error.failedToAccept')
   } finally {
     acceptLaterModal.value.isLoading = false
   }
 }
 
-const acceptIdeaForLater = async (request) => {
-  // This function is now replaced by the modal flow
-  openAcceptLaterModal(request)
-}
-
 const rejectIdea = async (request) => {
-  const reason = prompt(`Reject this idea?\n\nRequest: ${request.title}\n\nPlease provide a reason for rejection:`)
+  const reason = prompt(`${t('department.rejectPrompt')}\n\n${t('request.request')}: ${request.title}\n\n${t('department.provideReason')}`)
   if (!reason) return
 
   try {
@@ -814,255 +977,381 @@ const rejectIdea = async (request) => {
       }
     )
 
-    success.value = 'Idea rejected'
+    success.value = t('messages.success.ideaRejected')
     await loadRequests()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to reject idea'
+    error.value = err.response?.data?.message || t('messages.error.failedToReject')
   }
 }
 </script>
 
 <style scoped>
-.page-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
-}
-
-.page-card {
-  background: white;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+.department-workflow {
   max-width: 1400px;
   margin: 0 auto;
 }
 
-.header {
+/* Page Header */
+.page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
-  gap: 15px;
+  margin-bottom: var(--spacing-8);
+  gap: var(--spacing-4);
 }
 
-.btn-back, .btn-refresh {
-  padding: 8px 16px;
-  background: #f5f5f5;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s;
+.header-content {
+  flex: 1;
+  text-align: center;
 }
 
-.btn-back:hover, .btn-refresh:hover {
-  background: #e0e0e0;
+.header-content h1 {
+  font-size: var(--font-size-3xl);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-2);
 }
 
-h1 {
-  color: #333;
-  font-size: 28px;
+.header-content p {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
-.subtitle {
-  color: #666;
-  margin-bottom: 30px;
-  font-size: 14px;
-}
-
+/* Alert */
 .alert {
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
+  padding: var(--spacing-4);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-6);
+  font-size: var(--font-size-sm);
 }
 
 .alert-error {
-  background: #fee;
-  color: #c33;
-  border: 1px solid #fcc;
+  background: var(--color-error-50);
+  color: var(--color-error-700);
+  border: 1px solid var(--color-error-200);
 }
 
 .alert-success {
-  background: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #4caf50;
+  background: var(--color-success-50);
+  color: var(--color-success-700);
+  border: 1px solid var(--color-success-200);
 }
 
 .alert-info {
-  background: #e3f2fd;
-  color: #1976d2;
-  border: 1px solid #90caf9;
+  background: var(--color-info-50);
+  color: var(--color-info-700);
+  border: 1px solid var(--color-info-200);
 }
 
-.loading {
-  text-align: center;
-  padding: 40px;
-  color: #666;
-  font-size: 16px;
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-20);
+  gap: var(--spacing-4);
+}
+
+.loading-state p {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--color-surface);
+  border-top-color: var(--color-primary-600);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Empty State */
+.empty-state-card {
+  padding: var(--spacing-12);
 }
 
 .empty-state {
   text-align: center;
-  padding: 60px 20px;
-  color: #666;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
+.empty-state svg {
+  color: var(--color-gray-300);
+  margin-bottom: var(--spacing-6);
+}
+
+.empty-state h2 {
+  font-size: var(--font-size-2xl);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Requests Grid */
 .requests-grid {
   display: grid;
-  gap: 20px;
+  gap: var(--spacing-6);
 }
 
 .request-card {
-  border: 2px solid #e0e0e0;
-  border-radius: 10px;
-  padding: 20px;
-  background: white;
-  transition: all 0.3s;
+  transition: all var(--transition-base);
 }
 
 .request-card:hover {
-  border-color: #667eea;
+  box-shadow: var(--shadow-lg);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 .request-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: var(--spacing-4);
 }
 
 .request-header h3 {
-  color: #333;
-  font-size: 18px;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
   margin: 0;
 }
 
-.badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.badge-in_review {
-  background: #cfe2ff;
-  color: #084298;
-}
-
 .request-body {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-6);
 }
 
 .description {
-  color: #666;
-  font-size: 14px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
   line-height: 1.6;
-  margin-bottom: 15px;
+  margin-bottom: var(--spacing-4);
 }
 
 .request-meta {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  font-size: 13px;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
 }
 
 .meta-item {
-  color: #666;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
 }
 
 .meta-item strong {
-  color: #333;
-  display: block;
-  margin-bottom: 2px;
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.meta-item span {
+  color: var(--color-text-secondary);
 }
 
 .meta-item.expected-date-item {
-  background: #fff4e6;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #ffb84d;
+  background: var(--color-warning-50);
+  padding: var(--spacing-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-warning-200);
 }
 
 .meta-item.expected-date-item strong {
-  color: #e65100;
+  color: var(--color-warning-700);
 }
 
+/* Attachments Section */
+.attachments-section {
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.attachments-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-3);
+}
+
+.attachments-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.attachment-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.attachment-item:hover {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-300);
+  color: var(--color-primary-700);
+}
+
+.attachment-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Evaluation Section */
+.evaluation-section {
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.evaluation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3);
+  background: var(--color-success-50);
+  border: 1px solid var(--color-success-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.evaluation-header:hover {
+  background: var(--color-success-100);
+}
+
+.evaluation-header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-success-700);
+}
+
+.expand-icon {
+  color: var(--color-success-700);
+  transition: transform var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.expand-icon.expanded {
+  transform: rotate(180deg);
+}
+
+.evaluation-results-list {
+  margin-top: var(--spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.evaluation-result-item {
+  padding: var(--spacing-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.evaluation-question {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
+}
+
+.question-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  background: var(--color-primary-500);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  flex-shrink: 0;
+}
+
+.question-text {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+.evaluation-answer {
+  margin-bottom: var(--spacing-3);
+}
+
+.evaluation-notes {
+  padding: var(--spacing-3);
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.evaluation-notes strong {
+  display: block;
+  margin-bottom: var(--spacing-1);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.evaluation-notes p {
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Request Actions */
 .request-actions {
   display: flex;
-  gap: 10px;
+  gap: var(--spacing-3);
   flex-wrap: wrap;
 }
 
-.btn-action {
+.request-actions > * {
   flex: 1;
   min-width: 160px;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
 }
 
-.btn-accept {
-  background: #4caf50;
-  color: white;
-}
-
-.btn-accept:hover {
-  background: #45a049;
-  transform: translateY(-2px);
-}
-
-.btn-accept-later {
-  background: #ff9800;
-  color: white;
-}
-
-.btn-accept-later:hover {
-  background: #f57c00;
-  transform: translateY(-2px);
-}
-
-.btn-reject {
-  background: #f44336;
-  color: white;
-}
-
-.btn-reject:hover {
-  background: #d32f2f;
-  transform: translateY(-2px);
-}
-
-.btn-return {
-  background: #2196f3;
-  color: white;
-}
-
-.btn-return:hover {
-  background: #0b7dda;
-  transform: translateY(-2px);
-}
-
-.btn-return-manager {
-  background: #ff9800;
-  color: white;
-}
-
-.btn-return-manager:hover {
-  background: #f57c00;
-  transform: translateY(-2px);
+.evaluation-required-message {
+  width: 100%;
+  padding: var(--spacing-3);
+  background: var(--color-info-50);
+  border: 1px solid var(--color-info-200);
+  border-radius: var(--radius-md);
+  color: var(--color-info-700);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  margin-top: var(--spacing-2);
 }
 
 /* Modal Styles */
@@ -1077,232 +1366,191 @@ h1 {
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  padding: 20px;
+  padding: var(--spacing-4);
 }
 
 .modal-content {
   background: white;
-  border-radius: 15px;
-  padding: 30px;
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-8);
   max-width: 600px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
+  box-shadow: var(--shadow-2xl);
 }
 
 .modal-content h2 {
-  color: #333;
-  margin-bottom: 10px;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-2);
 }
 
 .modal-subtitle {
-  color: #666;
-  font-size: 14px;
-  margin-bottom: 20px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-6);
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-6);
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
-  color: #555;
-  font-weight: 500;
-  font-size: 14px;
+  margin-bottom: var(--spacing-2);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
 }
 
-.form-group textarea {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-family: inherit;
-  font-size: 14px;
-  transition: border-color 0.3s;
-}
-
-.form-group textarea:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
+.form-group textarea,
 .form-group .date-input {
   width: 100%;
-  padding: 12px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  padding: var(--spacing-3);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
   font-family: inherit;
-  font-size: 14px;
-  transition: border-color 0.3s;
-  cursor: pointer;
+  font-size: var(--font-size-sm);
+  transition: border-color var(--transition-fast);
 }
 
+.form-group textarea:focus,
 .form-group .date-input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-primary-500);
 }
 
 .employees-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--spacing-3);
   max-height: 300px;
   overflow-y: auto;
 }
 
 .employee-option {
-  padding: 12px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  padding: var(--spacing-3);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all var(--transition-fast);
 }
 
 .employee-option:hover {
-  border-color: #667eea;
-  background: #f8f9ff;
+  border-color: var(--color-primary-500);
+  background: var(--color-primary-50);
 }
 
 .employee-option.selected {
-  border-color: #667eea;
-  background: #f0f3ff;
+  border-color: var(--color-primary-500);
+  background: var(--color-primary-100);
 }
 
 .employee-option strong {
-  color: #333;
-  font-size: 14px;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-1);
 }
 
 .employee-email {
-  color: #999;
-  font-size: 12px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
 }
 
 .modal-actions {
   display: flex;
-  gap: 10px;
-  margin-top: 25px;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-6);
 }
 
-.btn-primary, .btn-secondary {
+.modal-actions > * {
   flex: 1;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
 }
 
-.btn-primary {
-  background: #667eea;
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #5568d3;
-  transform: translateY(-2px);
-}
-
-.btn-secondary {
-  background: #f5f5f5;
-  color: #333;
-}
-
-.btn-secondary:hover {
-  background: #e0e0e0;
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Path Evaluation Modal Styles */
+/* Path Evaluation Modal */
 .path-evaluation-modal {
   max-width: 700px;
 }
 
 .evaluation-questions-list {
-  margin-top: 20px;
+  margin-top: var(--spacing-6);
 }
 
 .evaluation-question {
-  background: #f8f9fa;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 20px;
-  border: 2px solid #e0e0e0;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-5);
+  margin-bottom: var(--spacing-5);
+  border: 2px solid var(--color-border);
 }
 
 .question-title {
-  color: #333;
-  font-size: 15px;
-  margin: 0 0 15px 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  margin: 0 0 var(--spacing-4) 0;
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: var(--spacing-3);
   line-height: 1.5;
 }
 
 .question-number {
-  background: #667eea;
+  background: var(--color-primary-600);
   color: white;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 700;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
   flex-shrink: 0;
 }
 
 .evaluation-toggles {
   display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
 }
 
 .toggle-btn {
   flex: 1;
-  padding: 12px 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  padding: var(--spacing-3);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
   background: white;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.3s;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--transition-fast);
 }
 
 .toggle-btn:hover {
-  border-color: #667eea;
-  background: #f8f9ff;
+  border-color: var(--color-primary-500);
+  background: var(--color-primary-50);
 }
 
 .toggle-btn.applied.active {
-  background: #4caf50;
+  background: var(--color-success-600);
   color: white;
-  border-color: #4caf50;
+  border-color: var(--color-success-600);
 }
 
 .toggle-btn.not-applied.active {
-  background: #f44336;
+  background: var(--color-error-600);
   color: white;
-  border-color: #f44336;
+  border-color: var(--color-error-600);
 }
 
 .toggle-btn.applied:not(.active):hover {
-  border-color: #4caf50;
-  background: #e8f5e9;
+  border-color: var(--color-success-600);
+  background: var(--color-success-50);
 }
 
 .toggle-btn.not-applied:not(.active):hover {
-  border-color: #f44336;
-  background: #ffebee;
+  border-color: var(--color-error-600);
+  background: var(--color-error-50);
 }
 
 .evaluation-question .form-group {
@@ -1310,71 +1558,36 @@ h1 {
 }
 
 .evaluation-question .form-group label {
-  font-size: 13px;
-  color: #666;
-  margin-bottom: 6px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
 }
 
 .evaluation-question .form-group textarea {
-  font-size: 13px;
-  padding: 10px;
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-2);
 }
 
-/* Attachments Section */
-.attachments-section {
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px solid #e0e0e0;
-}
+/* Responsive */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-.attachments-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 10px;
-}
+  .header-content {
+    text-align: left;
+  }
 
-.attachments-header svg {
-  flex-shrink: 0;
-}
+  .request-meta {
+    grid-template-columns: 1fr;
+  }
 
-.attachments-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+  .request-actions {
+    flex-direction: column;
+  }
 
-.attachment-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  font-size: 13px;
-  color: #555;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-
-.attachment-item:hover {
-  background: #f8f9ff;
-  border-color: #667eea;
-  color: #667eea;
-}
-
-.attachment-item svg {
-  flex-shrink: 0;
-}
-
-.attachment-name {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  .request-actions > * {
+    min-width: unset;
+  }
 }
 </style>

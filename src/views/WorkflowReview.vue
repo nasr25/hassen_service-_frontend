@@ -372,17 +372,17 @@
     <div v-if="assignModal.show" class="modal-overlay" @click="closeAssignModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h2>Assign Workflow Path</h2>
+          <h2>{{ $t('workflow.assignWorkflowPath') }}</h2>
           <button @click="closeAssignModal" class="modal-close">
             <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
             </svg>
           </button>
         </div>
-        <p class="modal-subtitle">Request: {{ assignModal.request?.title }}</p>
+        <p class="modal-subtitle">{{ $t('workflow.request') }}: {{ assignModal.request?.title }}</p>
 
         <div class="form-group">
-          <label class="form-label">Select Workflow Path *</label>
+          <label class="form-label">{{ $t('workflow.selectWorkflowPath') }} *</label>
           <div class="paths-list">
             <div
               v-for="path in workflowPaths"
@@ -395,7 +395,7 @@
               </div>
               <p class="path-description">{{ path.description }}</p>
               <div class="path-steps">
-                <strong>Steps:</strong>
+                <strong>{{ $t('workflow.steps') }}:</strong>
                 <span v-for="(step, index) in path.steps" :key="step.id">
                   {{ step.department?.name }}<span v-if="index < path.steps.length - 1"> → </span>
                 </span>
@@ -405,10 +405,10 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Comments (Optional)</label>
+          <label class="form-label">{{ $t('department.commentsOptional') }}</label>
           <textarea
             v-model="assignModal.comments"
-            placeholder="Add any comments about this assignment..."
+            :placeholder="$t('workflow.addCommentsPlaceholder')"
             rows="3"
             class="form-textarea"
           ></textarea>
@@ -416,7 +416,7 @@
 
         <div class="modal-actions">
           <BaseButton variant="secondary" @click="closeAssignModal">
-            Cancel
+            {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
             variant="primary"
@@ -424,7 +424,7 @@
             :disabled="!assignModal.pathId || assignModal.isLoading"
             :loading="assignModal.isLoading"
           >
-            Assign Path
+            {{ $t('workflow.assignPath') }}
           </BaseButton>
         </div>
       </div>
@@ -518,24 +518,24 @@
     <div v-if="completeModal.show" class="modal-overlay" @click="closeCompleteModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h2>Complete Request</h2>
+          <h2>{{ $t('workflow.completeRequest') }}</h2>
           <button @click="closeCompleteModal" class="modal-close">
             <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
             </svg>
           </button>
         </div>
-        <p class="modal-subtitle">Request: {{ completeModal.request?.title }}</p>
+        <p class="modal-subtitle">{{ $t('workflow.request') }}: {{ completeModal.request?.title }}</p>
 
         <div class="alert alert-success">
-          <strong>Final Approval:</strong> This will mark the request as completed and close the workflow.
+          <strong>{{ $t('workflow.completeRequest') }}:</strong> {{ $t('workflow.finalApprovalNote') }}
         </div>
 
         <div class="form-group">
-          <label class="form-label">Final Comments (Optional)</label>
+          <label class="form-label">{{ $t('workflow.finalComments') }}</label>
           <textarea
             v-model="completeModal.comments"
-            placeholder="Add any final comments about the completion..."
+            :placeholder="$t('workflow.finalCommentsPlaceholder')"
             rows="3"
             class="form-textarea"
           ></textarea>
@@ -543,7 +543,7 @@
 
         <div class="modal-actions">
           <BaseButton variant="secondary" @click="closeCompleteModal">
-            Cancel
+            {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
             variant="primary"
@@ -551,7 +551,7 @@
             :disabled="completeModal.isLoading"
             :loading="completeModal.isLoading"
           >
-            Complete Request
+            {{ $t('workflow.completeRequest') }}
           </BaseButton>
         </div>
       </div>
@@ -956,13 +956,13 @@ const confirmComplete = async () => {
       }
     )
 
-    success.value = 'Request completed successfully'
+    success.value = t('messages.success.requestCompleted')
     closeCompleteModal()
     await loadRequests()
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to complete request'
+    error.value = err.response?.data?.message || t('messages.error.failedToComplete')
   } finally {
     completeModal.value.isLoading = false
   }
