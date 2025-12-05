@@ -10,7 +10,8 @@
       <div class="login-content">
         <div class="login-header">
           <div class="logo-icon">
-            <svg width="56" height="56" viewBox="0 0 48 48" fill="none">
+            <img v-if="logo" :src="logo" alt="Logo" class="logo-image" />
+            <svg v-else width="56" height="56" viewBox="0 0 48 48" fill="none">
               <rect width="48" height="48" rx="12" fill="url(#gradient)" />
               <path d="M24 14L34 20V28L24 34L14 28V20L24 14Z" fill="white" opacity="0.9" />
               <defs>
@@ -148,10 +149,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useI18n } from 'vue-i18n'
+import { useSettings } from '../composables/useSettings'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import BaseButton from '../components/BaseButton.vue'
 import BaseInput from '../components/BaseInput.vue'
@@ -159,6 +161,11 @@ import BaseInput from '../components/BaseInput.vue'
 const router = useRouter()
 const authStore = useAuthStore()
 const { t } = useI18n()
+const { logo, fetchPublicSettings } = useSettings()
+
+onMounted(() => {
+  fetchPublicSettings()
+})
 
 const form = ref({
   email: '',
@@ -258,6 +265,12 @@ html[dir="rtl"] .language-switcher-wrapper {
   display: flex;
   justify-content: center;
   margin-bottom: var(--spacing-4);
+}
+
+.logo-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
 }
 
 .login-header h1 {
