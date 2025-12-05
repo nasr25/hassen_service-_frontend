@@ -196,7 +196,7 @@
                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                   </svg>
-                  Assign Path
+                  {{ $t('workflow.assignPath') }}
                 </BaseButton>
                 <BaseButton
                   variant="outline"
@@ -207,7 +207,7 @@
                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                   </svg>
-                  Request Details
+                  {{ $t('workflow.requestDetails') }}
                 </BaseButton>
                 <BaseButton
                   variant="error"
@@ -218,7 +218,7 @@
                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
                   </svg>
-                  Reject
+                  {{ $t('workflow.reject') }}
                 </BaseButton>
                 <BaseButton
                   variant="secondary"
@@ -229,7 +229,7 @@
                     <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
                     <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
                   </svg>
-                  {{ requestEvaluationStatus[request.id] ? 'View Evaluation' : 'Start Evaluation' }}
+                  {{ requestEvaluationStatus[request.id] ? $t('workflow.viewEditEvaluation') : $t('workflow.startEvaluation') }}
                 </BaseButton>
               </template>
 
@@ -244,7 +244,7 @@
                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                   </svg>
-                  Complete Request
+                  {{ $t('workflow.complete') }}
                 </BaseButton>
                 <BaseButton
                   variant="warning"
@@ -255,7 +255,7 @@
                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M7.707 3.293a1 1 0 010 1.414L5.414 7H11a7 7 0 017 7v2a1 1 0 11-2 0v-2a5 5 0 00-5-5H5.414l2.293 2.293a1 1 0 11-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
                   </svg>
-                  Return to Previous Dept
+                  {{ $t('workflow.returnToPrevious') }}
                 </BaseButton>
                 <BaseButton
                   variant="error"
@@ -266,7 +266,7 @@
                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
                   </svg>
-                  Reject
+                  {{ $t('workflow.reject') }}
                 </BaseButton>
                 <BaseButton
                   variant="secondary"
@@ -277,7 +277,7 @@
                     <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
                     <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
                   </svg>
-                  {{ requestEvaluationStatus[request.id] ? 'View Evaluation' : 'Start Evaluation' }}
+                  {{ requestEvaluationStatus[request.id] ? $t('workflow.viewEditEvaluation') : $t('workflow.startEvaluation') }}
                 </BaseButton>
               </template>
             </div>
