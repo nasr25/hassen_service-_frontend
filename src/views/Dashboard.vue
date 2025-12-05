@@ -134,8 +134,8 @@
               <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
           </div>
-          <h3>All Requests</h3>
-          <p>View all requests with history and status</p>
+          <h3>{{ $t('dashboard.allRequests.title') }}</h3>
+          <p>{{ $t('dashboard.allRequests.description') }}</p>
         </BaseCard>
 
         <BaseCard v-if="canViewDepartment" class="action-card" @click="goDepartmentWorkflow">
@@ -171,10 +171,10 @@
             <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
-            <h3>No recent activity</h3>
-            <p>Start by creating your first request</p>
+            <h3>{{ $t('dashboard.recentActivity.empty') }}</h3>
+            <p>{{ $t('dashboard.recentActivity.emptyMessage') }}</p>
             <BaseButton v-if="canCreateRequest" variant="primary" @click="goToNewRequest">
-              Create Request
+              {{ $t('dashboard.createRequest') }}
             </BaseButton>
           </div>
 
