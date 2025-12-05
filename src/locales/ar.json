@@ -175,6 +175,7 @@
     "workflowPath": "مسار سير العمل",
     "attachments": "المرفقات",
     "expectedDate": "تاريخ التنفيذ المتوقع",
+    "expectedExecutionDate": "تاريخ التنفيذ المتوقع",
     "optional": "اختياري",
     "uploadedFiles": "الملفات المرفوعة",
     "newRequest": "طلب جديد",

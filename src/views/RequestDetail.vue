@@ -8,7 +8,7 @@
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
             </svg>
-            Back to Requests
+            {{ $t('common.backToRequests') }}
           </BaseButton>
         </div>
         <div class="header-right">
@@ -20,7 +20,7 @@
             <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
               <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
             </svg>
-            Edit & Resubmit
+            {{ $t('request.editAndResubmit') }}
           </BaseButton>
         </div>
       </div>
@@ -36,15 +36,15 @@
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
           </svg>
-          <strong>More Details Required</strong>
+          <strong>{{ $t('request.moreDetailsRequired') }}</strong>
         </div>
-        <p>This request needs additional information. Please review the comments in the workflow history below, update your request, and resubmit.</p>
+        <p>{{ $t('request.moreDetailsMessage') }}</p>
       </div>
 
       <!-- Loading State -->
       <div v-if="isLoading" class="loading-state">
         <div class="spinner"></div>
-        <p>Loading request details...</p>
+        <p>{{ $t('request.loadingRequestDetails') }}</p>
       </div>
 
       <!-- Request Content -->
@@ -70,7 +70,7 @@
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                 </svg>
-                <span>Submitted By</span>
+                <span>{{ $t('request.submittedBy') }}</span>
               </div>
               <div class="info-value">{{ request.user?.name }}</div>
             </div>
@@ -81,7 +81,7 @@
                   <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
                   <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
                 </svg>
-                <span>Email</span>
+                <span>{{ $t('common.email') }}</span>
               </div>
               <div class="info-value">{{ request.user?.email }}</div>
             </div>
@@ -91,7 +91,7 @@
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
                 </svg>
-                <span>Submitted At</span>
+                <span>{{ $t('request.submittedAt') }}</span>
               </div>
               <div class="info-value">{{ formatDate(request.submitted_at || request.created_at) }}</div>
             </div>
@@ -101,7 +101,7 @@
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span>Completed At</span>
+                <span>{{ $t('request.completedAt') }}</span>
               </div>
               <div class="info-value">{{ formatDate(request.completed_at) }}</div>
             </div>
@@ -111,7 +111,7 @@
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
                 </svg>
-                <span>Expected Execution Date</span>
+                <span>{{ $t('request.expectedExecutionDate') }}</span>
               </div>
               <div class="info-value">{{ formatDate(request.expected_execution_date) }}</div>
             </div>
@@ -121,7 +121,7 @@
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
                 </svg>
-                <span>Current Department</span>
+                <span>{{ $t('request.currentDepartment') }}</span>
               </div>
               <div class="info-value">{{ request.current_department.name }}</div>
             </div>
@@ -131,7 +131,7 @@
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
                 </svg>
-                <span>Workflow Path</span>
+                <span>{{ $t('request.workflowPath') }}</span>
               </div>
               <div class="info-value">{{ request.workflow_path.name }}</div>
             </div>
@@ -139,13 +139,13 @@
 
           <!-- Description -->
           <div class="description-section">
-            <h4>Description</h4>
+            <h4>{{ $t('request.description') }}</h4>
             <p>{{ request.description }}</p>
           </div>
 
           <!-- Additional Details -->
           <div v-if="request.additional_details" class="description-section">
-            <h4>Additional Details</h4>
+            <h4>{{ $t('request.additionalDetails') }}</h4>
             <p>{{ request.additional_details }}</p>
           </div>
 
@@ -155,7 +155,7 @@
               <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
               </svg>
-              <h4>Rejection Reason</h4>
+              <h4>{{ $t('request.rejectionReason') }}</h4>
             </div>
             <p>{{ request.rejection_reason }}</p>
           </div>
@@ -168,7 +168,7 @@
               <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
               </svg>
-              <h3>Collaborating Employees</h3>
+              <h3>{{ $t('request.collaboratingEmployees') }}</h3>
               <BaseBadge variant="blue">{{ request.employees.length }}</BaseBadge>
             </div>
           </template>
@@ -214,7 +214,7 @@
               <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
               </svg>
-              <h3>Attachments</h3>
+              <h3>{{ $t('request.attachments') }}</h3>
               <BaseBadge variant="gray">{{ request.attachments.length }}</BaseBadge>
             </div>
           </template>
@@ -246,7 +246,7 @@
               <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
               </svg>
-              <h3>Workflow History</h3>
+              <h3>{{ $t('request.workflowHistory') }}</h3>
             </div>
           </template>
 
@@ -255,7 +255,7 @@
             <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
-            <p>No workflow history yet.</p>
+            <p>{{ $t('request.noWorkflowHistory') }}</p>
           </div>
 
           <!-- Timeline -->
@@ -279,27 +279,27 @@
 
                 <div class="timeline-details">
                   <div v-if="transition.actioned_by" class="detail-row">
-                    <span class="detail-label">By:</span>
+                    <span class="detail-label">{{ $t('workflow.by') }}</span>
                     <span class="detail-value">{{ transition.actioned_by.name }} ({{ transition.actioned_by.email }})</span>
                   </div>
 
                   <div v-if="transition.from_department_id" class="detail-row">
-                    <span class="detail-label">From:</span>
+                    <span class="detail-label">{{ $t('workflow.from') }}</span>
                     <span class="detail-value">{{ getDepartmentName(transition.from_department_id) }}</span>
                   </div>
 
                   <div v-if="transition.to_department" class="detail-row">
-                    <span class="detail-label">To:</span>
+                    <span class="detail-label">{{ $t('workflow.to') }}</span>
                     <span class="detail-value">{{ transition.to_department.name }}</span>
                   </div>
 
                   <div v-if="transition.to_user_id" class="detail-row">
-                    <span class="detail-label">Assigned to:</span>
+                    <span class="detail-label">{{ $t('workflow.assignedTo') }}</span>
                     <span class="detail-value">User ID {{ transition.to_user_id }}</span>
                   </div>
 
                   <div class="detail-row">
-                    <span class="detail-label">Status Change:</span>
+                    <span class="detail-label">{{ $t('workflow.statusChange') }}</span>
                     <div class="status-change">
                       <BaseBadge :variant="getStatusVariant(transition.from_status)" class="mini-badge">
                         {{ formatStatus(transition.from_status) }}
@@ -314,7 +314,7 @@
                   </div>
 
                   <div v-if="transition.comments" class="transition-comments">
-                    <span class="detail-label">Comments:</span>
+                    <span class="detail-label">{{ $t('workflow.comments') }}</span>
                     <p class="comment-text">{{ transition.comments }}</p>
                   </div>
                 </div>
@@ -331,6 +331,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import AppLayout from '../components/AppLayout.vue'
 import BaseCard from '../components/BaseCard.vue'
@@ -341,6 +342,7 @@ import { API_URL, BASE_URL } from '../config/api'
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const request = ref(null)
 const error = ref(null)
@@ -364,7 +366,7 @@ const loadRequest = async () => {
 
     request.value = response.data.request
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to load request details'
+    error.value = err.response?.data?.message || t('request.loadFailed')
   } finally {
     isLoading.value = false
   }
@@ -392,29 +394,19 @@ const getStatusVariant = (status) => {
 }
 
 const formatStatus = (status) => {
-  if (!status) return 'N/A'
-  return status
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
+  if (!status) return t('common.notAvailable')
+  const statusKey = `status.${status}`
+  return t(statusKey)
 }
 
 const formatAction = (action) => {
-  if (!action) return 'N/A'
-  const actionMap = {
-    'assign_path': 'Path Assigned',
-    'assign': 'Assigned to Employee',
-    'complete': 'Completed/Returned',
-    'reject': 'Rejected',
-    'request_details': 'More Details Requested',
-    'return_to_department': 'Returned to Department',
-    'submit': 'Submitted'
-  }
-  return actionMap[action] || action.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  if (!action) return t('common.notAvailable')
+  const actionKey = `workflow.actions.${action}`
+  return t(actionKey)
 }
 
 const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
+  if (!dateString) return t('common.notAvailable')
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
@@ -424,7 +416,7 @@ const formatDate = (dateString) => {
 }
 
 const formatDateTime = (dateString) => {
-  if (!dateString) return 'N/A'
+  if (!dateString) return t('common.notAvailable')
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
@@ -436,9 +428,9 @@ const formatDateTime = (dateString) => {
 }
 
 const formatFileSize = (bytes) => {
-  if (!bytes) return '0 Bytes'
+  if (!bytes) return t('common.zeroBytes')
   const k = 1024
-  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  const sizes = [t('common.bytes'), t('common.kb'), t('common.mb'), t('common.gb')]
   const i = Math.floor(Math.log(bytes) / Math.log(k))
   return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
 }
