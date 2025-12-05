@@ -162,7 +162,7 @@
         </BaseCard>
 
         <!-- Collaborating Employees Section -->
-        <BaseCard v-if="request.employees && request.employees.length > 0" class="employees-card">
+        <BaseCard v-if="request.idea_type === 'shared' && request.employees && request.employees.length > 0" class="employees-card">
           <template #header>
             <div class="section-header">
               <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
