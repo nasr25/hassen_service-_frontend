@@ -232,7 +232,7 @@ onMounted(async () => {
 // Fetch statistics from API
 const loadStatistics = async () => {
   try {
-    const response = await axios.get('${API_URL}/dashboard/statistics', {
+    const response = await axios.get(`${API_URL}/dashboard/statistics`, {
       headers: {
         Authorization: `Bearer ${authStore.token}`
       }
