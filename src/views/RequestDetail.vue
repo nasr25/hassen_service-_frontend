@@ -93,7 +93,7 @@
                 </svg>
                 <span>{{ $t('request.submittedAt') }}</span>
               </div>
-              <div class="info-value">{{ formatDate(request.submitted_at || request.created_at) }}</div>
+              <div class="info-value">{{ formatDateTime(request.submitted_at || request.created_at) }}</div>
             </div>
 
             <div v-if="request.completed_at" class="info-item">
@@ -103,7 +103,7 @@
                 </svg>
                 <span>{{ $t('request.completedAt') }}</span>
               </div>
-              <div class="info-value">{{ formatDate(request.completed_at) }}</div>
+              <div class="info-value">{{ formatDateTime(request.completed_at) }}</div>
             </div>
 
             <div v-if="request.expected_execution_date" class="info-item">
