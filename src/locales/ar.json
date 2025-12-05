@@ -146,6 +146,8 @@
     "currentDepartment": "القسم الحالي",
     "currentLocation": "الموقع الحالي",
     "assignedTo": "معين إلى",
+    "unassigned": "غير معين",
+    "notAssigned": "غير معين",
     "workflowPath": "مسار سير العمل",
     "attachments": "المرفقات",
     "expectedDate": "تاريخ التنفيذ المتوقع",
@@ -657,6 +659,7 @@
       "unauthorized": "غير مصرح بالوصول",
       "validation": "يرجى التحقق من المدخلات",
       "loadingFailed": "فشل التحميل",
+      "failedToLoadRequests": "فشل تحميل الطلبات",
       "savingFailed": "فشل الحفظ"
     },
     "confirm": {
@@ -670,6 +673,9 @@
       "details": "جاري تحميل التفاصيل...",
       "evaluations": "جاري تحميل أسئلة التقييم...",
       "employees": "جاري تحميل الموظفين..."
+    },
+    "empty": {
+      "noRequestsFound": "لم يتم العثور على طلبات."
     }
   }
 }

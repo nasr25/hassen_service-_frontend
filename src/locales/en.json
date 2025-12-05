@@ -146,6 +146,8 @@
     "currentDepartment": "Current Department",
     "currentLocation": "Current Location",
     "assignedTo": "Assigned To",
+    "unassigned": "Unassigned",
+    "notAssigned": "Not assigned",
     "workflowPath": "Workflow Path",
     "attachments": "Attachments",
     "expectedDate": "Expected Execution Date",
@@ -657,6 +659,7 @@
       "unauthorized": "Unauthorized access",
       "validation": "Please check your input",
       "loadingFailed": "Loading failed",
+      "failedToLoadRequests": "Failed to load requests",
       "savingFailed": "Saving failed"
     },
     "confirm": {
@@ -670,6 +673,9 @@
       "details": "Loading details...",
       "evaluations": "Loading evaluation questions...",
       "employees": "Loading employees..."
+    },
+    "empty": {
+      "noRequestsFound": "No requests found."
     }
   }
 }
