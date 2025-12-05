@@ -8,7 +8,7 @@
           <p class="welcome-subtitle">{{ $t('dashboard.subtitle') }}</p>
         </div>
         <BaseBadge :variant="getRoleBadgeVariant(user?.role)" class="role-badge-large">
-          {{ user?.role }}
+          {{ $t('admin.' + (user?.role || 'user').toLowerCase()) }}
         </BaseBadge>
       </div>
 
