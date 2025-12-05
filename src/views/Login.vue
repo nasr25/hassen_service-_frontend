@@ -96,7 +96,8 @@
     <div class="welcome-panel">
       <div class="welcome-content">
         <div class="welcome-icon">
-          <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+          <img v-if="logo" :src="logo" alt="Logo" class="welcome-logo-image" />
+          <svg v-else width="120" height="120" viewBox="0 0 120 120" fill="none">
             <circle cx="60" cy="60" r="60" fill="rgba(255, 255, 255, 0.1)" />
             <path d="M60 30L80 42V66L60 78L40 66V42L60 30Z" fill="white" opacity="0.9" stroke="white" stroke-width="2"/>
             <circle cx="60" cy="54" r="24" fill="none" stroke="white" stroke-width="2" opacity="0.5"/>
@@ -435,6 +436,13 @@ html[dir="rtl"] .test-account:hover {
   margin-bottom: var(--spacing-8);
   display: flex;
   justify-content: center;
+}
+
+.welcome-logo-image {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 .welcome-title {
