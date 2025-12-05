@@ -401,7 +401,9 @@ const formatStatus = (status) => {
 
 const formatAction = (action) => {
   if (!action) return t('common.notAvailable')
-  const actionKey = `workflow.actions.${action}`
+  // Convert snake_case to camelCase for translation key
+  const camelCaseAction = action.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+  const actionKey = `workflow.actions.${camelCaseAction}`
   return t(actionKey)
 }
 
