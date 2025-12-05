@@ -124,8 +124,8 @@
                     </svg>
                   </div>
                   <div class="notification-content">
-                    <div class="notification-title">{{ notification.title }}</div>
-                    <div class="notification-message">{{ notification.message }}</div>
+                    <div class="notification-title">{{ getNotificationTitle(notification) }}</div>
+                    <div class="notification-message">{{ getNotificationMessage(notification) }}</div>
                     <div class="notification-time">{{ formatTime(notification.created_at) }}</div>
                   </div>
                   <button
@@ -378,6 +378,44 @@ const formatTime = (dateString) => {
   if (hours < 24) return t('common.hoursAgo', { count: hours })
   if (days < 7) return t('common.daysAgo', { count: days })
   return date.toLocaleDateString()
+}
+
+// Notification translation helpers
+const getNotificationTitle = (notification) => {
+  const typeMap = {
+    'request_created': 'notifications.titles.newRequestSubmitted',
+    'request_status_changed': 'notifications.titles.requestResubmitted',
+    'request_assigned': 'notifications.titles.requestAssignedToYou',
+    'request_approved': 'notifications.titles.requestCompleted',
+    'request_rejected': 'notifications.titles.requestRejected',
+    'request_completed': 'notifications.titles.requestCompleted'
+  }
+
+  const key = typeMap[notification.type]
+  return key ? t(key) : notification.title
+}
+
+const getNotificationMessage = (notification) => {
+  const typeMap = {
+    'request_created': 'notifications.messages.newRequestSubmitted',
+    'request_status_changed': 'notifications.messages.requestResubmitted',
+    'request_assigned': 'notifications.messages.requestAssignedToYou',
+    'request_approved': 'notifications.messages.requestCompleted',
+    'request_rejected': 'notifications.messages.requestRejected',
+    'request_completed': 'notifications.messages.requestCompleted'
+  }
+
+  const key = typeMap[notification.type]
+  if (!key) return notification.message
+
+  // Parse data for placeholder replacement
+  const data = notification.data || {}
+  return t(key, {
+    id: notification.request_id || '',
+    user: data.user_name || '',
+    path: data.path_name || '',
+    employee: data.employee_name || ''
+  })
 }
 
 // Fetch settings on mount

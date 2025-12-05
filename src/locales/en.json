@@ -57,7 +57,31 @@
   },
   "notifications": {
     "markAllRead": "Mark all as read",
-    "noNotifications": "No notifications yet"
+    "noNotifications": "No notifications yet",
+    "titles": {
+      "newRequestSubmitted": "New Request Submitted",
+      "requestResubmitted": "Request Resubmitted",
+      "requestAssignedToPath": "Request Assigned to Workflow Path",
+      "requestAssignedToEmployee": "Request Assigned to Employee",
+      "requestAssignedToYou": "Request Assigned to You",
+      "requestRejected": "Request Rejected",
+      "requestCompleted": "Request Completed",
+      "requestReturnedForRevision": "Request Returned for Revision",
+      "requestReturnedToManager": "Request Returned to Manager",
+      "requestReturnedToDeptA": "Request Returned to Department A"
+    },
+    "messages": {
+      "newRequestSubmitted": "A new request #{id} has been submitted by {user}",
+      "requestResubmitted": "Request #{id} has been resubmitted with additional details",
+      "requestAssignedToPath": "Request #{id} has been assigned to workflow path: {path}",
+      "requestAssignedToEmployee": "Request #{id} has been assigned to employee: {employee}",
+      "requestAssignedToYou": "Request #{id} has been assigned to you",
+      "requestRejected": "Request #{id} has been rejected",
+      "requestCompleted": "Request #{id} has been completed",
+      "requestReturnedForRevision": "Request #{id} has been returned for revision",
+      "requestReturnedToManager": "Request #{id} has been returned to the manager",
+      "requestReturnedToDeptA": "Request #{id} has been returned to Department A"
+    }
   },
   "auth": {
     "login": "Login",

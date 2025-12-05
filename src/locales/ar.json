@@ -57,7 +57,31 @@
   },
   "notifications": {
     "markAllRead": "تعليم الكل كمقروء",
-    "noNotifications": "لا توجد إشعارات بعد"
+    "noNotifications": "لا توجد إشعارات بعد",
+    "titles": {
+      "newRequestSubmitted": "تم تقديم طلب جديد",
+      "requestResubmitted": "تم إعادة تقديم الطلب",
+      "requestAssignedToPath": "تم تعيين الطلب إلى مسار العمل",
+      "requestAssignedToEmployee": "تم تعيين الطلب إلى الموظف",
+      "requestAssignedToYou": "تم تعيين الطلب إليك",
+      "requestRejected": "تم رفض الطلب",
+      "requestCompleted": "تم إكمال الطلب",
+      "requestReturnedForRevision": "تم إرجاع الطلب للمراجعة",
+      "requestReturnedToManager": "تم إرجاع الطلب إلى المدير",
+      "requestReturnedToDeptA": "تم إرجاع الطلب إلى القسم أ"
+    },
+    "messages": {
+      "newRequestSubmitted": "تم تقديم طلب جديد #{id} من قبل {user}",
+      "requestResubmitted": "تم إعادة تقديم الطلب #{id} مع تفاصيل إضافية",
+      "requestAssignedToPath": "تم تعيين الطلب #{id} إلى مسار العمل: {path}",
+      "requestAssignedToEmployee": "تم تعيين الطلب #{id} إلى الموظف: {employee}",
+      "requestAssignedToYou": "تم تعيين الطلب #{id} إليك",
+      "requestRejected": "تم رفض الطلب #{id}",
+      "requestCompleted": "تم إكمال الطلب #{id}",
+      "requestReturnedForRevision": "تم إرجاع الطلب #{id} للمراجعة",
+      "requestReturnedToManager": "تم إرجاع الطلب #{id} إلى المدير",
+      "requestReturnedToDeptA": "تم إرجاع الطلب #{id} إلى القسم أ"
+    }
   },
   "auth": {
     "login": "تسجيل الدخول",
