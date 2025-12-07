@@ -90,18 +90,18 @@
 
             <div class="template-body">
               <div class="template-event">
-                <code>{{ template.event_type }}</code>
+                <code>{{ $t(template.event_type) }}</code>
               </div>
               <div class="template-description">
                 {{ template.description }}
               </div>
               <div class="template-subjects">
                 <div class="subject-line">
-                  <span class="lang-label">EN:</span>
+                  <span class="lang-label">{{ $t('common.english') }}:</span>
                   <span class="subject-text">{{ template.subject_en }}</span>
                 </div>
                 <div class="subject-line">
-                  <span class="lang-label">AR:</span>
+                  <span class="lang-label">{{ $t('common.arabic') }}:</span>
                   <span class="subject-text">{{ template.subject_ar }}</span>
                 </div>
               </div>
@@ -294,10 +294,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import axios from 'axios'
+import { useAuthStore } from '../../stores/auth'
 import AppLayout from '../../components/AppLayout.vue'
-import api from '../../services/api'
+import { API_URL } from '../../config/api'
 
 const { t } = useI18n()
+const authStore = useAuthStore()
 
 const activeTab = ref('user')
 const templates = ref([])
@@ -357,7 +360,9 @@ const fetchTemplates = async () => {
   error.value = ''
 
   try {
-    const response = await api.get('/email-templates')
+    const response = await axios.get(`${API_URL}/email-templates`, {
+      headers: { Authorization: `Bearer ${authStore.token}` }
+    })
     templates.value = response.data.templates || []
   } catch (err) {
     error.value = err.response?.data?.message || t('messages.error.failedToFetch')
@@ -405,7 +410,9 @@ const saveTemplate = async () => {
   success.value = ''
 
   try {
-    await api.put(`/email-templates/${editForm.value.id}`, editForm.value)
+    await axios.put(`${API_URL}/email-templates/${editForm.value.id}`, editForm.value, {
+      headers: { Authorization: `Bearer ${authStore.token}` }
+    })
     success.value = t('messages.success.templateUpdated')
     closeEditModal()
     fetchTemplates()
@@ -416,9 +423,11 @@ const saveTemplate = async () => {
 
 const toggleTemplateStatus = async (template) => {
   try {
-    await api.put(`/email-templates/${template.id}`, {
+    await axios.put(`${API_URL}/email-templates/${template.id}`, {
       ...template,
       is_active: !template.is_active
+    }, {
+      headers: { Authorization: `Bearer ${authStore.token}` }
     })
     success.value = t('messages.success.statusUpdated')
     fetchTemplates()
@@ -448,8 +457,10 @@ const sendTestEmail = async () => {
   success.value = ''
 
   try {
-    await api.post(`/email-templates/${testEmail.value.template.id}/test`, {
+    await axios.post(`${API_URL}/email-templates/${testEmail.value.template.id}/test`, {
       email: testEmail.value.email
+    }, {
+      headers: { Authorization: `Bearer ${authStore.token}` }
     })
     success.value = t('messages.success.testEmailSent')
     closeTestEmailModal()

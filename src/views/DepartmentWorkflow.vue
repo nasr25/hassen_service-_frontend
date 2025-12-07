@@ -293,7 +293,14 @@
     <!-- Path Evaluation Modal (Manager) -->
     <div v-if="pathEvaluationModal.show" class="modal-overlay" @click="closePathEvaluationModal">
       <div class="modal-content path-evaluation-modal" @click.stop>
-        <h2>{{ $t('department.pathEvaluationRequired') }}</h2>
+        <div class="modal-header">
+          <h2>{{ $t('department.pathEvaluationRequired') }}</h2>
+          <button @click="closePathEvaluationModal" class="modal-close">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
         <p class="modal-subtitle">{{ $t('request.request') }}: {{ pathEvaluationModal.request?.title }}</p>
 
         <div v-if="pathEvaluationModal.action" class="alert alert-info">
@@ -304,50 +311,56 @@
           <span v-else-if="pathEvaluationModal.action === 'return'">{{ $t('department.returnToDeptAAction') }}</span>
         </div>
 
-        <div class="alert alert-info">
-          <strong>{{ $t('evaluations.notes') }}:</strong> {{ $t('department.evaluateNote') }}
-        </div>
-
         <div v-if="pathEvaluationModal.isLoading" class="loading-state">
           <div class="spinner"></div>
           <p>{{ $t('department.loadingQuestions') }}</p>
         </div>
 
-        <div v-else-if="pathEvaluationModal.questions.length === 0" class="alert alert-info">
-          <strong>{{ $t('department.noQuestions') }}</strong>
-          <p style="margin-top: 8px; font-size: 13px;">{{ $t('department.canProceed') }}</p>
+        <div v-else-if="pathEvaluationModal.questions.length === 0" class="alert alert-warning">
+          {{ $t('department.noQuestions') }} {{ $t('department.canProceed') }}
         </div>
 
-        <div v-else class="evaluation-questions-list">
+        <div v-else class="evaluation-form">
           <div v-for="(question, index) in pathEvaluationModal.questions" :key="question.id" class="evaluation-question">
-            <h4 class="question-title">
-              <span class="question-number">Q{{ index + 1 }}</span>
-              {{ question.question }}
-            </h4>
+            <div class="question-header">
+              <BaseBadge variant="primary">Q{{ index + 1 }}</BaseBadge>
+              <BaseBadge variant="gray">{{ $t('department.applied') }} / {{ $t('department.notApplied') }}</BaseBadge>
+            </div>
+            <p class="question-text">{{ question.question }}</p>
 
-            <div class="evaluation-toggles">
-              <button
-                :class="['toggle-btn', 'applied', { active: pathEvaluationModal.evaluations[question.id]?.is_applied === true }]"
-                @click="setEvaluation(question.id, true)"
-              >
-                {{ $t('department.applied') }}
-              </button>
-              <button
-                :class="['toggle-btn', 'not-applied', { active: pathEvaluationModal.evaluations[question.id]?.is_applied === false }]"
-                @click="setEvaluation(question.id, false)"
-              >
-                {{ $t('department.notApplied') }}
-              </button>
+            <div class="answer-section">
+              <label>{{ $t('department.answer') }} *</label>
+              <div class="toggle-buttons">
+                <button
+                  type="button"
+                  :class="['toggle-btn', 'toggle-applied', { active: pathEvaluationModal.evaluations[question.id]?.is_applied === true }]"
+                  @click="setEvaluation(question.id, true)"
+                >
+                  ✓ {{ $t('department.applied') }}
+                </button>
+                <button
+                  type="button"
+                  :class="['toggle-btn', 'toggle-not-applied', { active: pathEvaluationModal.evaluations[question.id]?.is_applied === false }]"
+                  @click="setEvaluation(question.id, false)"
+                >
+                  ✗ {{ $t('department.notApplied') }}
+                </button>
+              </div>
             </div>
 
-            <div class="form-group">
-              <label>{{ $t('department.notes') }}</label>
+            <div class="notes-section">
+              <label>{{ $t('department.notes') }} ({{ $t('common.optional') }})</label>
               <textarea
                 v-model="pathEvaluationModal.evaluations[question.id].notes"
                 :placeholder="$t('department.addComments')"
                 rows="2"
+                class="form-textarea"
               ></textarea>
             </div>
+          </div>
+
+          <div class="evaluation-summary">
+            <strong>{{ $t('department.progress') }}:</strong> {{ answeredPathQuestionsCount }} / {{ pathEvaluationModal.questions.length }} {{ $t('department.questionsAnswered') }}
           </div>
         </div>
 
@@ -367,8 +380,9 @@
             variant="primary"
             @click="submitPathEvaluation"
             :disabled="!isEvaluationComplete || pathEvaluationModal.isSaving"
+            :loading="pathEvaluationModal.isSaving"
           >
-            {{ pathEvaluationModal.isSaving ? $t('department.saving') : $t('department.saveAndContinue') }}
+            {{ $t('department.submitAndContinue') }}
           </BaseButton>
         </div>
       </div>
@@ -768,6 +782,15 @@ const isEvaluationComplete = computed(() => {
     const evaluation = pathEvaluationModal.value.evaluations[q.id]
     return evaluation && evaluation.is_applied !== undefined && evaluation.is_applied !== null
   })
+})
+
+const answeredPathQuestionsCount = computed(() => {
+  if (pathEvaluationModal.value.questions.length === 0) return 0
+
+  return pathEvaluationModal.value.questions.filter(q => {
+    const evaluation = pathEvaluationModal.value.evaluations[q.id]
+    return evaluation && evaluation.is_applied !== undefined && evaluation.is_applied !== null
+  }).length
 })
 
 const openPathEvaluationModal = async (request, action) => {
@@ -1472,99 +1495,148 @@ const rejectIdea = async (request) => {
 
 /* Path Evaluation Modal */
 .path-evaluation-modal {
-  max-width: 700px;
+  max-width: 800px;
 }
 
-.evaluation-questions-list {
-  margin-top: var(--spacing-6);
+.evaluation-form {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: var(--spacing-2);
 }
 
 .evaluation-question {
   background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-5);
-  margin-bottom: var(--spacing-5);
-  border: 2px solid var(--color-border);
+  padding: var(--spacing-6);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--spacing-4);
+  border-left: 4px solid var(--color-primary-500);
 }
 
-.question-title {
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-3);
+  gap: var(--spacing-2);
+}
+
+.question-text {
   color: var(--color-text-primary);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-relaxed);
   margin: 0 0 var(--spacing-4) 0;
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-3);
-  line-height: 1.5;
 }
 
-.question-number {
-  background: var(--color-primary-600);
-  color: white;
-  padding: var(--spacing-1) var(--spacing-3);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  flex-shrink: 0;
-}
-
-.evaluation-toggles {
-  display: flex;
-  gap: var(--spacing-3);
+.answer-section {
   margin-bottom: var(--spacing-4);
+}
+
+.answer-section label {
+  display: block;
+  margin-bottom: var(--spacing-3);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: var(--spacing-3);
 }
 
 .toggle-btn {
   flex: 1;
-  padding: var(--spacing-3);
+  padding: var(--spacing-4);
   border: 2px solid var(--color-border);
+  background: var(--color-background);
   border-radius: var(--radius-lg);
-  background: white;
-  cursor: pointer;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
+  cursor: pointer;
   transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
 }
 
 .toggle-btn:hover {
-  border-color: var(--color-primary-500);
-  background: var(--color-primary-50);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.toggle-btn.applied.active {
+.toggle-applied {
+  color: var(--color-success-700);
+  border-color: var(--color-success-200);
+}
+
+.toggle-applied:hover {
+  background: var(--color-success-50);
+  border-color: var(--color-success-300);
+}
+
+.toggle-applied.active {
   background: var(--color-success-600);
   color: white;
   border-color: var(--color-success-600);
+  transform: scale(1.05);
 }
 
-.toggle-btn.not-applied.active {
+.toggle-not-applied {
+  color: var(--color-error-700);
+  border-color: var(--color-error-200);
+}
+
+.toggle-not-applied:hover {
+  background: var(--color-error-50);
+  border-color: var(--color-error-300);
+}
+
+.toggle-not-applied.active {
   background: var(--color-error-600);
   color: white;
   border-color: var(--color-error-600);
+  transform: scale(1.05);
 }
 
-.toggle-btn.applied:not(.active):hover {
-  border-color: var(--color-success-600);
-  background: var(--color-success-50);
+.notes-section {
+  margin-top: var(--spacing-4);
 }
 
-.toggle-btn.not-applied:not(.active):hover {
-  border-color: var(--color-error-600);
-  background: var(--color-error-50);
-}
-
-.evaluation-question .form-group {
-  margin-bottom: 0;
-}
-
-.evaluation-question .form-group label {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-}
-
-.evaluation-question .form-group textarea {
+.notes-section label {
+  display: block;
+  margin-bottom: var(--spacing-2);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
   font-size: var(--font-size-sm);
-  padding: var(--spacing-2);
+}
+
+.form-textarea {
+  width: 100%;
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  resize: vertical;
+  transition: all var(--transition-fast);
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.evaluation-summary {
+  background: var(--color-success-50);
+  color: var(--color-success-700);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-4);
 }
 
 /* Responsive */

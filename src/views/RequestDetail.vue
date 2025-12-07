@@ -440,7 +440,7 @@ const formatFileSize = (bytes) => {
 const getDepartmentName = (deptId) => {
   // Try to find department name from transitions
   const transition = request.value?.transitions?.find(t => t.from_department_id === deptId)
-  return transition?.from_department?.name || `Department ${deptId}`
+  return transition?.from_department?.name || `${t('common.department')} ${deptId}`
 }
 </script>
 

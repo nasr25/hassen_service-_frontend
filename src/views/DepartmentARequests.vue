@@ -111,6 +111,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import axios from 'axios'
 import AppLayout from '../components/AppLayout.vue'
@@ -119,6 +120,7 @@ import BaseButton from '../components/BaseButton.vue'
 import BaseBadge from '../components/BaseBadge.vue'
 import { API_URL, BASE_URL } from '../config/api'
 
+const { t } = useI18n()
 const router = useRouter()
 const authStore = useAuthStore()
 
@@ -143,7 +145,7 @@ const loadRequests = async () => {
 
     requests.value = response.data.requests
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to load requests'
+    error.value = err.response?.data?.message || t('messages.error.failedToLoadRequests')
   } finally {
     isLoading.value = false
   }
@@ -167,7 +169,7 @@ const getStatusVariant = (status) => {
 }
 
 const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
+  if (!dateString) return t('common.notAvailable')
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', {
     year: 'numeric',

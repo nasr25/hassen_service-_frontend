@@ -43,6 +43,9 @@
         <router-link to="/admin/email-templates" class="tab tab-link">
           📧 {{ $t('admin.emailTemplates') }}
         </router-link>
+        <router-link to="/admin/audit-logs" class="tab tab-link">
+          📜 {{ $t('admin.auditLogs') }}
+        </router-link>
       </div>
 
       <div v-if="activeTab === 'departments'" class="tab-content">
@@ -66,7 +69,7 @@
               <tr v-for="dept in departments" :key="dept.id">
                 <td>
                   <strong>{{ dept.name }}</strong>
-                  <span v-if="dept.is_department_a" class="badge badge-primary">Dept A</span>
+                  <span v-if="dept.is_department_a" class="badge badge-primary">{{ $t('admin.deptA') }}</span>
                 </td>
                 <td><code>{{ dept.code }}</code></td>
                 <td>{{ dept.users?.length || 0 }}</td>
@@ -113,7 +116,7 @@
                       {{ dept.code }}
                     </span>
                   </span>
-                  <span v-else class="text-muted">None</span>
+                  <span v-else class="text-muted">{{ $t('common.none') }}</span>
                 </td>
                 <td class="actions">
                   <button @click="openUserModal(user)" class="btn-icon">✏️</button>
@@ -139,7 +142,7 @@
               <h3>{{ dept.name }}</h3>
               <span class="badge badge-info">{{ dept.users?.length || 0 }}</span>
             </div>
-            <div v-if="!dept.users || dept.users.length === 0" class="empty-message">No members</div>
+            <div v-if="!dept.users || dept.users.length === 0" class="empty-message">{{ $t('admin.noMembers') }}</div>
             <div v-else class="members-list">
               <div v-for="user in dept.users" :key="user.id" class="member-item">
                 <div class="member-info">
@@ -182,20 +185,20 @@
               <div class="question-body">
                 <p class="question-text">{{ question.question }}</p>
                 <div class="question-meta">
-                  <span class="format-badge">Applied / Not Applied</span>
-                  <span class="question-date">Created: {{ formatDate(question.created_at) }}</span>
+                  <span class="format-badge">{{ $t('admin.appliedNotApplied') }}</span>
+                  <span class="question-date">{{ $t('common.created') }}: {{ formatDate(question.created_at) }}</span>
                 </div>
               </div>
               <div class="question-actions">
-                <button @click="openQuestionModal(question)" class="btn-icon">✏️ Edit</button>
+                <button @click="openQuestionModal(question)" class="btn-icon">✏️ {{ $t('common.edit') }}</button>
                 <button
                   @click="toggleQuestionStatus(question)"
                   class="btn-icon"
-                  :title="question.is_active ? 'Deactivate' : 'Activate'"
+                  :title="question.is_active ? $t('common.deactivate') : $t('common.activate')"
                 >
                   {{ question.is_active ? '⏸️' : '▶️' }}
                 </button>
-                <button @click="deleteQuestion(question)" class="btn-icon btn-danger">🗑️ Delete</button>
+                <button @click="deleteQuestion(question)" class="btn-icon btn-danger">🗑️ {{ $t('common.delete') }}</button>
               </div>
             </div>
           </div>
@@ -231,20 +234,20 @@
                   <div class="question-body">
                     <p class="question-text">{{ question.question }}</p>
                     <div class="question-meta">
-                      <span class="format-badge">Applied / Not Applied</span>
-                      <span class="question-date">Created: {{ formatDate(question.created_at) }}</span>
+                      <span class="format-badge">{{ $t('admin.appliedNotApplied') }}</span>
+                      <span class="question-date">{{ $t('common.created') }}: {{ formatDate(question.created_at) }}</span>
                     </div>
                   </div>
                   <div class="question-actions">
-                    <button @click="openPathQuestionModal(question)" class="btn-icon">✏️ Edit</button>
+                    <button @click="openPathQuestionModal(question)" class="btn-icon">✏️ {{ $t('common.edit') }}</button>
                     <button
                       @click="togglePathQuestionStatus(question)"
                       class="btn-icon"
-                      :title="question.is_active ? 'Deactivate' : 'Activate'"
+                      :title="question.is_active ? $t('common.deactivate') : $t('common.activate')"
                     >
                       {{ question.is_active ? '⏸️' : '▶️' }}
                     </button>
-                    <button @click="deletePathQuestion(question)" class="btn-icon btn-danger">🗑️ Delete</button>
+                    <button @click="deletePathQuestion(question)" class="btn-icon btn-danger">🗑️ {{ $t('common.delete') }}</button>
                   </div>
                 </div>
               </div>
@@ -259,30 +262,30 @@
           <!-- Roles Section -->
           <div class="permissions-section">
             <div class="section-header">
-              <h2>Roles ({{ roles.length }})</h2>
-              <button @click="openRoleModal()" class="btn-primary">➕ Create Role</button>
+              <h2>{{ $t('admin.roles') }} ({{ roles.length }})</h2>
+              <button @click="openRoleModal()" class="btn-primary">➕ {{ $t('admin.createRole') }}</button>
             </div>
-            <div v-if="isLoading" class="loading">Loading...</div>
+            <div v-if="isLoading" class="loading">{{ $t('common.loading') }}</div>
             <div v-else class="table-container">
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th>Role Name</th>
-                    <th>Permissions</th>
-                    <th>Users</th>
-                    <th>Actions</th>
+                    <th>{{ $t('admin.roleName') }}</th>
+                    <th>{{ $t('admin.permissions') }}</th>
+                    <th>{{ $t('admin.users') }}</th>
+                    <th>{{ $t('admin.actions') }}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="role in roles" :key="role.id">
                     <td><strong>{{ role.name }}</strong></td>
                     <td>
-                      <span class="badge badge-info">{{ role.permissions?.length || 0 }} permissions</span>
+                      <span class="badge badge-info">{{ role.permissions?.length || 0 }} {{ $t('admin.permissions').toLowerCase() }}</span>
                     </td>
                     <td>{{ role.users_count || 0 }}</td>
                     <td class="actions">
-                      <button @click="openRoleModal(role)" class="btn-icon" title="Edit Role">✏️</button>
-                      <button @click="deleteRole(role)" class="btn-icon btn-danger" :disabled="['Super Admin', 'Admin'].includes(role.name)" title="Delete Role">🗑️</button>
+                      <button @click="openRoleModal(role)" class="btn-icon" :title="$t('admin.editRole')">✏️</button>
+                      <button @click="deleteRole(role)" class="btn-icon btn-danger" :disabled="['Super Admin', 'Admin'].includes(role.name)" :title="$t('admin.deleteRole')">🗑️</button>
                     </td>
                   </tr>
                 </tbody>
@@ -293,10 +296,10 @@
           <!-- User Role Assignment Section -->
           <div class="permissions-section">
             <div class="section-header">
-              <h2>User Role Assignments</h2>
-              <button @click="openUserRoleModal()" class="btn-primary">🔗 Assign Role to User</button>
+              <h2>{{ $t('admin.userRoleAssignments') }}</h2>
+              <button @click="openUserRoleModal()" class="btn-primary">🔗 {{ $t('admin.assignRole') }}</button>
             </div>
-            <div v-if="isLoading" class="loading">Loading...</div>
+            <div v-if="isLoading" class="loading">{{ $t('common.loading') }}</div>
             <div v-else class="user-roles-grid">
               <div v-for="user in users" :key="user.id" class="user-role-card">
                 <div class="user-role-header">
@@ -310,9 +313,9 @@
                     <span v-if="user.roles && user.roles.length > 0">
                       <span v-for="role in user.roles" :key="role.id" class="badge badge-primary">{{ role.name }}</span>
                     </span>
-                    <span v-else class="text-muted">No roles assigned</span>
+                    <span v-else class="text-muted">{{ $t('admin.noRolesAssigned') }}</span>
                   </div>
-                  <button @click="openUserRoleModal(user)" class="btn-icon-small">🔄 Change</button>
+                  <button @click="openUserRoleModal(user)" class="btn-icon-small">🔄 {{ $t('admin.change') }}</button>
                 </div>
               </div>
             </div>
@@ -321,9 +324,9 @@
           <!-- Permission Matrix Section -->
           <div class="permissions-section">
             <div class="section-header">
-              <h2>Permission Matrix</h2>
+              <h2>{{ $t('admin.permissionMatrix') }}</h2>
             </div>
-            <div v-if="isLoading" class="loading">Loading...</div>
+            <div v-if="isLoading" class="loading">{{ $t('common.loading') }}</div>
             <div v-else class="permissions-matrix">
               <div v-for="(perms, category) in groupedPermissions" :key="category" class="permission-category">
                 <h3 class="category-title">{{ category }}</h3>

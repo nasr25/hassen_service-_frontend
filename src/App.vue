@@ -16,12 +16,8 @@ const updateDirection = (lang) => {
   document.documentElement.setAttribute('dir', dir)
   document.documentElement.setAttribute('lang', lang)
 
-  // Update body font for Arabic
-  if (lang === 'ar') {
-    document.body.style.fontFamily = "'Cairo', 'Tajawal', 'Arial', sans-serif"
-  } else {
-    document.body.style.fontFamily = "'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif"
-  }
+  // Apply Cairo font for both languages
+  document.body.style.fontFamily = "'Cairo', 'Tajawal', sans-serif"
 }
 
 // Set direction immediately on script load
@@ -50,10 +46,13 @@ watch(locale, (newLocale) => {
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, sans-serif;
-  transition: font-family 0.3s ease;
+body, * {
+  font-family: 'Cairo', 'Tajawal', sans-serif !important;
+}
+
+/* Override for monospace elements only */
+code, pre, kbd, samp {
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace !important;
 }
 
 #app {
