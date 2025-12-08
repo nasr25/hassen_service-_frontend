@@ -986,5 +986,21 @@
     "empty": {
       "noRequestsFound": "لم يتم العثور على طلبات."
     }
+  },
+  "evaluation": {
+    "requestEvaluation": "تقييم الطلب",
+    "evaluateBeforeProceeding": "يرجى تقييم هذا الطلب قبل المتابعة",
+    "loadingQuestions": "جاري تحميل الأسئلة...",
+    "noQuestionsConfigured": "لم يتم تكوين أسئلة التقييم. يرجى الاتصال بالمسؤول لإعداد أسئلة التقييم.",
+    "questionLabel": "س{number}",
+    "appliedNotApplied": "منطبق / غير منطبق",
+    "answer": "الإجابة",
+    "applied": "منطبق",
+    "notApplied": "غير منطبق",
+    "notesOptional": "ملاحظات (اختياري)",
+    "notesPlaceholder": "أضف أي ملاحظات حول هذا التقييم...",
+    "progress": "التقدم",
+    "questionsAnswered": "أسئلة تمت الإجابة عليها",
+    "submitContinue": "إرسال والمتابعة"
   }
 }

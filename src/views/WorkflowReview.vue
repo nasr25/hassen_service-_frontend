@@ -290,57 +290,57 @@
     <div v-if="evaluationModal.show" class="modal-overlay" @click="closeEvaluationModal">
       <div class="modal-content evaluation-modal" @click.stop>
         <div class="modal-header">
-          <h2>Request Evaluation</h2>
+          <h2>{{ $t('evaluation.requestEvaluation') }}</h2>
           <button @click="closeEvaluationModal" class="modal-close">
             <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
             </svg>
           </button>
         </div>
-        <p class="modal-subtitle">Please evaluate this request before proceeding</p>
+        <p class="modal-subtitle">{{ $t('evaluation.evaluateBeforeProceeding') }}</p>
 
         <div v-if="evaluationModal.isLoading" class="loading-state">
           <div class="spinner"></div>
-          <p>Loading questions...</p>
+          <p>{{ $t('evaluation.loadingQuestions') }}</p>
         </div>
 
         <div v-else-if="evaluationQuestions.length === 0" class="alert alert-warning">
-          No evaluation questions configured. Please contact admin to set up evaluation questions.
+          {{ $t('evaluation.noQuestionsConfigured') }}
         </div>
 
         <div v-else class="evaluation-form">
           <div v-for="(question, index) in evaluationQuestions" :key="question.id" class="evaluation-question">
             <div class="question-header">
-              <BaseBadge variant="primary">Q{{ index + 1 }}</BaseBadge>
-              <BaseBadge variant="gray">Applied / Not Applied</BaseBadge>
+              <BaseBadge variant="primary">{{ $t('evaluation.questionLabel', { number: index + 1 }) }}</BaseBadge>
+              <BaseBadge variant="gray">{{ $t('evaluation.appliedNotApplied') }}</BaseBadge>
             </div>
             <p class="question-text">{{ question.question }}</p>
 
             <div class="answer-section">
-              <label>Answer *</label>
+              <label>{{ $t('evaluation.answer') }} *</label>
               <div class="toggle-buttons">
                 <button
                   type="button"
                   :class="['toggle-btn', 'toggle-applied', { active: evaluationModal.answers[question.id]?.is_applied === true }]"
                   @click="setAnswer(question.id, true)"
                 >
-                  ✓ Applied
+                  ✓ {{ $t('evaluation.applied') }}
                 </button>
                 <button
                   type="button"
                   :class="['toggle-btn', 'toggle-not-applied', { active: evaluationModal.answers[question.id]?.is_applied === false }]"
                   @click="setAnswer(question.id, false)"
                 >
-                  ✗ Not Applied
+                  ✗ {{ $t('evaluation.notApplied') }}
                 </button>
               </div>
             </div>
 
             <div class="notes-section">
-              <label>Notes (Optional)</label>
+              <label>{{ $t('evaluation.notesOptional') }}</label>
               <textarea
                 v-model="evaluationModal.answers[question.id].notes"
-                placeholder="Add any notes about this evaluation..."
+                :placeholder="$t('evaluation.notesPlaceholder')"
                 rows="2"
                 class="form-textarea"
               ></textarea>
@@ -348,13 +348,13 @@
           </div>
 
           <div class="evaluation-summary">
-            <strong>Progress:</strong> {{ answeredCount }} / {{ evaluationQuestions.length }} questions answered
+            <strong>{{ $t('evaluation.progress') }}:</strong> {{ answeredCount }} / {{ evaluationQuestions.length }} {{ $t('evaluation.questionsAnswered') }}
           </div>
         </div>
 
         <div class="modal-actions">
           <BaseButton variant="secondary" @click="closeEvaluationModal">
-            Cancel
+            {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
             variant="primary"
@@ -362,7 +362,7 @@
             :disabled="!allQuestionsAnswered || evaluationModal.isSaving"
             :loading="evaluationModal.isSaving"
           >
-            Submit & Continue
+            {{ $t('evaluation.submitContinue') }}
           </BaseButton>
         </div>
       </div>

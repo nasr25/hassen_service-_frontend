@@ -987,5 +987,21 @@
     "empty": {
       "noRequestsFound": "No requests found."
     }
+  },
+  "evaluation": {
+    "requestEvaluation": "Request Evaluation",
+    "evaluateBeforeProceeding": "Please evaluate this request before proceeding",
+    "loadingQuestions": "Loading questions...",
+    "noQuestionsConfigured": "No evaluation questions configured. Please contact admin to set up evaluation questions.",
+    "questionLabel": "Q{number}",
+    "appliedNotApplied": "Applied / Not Applied",
+    "answer": "Answer",
+    "applied": "Applied",
+    "notApplied": "Not Applied",
+    "notesOptional": "Notes (Optional)",
+    "notesPlaceholder": "Add any notes about this evaluation...",
+    "progress": "Progress",
+    "questionsAnswered": "questions answered",
+    "submitContinue": "Submit & Continue"
   }
 }
