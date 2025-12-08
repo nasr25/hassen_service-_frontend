@@ -292,7 +292,7 @@
 
     <!-- Path Evaluation Modal (Manager) -->
     <div v-if="pathEvaluationModal.show" class="modal-overlay" @click="closePathEvaluationModal">
-      <div class="modal-content path-evaluation-modal" @click.stop>
+      <div class="modal-content evaluation-modal" @click.stop>
         <div class="modal-header">
           <h2>{{ $t('department.pathEvaluationRequired') }}</h2>
           <button @click="closePathEvaluationModal" class="modal-close">
