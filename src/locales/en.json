@@ -644,7 +644,20 @@
     "ideaTypeDescriptionPlaceholder": "Brief description of this idea type...",
     "ideaTypeDescriptionArPlaceholder": "وصف مختصر لهذا النوع من الأفكار...",
     "colorPlaceholder": "#22c55e",
-    "colorHint": "Choose a color to represent this idea type"
+    "colorHint": "Choose a color to represent this idea type",
+    "workflowPaths": "Workflow Paths",
+    "addWorkflowPath": "Add Workflow Path",
+    "editWorkflowPath": "Edit Workflow Path",
+    "deleteWorkflowPath": "Delete Workflow Path",
+    "pathName": "Path Name",
+    "pathCode": "Path Code",
+    "pathDescription": "Path Description",
+    "pathOrder": "Display Order",
+    "pathNamePlaceholder": "Enter workflow path name",
+    "pathCodePlaceholder": "Enter path code (e.g., PATH_001)",
+    "pathDescriptionPlaceholder": "Brief description of this workflow path...",
+    "pathOrderPlaceholder": "1",
+    "noPathsFound": "No workflow paths found"
   },
   "manager": {
     "request_assigned": "Request Assigned to Department",

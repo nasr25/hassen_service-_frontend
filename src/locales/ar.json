@@ -643,7 +643,20 @@
     "ideaTypeDescriptionPlaceholder": "وصف مختصر لهذا النوع من الأفكار...",
     "ideaTypeDescriptionArPlaceholder": "وصف مختصر لهذا النوع من الأفكار...",
     "colorPlaceholder": "#22c55e",
-    "colorHint": "اختر لوناً يمثل هذا النوع من الأفكار"
+    "colorHint": "اختر لوناً يمثل هذا النوع من الأفكار",
+    "workflowPaths": "مسارات سير العمل",
+    "addWorkflowPath": "إضافة مسار عمل",
+    "editWorkflowPath": "تعديل مسار العمل",
+    "deleteWorkflowPath": "حذف مسار العمل",
+    "pathName": "اسم المسار",
+    "pathCode": "رمز المسار",
+    "pathDescription": "وصف المسار",
+    "pathOrder": "ترتيب العرض",
+    "pathNamePlaceholder": "أدخل اسم مسار العمل",
+    "pathCodePlaceholder": "أدخل رمز المسار (مثال: PATH_001)",
+    "pathDescriptionPlaceholder": "وصف مختصر لمسار العمل...",
+    "pathOrderPlaceholder": "1",
+    "noPathsFound": "لم يتم العثور على مسارات عمل"
   },
   "manager": {
     "request_assigned": "تم تعيين الطلب للقسم",

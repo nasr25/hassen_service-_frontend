@@ -37,6 +37,9 @@
         <button :class="['tab', { active: activeTab === 'ideaTypes' }]" @click="activeTab = 'ideaTypes'">
           💡 {{ $t('admin.ideaTypes') }}
         </button>
+        <button :class="['tab', { active: activeTab === 'workflowPaths' }]" @click="activeTab = 'workflowPaths'">
+          🔀 {{ $t('admin.workflowPaths') }}
+        </button>
         <router-link to="/admin/settings" class="tab tab-link">
           ⚙️ {{ $t('nav.settings') }}
         </router-link>
@@ -394,6 +397,52 @@
           </table>
         </div>
       </div>
+
+      <!-- Workflow Paths Tab -->
+      <div v-if="activeTab === 'workflowPaths'" class="tab-content">
+        <div class="section-header">
+          <h2>{{ $t('admin.workflowPaths') }} ({{ workflowPaths.length }})</h2>
+          <button @click="openPathModal()" class="btn-primary">➕ {{ $t('admin.addWorkflowPath') }}</button>
+        </div>
+        <div v-if="isLoading" class="loading">{{ $t('common.loading') }}</div>
+        <div v-else class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ $t('admin.pathName') }}</th>
+                <th>{{ $t('admin.pathCode') }}</th>
+                <th>{{ $t('admin.pathDescription') }}</th>
+                <th>{{ $t('admin.pathOrder') }}</th>
+                <th>{{ $t('admin.status') }}</th>
+                <th>{{ $t('admin.actions') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="path in workflowPaths" :key="path.id">
+                <td><strong>{{ path.name }}</strong></td>
+                <td><code>{{ path.code }}</code></td>
+                <td>
+                  <div v-if="path.description">{{ path.description.substring(0, 50) }}{{ path.description.length > 50 ? '...' : '' }}</div>
+                  <div v-else class="text-muted">-</div>
+                </td>
+                <td><span class="badge badge-info">#{{ path.order || 0 }}</span></td>
+                <td>
+                  <span :class="['badge', path.is_active ? 'badge-success' : 'badge-inactive']">
+                    {{ path.is_active ? $t('admin.active') : $t('admin.inactive') }}
+                  </span>
+                </td>
+                <td class="actions">
+                  <button @click="openPathModal(path)" class="btn-icon">✏️</button>
+                  <button @click="deletePath(path)" class="btn-icon btn-danger">🗑️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-if="workflowPaths.length === 0" class="empty-state">
+            <p>{{ $t('admin.noPathsFound') }}</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Question Modal -->
@@ -724,6 +773,39 @@
         </div>
       </div>
     </div>
+
+    <!-- Workflow Path Modal -->
+    <div v-if="pathModal.show" class="modal-overlay" @click="closePathModal">
+      <div class="modal-content" @click.stop>
+        <h2>{{ pathModal.isEdit ? $t('admin.editWorkflowPath') : $t('admin.addWorkflowPath') }}</h2>
+        <div class="form-group">
+          <label>{{ $t('admin.pathName') }} {{ $t('admin.required') }}</label>
+          <input v-model="pathModal.form.name" type="text" required :placeholder="$t('admin.pathNamePlaceholder')" />
+        </div>
+        <div class="form-group">
+          <label>{{ $t('admin.pathCode') }} {{ $t('admin.required') }}</label>
+          <input v-model="pathModal.form.code" type="text" required :placeholder="$t('admin.pathCodePlaceholder')" :disabled="pathModal.isEdit" />
+          <small v-if="pathModal.isEdit">{{ $t('admin.pathCannotChange') }}</small>
+        </div>
+        <div class="form-group">
+          <label>{{ $t('admin.pathDescription') }}</label>
+          <textarea v-model="pathModal.form.description" rows="3" :placeholder="$t('admin.pathDescriptionPlaceholder')"></textarea>
+        </div>
+        <div class="form-group">
+          <label>{{ $t('admin.pathOrder') }}</label>
+          <input v-model.number="pathModal.form.order" type="number" min="0" :placeholder="$t('admin.pathOrderPlaceholder')" />
+        </div>
+        <div class="form-group">
+          <label><input v-model="pathModal.form.is_active" type="checkbox" /> {{ $t('admin.active') }}</label>
+        </div>
+        <div class="modal-actions">
+          <button @click="closePathModal" class="btn-secondary">{{ $t('common.cancel') }}</button>
+          <button @click="savePath" :disabled="pathModal.isLoading" class="btn-primary">
+            {{ pathModal.isLoading ? $t('common.saving') : $t('common.save') }}
+          </button>
+        </div>
+      </div>
+    </div>
   </AppLayout>
 </template>
 
@@ -763,6 +845,7 @@ const pathQuestionModal = ref({ show: false, isEdit: false, isLoading: false, fo
 const roleModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', permissions: [] }, editId: null })
 const userRoleModal = ref({ show: false, isLoading: false, user: null, form: { user_id: '', role_name: '' } })
 const ideaTypeModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', name_ar: '', description: '', description_ar: '', color: '#22c55e', is_active: true, order: 0 }, editId: null })
+const pathModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', code: '', description: '', order: 0, is_active: true }, editId: null })
 
 const totalWeight = computed(() => {
   return evaluationQuestions.value
@@ -824,7 +907,7 @@ const loadData = async () => {
       axios.get(`${API_URL}/admin/users`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/admin/evaluation-questions`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/admin/path-evaluation-questions`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
-      axios.get(`${API_URL}/workflow/paths`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
+      axios.get(`${API_URL}/admin/workflow-paths`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/permissions/roles`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/permissions/list`, { headers: { Authorization: `Bearer ${authStore.token}` } }),
       axios.get(`${API_URL}/admin/idea-types`, { headers: { Authorization: `Bearer ${authStore.token}` } })
@@ -1482,6 +1565,98 @@ const deleteIdeaType = async (ideaType) => {
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || 'Failed to delete idea type'
+  }
+}
+
+// ============= WORKFLOW PATH MANAGEMENT =============
+
+const openPathModal = (path = null) => {
+  if (path) {
+    pathModal.value = {
+      show: true,
+      isEdit: true,
+      isLoading: false,
+      form: {
+        name: path.name,
+        code: path.code,
+        description: path.description || '',
+        order: path.order || 0,
+        is_active: path.is_active
+      },
+      editId: path.id
+    }
+  } else {
+    pathModal.value = {
+      show: true,
+      isEdit: false,
+      isLoading: false,
+      form: {
+        name: '',
+        code: '',
+        description: '',
+        order: workflowPaths.value.length,
+        is_active: true
+      },
+      editId: null
+    }
+  }
+}
+
+const closePathModal = () => {
+  pathModal.value = {
+    show: false,
+    isEdit: false,
+    isLoading: false,
+    form: {
+      name: '',
+      code: '',
+      description: '',
+      order: 0,
+      is_active: true
+    },
+    editId: null
+  }
+}
+
+const savePath = async () => {
+  try {
+    pathModal.value.isLoading = true
+    error.value = null
+
+    if (pathModal.value.isEdit) {
+      await axios.put(`${API_URL}/admin/workflow-paths/${pathModal.value.editId}`, pathModal.value.form, {
+        headers: { Authorization: `Bearer ${authStore.token}` }
+      })
+      success.value = 'Workflow path updated successfully'
+    } else {
+      await axios.post(`${API_URL}/admin/workflow-paths`, pathModal.value.form, {
+        headers: { Authorization: `Bearer ${authStore.token}` }
+      })
+      success.value = 'Workflow path created successfully'
+    }
+
+    closePathModal()
+    await loadData()
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to save workflow path'
+  } finally {
+    pathModal.value.isLoading = false
+  }
+}
+
+const deletePath = async (path) => {
+  if (!confirm(`Are you sure you want to delete "${path.name}"? This cannot be undone.`)) return
+
+  try {
+    await axios.delete(`${API_URL}/admin/workflow-paths/${path.id}`, {
+      headers: { Authorization: `Bearer ${authStore.token}` }
+    })
+    success.value = 'Workflow path deleted successfully'
+    await loadData()
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Failed to delete workflow path'
   }
 }
 </script>
