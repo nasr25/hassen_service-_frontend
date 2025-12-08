@@ -830,7 +830,7 @@ const confirmAssign = async () => {
       }
     )
 
-    success.value = 'Request assigned to workflow path successfully'
+    success.value = t('messages.success.requestAssignedToPath')
 
     // Close modal first to prevent double-click
     closeAssignModal()
@@ -878,7 +878,7 @@ const confirmRequestDetails = async () => {
       }
     )
 
-    success.value = 'More details requested from user successfully'
+    success.value = t('messages.success.moreDetailsRequested')
 
     // Close modal first to prevent double-click
     closeDetailsModal()
@@ -926,7 +926,7 @@ const confirmReject = async () => {
       }
     )
 
-    success.value = 'Request rejected successfully'
+    success.value = t('messages.success.requestRejectedSuccess')
 
     // Close modal first to prevent double-click
     closeRejectModal()
@@ -974,7 +974,7 @@ const confirmComplete = async () => {
       }
     )
 
-    success.value = 'Request completed successfully'
+    success.value = t('messages.success.requestCompleted')
 
     // Close modal first to prevent double-click
     closeCompleteModal()
@@ -1022,7 +1022,7 @@ const confirmReturnToPrevious = async () => {
       }
     )
 
-    success.value = 'Request returned to previous department successfully'
+    success.value = t('messages.success.requestReturnedToPrevious')
 
     // Close modal first to prevent double-click
     closeReturnToPreviousModal()
@@ -1144,7 +1144,7 @@ const submitEvaluationAndProceed = async () => {
       }
     )
 
-    success.value = 'Evaluation submitted successfully'
+    success.value = t('messages.success.evaluationSubmitted')
 
     // Get the request and action before closing modal
     const request = evaluationModal.value.request
