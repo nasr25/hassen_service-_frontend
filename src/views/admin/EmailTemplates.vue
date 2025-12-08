@@ -457,7 +457,7 @@ const sendTestEmail = async () => {
   success.value = ''
 
   try {
-    await axios.post(`${API_URL}/email-templates/${testEmail.value.template.id}/test`, {
+    await axios.post(`${API_URL}/email-templates/${testEmail.value.template.id}/send-test`, {
       email: testEmail.value.email
     }, {
       headers: { Authorization: `Bearer ${authStore.token}` }
