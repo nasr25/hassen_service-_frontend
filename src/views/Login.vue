@@ -210,9 +210,11 @@ const handleLogin = async () => {
   }
 }
 
-const fillLogin = (email) => {
+const fillLogin = async (email) => {
   form.value.email = email
   form.value.password = 'password'
+  // Auto-submit the form after filling
+  await handleLogin()
 }
 </script>
 
