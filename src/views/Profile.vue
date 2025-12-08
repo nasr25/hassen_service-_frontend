@@ -235,17 +235,19 @@ const fetchProfile = async () => {
     loading.value = true
     error.value = null
 
-    const response = await axios.get('${API_URL}/auth/user', {
+    const response = await axios.get(`${API_URL}/auth/user`, {
       headers: {
         Authorization: `Bearer ${authStore.token}`
       }
     })
 
-    user.value = response.data.user
-    departments.value = response.data.user.departments || []
+    if (response.data && response.data.user) {
+      user.value = response.data.user
+      departments.value = response.data.user.departments || []
+    }
 
     // Fetch user statistics
-    const statsResponse = await axios.get('${API_URL}/dashboard/statistics', {
+    const statsResponse = await axios.get(`${API_URL}/dashboard/statistics`, {
       headers: {
         Authorization: `Bearer ${authStore.token}`
       }
