@@ -647,8 +647,14 @@ const confirmAssign = async () => {
     )
 
     success.value = t('messages.success.requestAssigned')
+
+    // Close modal first to prevent double-click
     closeAssignModal()
-    await loadRequests()
+
+    // Reload requests (don't await to prevent blocking modal close)
+    loadRequests().catch(err => {
+      console.error('Failed to reload requests:', err)
+    })
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
@@ -682,7 +688,11 @@ const returnToEmployee = async (request) => {
     )
 
     success.value = t('messages.success.requestReturnedToEmployee')
-    await loadRequests()
+
+    // Reload requests (don't await to prevent blocking)
+    loadRequests().catch(err => {
+      console.error('Failed to reload requests:', err)
+    })
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
@@ -721,8 +731,14 @@ const confirmReturnToManager = async () => {
     )
 
     success.value = t('messages.success.requestReturned')
+
+    // Close modal first to prevent double-click
     closeReturnToManagerModal()
-    await loadRequests()
+
+    // Reload requests (don't await to prevent blocking modal close)
+    loadRequests().catch(err => {
+      console.error('Failed to reload requests:', err)
+    })
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
@@ -763,8 +779,14 @@ const confirmReturnToDeptA = async () => {
     )
 
     success.value = t('messages.success.requestReturnedDeptA')
+
+    // Close modal first to prevent double-click
     closeReturnToDeptAModal()
-    await loadRequests()
+
+    // Reload requests (don't await to prevent blocking modal close)
+    loadRequests().catch(err => {
+      console.error('Failed to reload requests:', err)
+    })
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
@@ -893,8 +915,13 @@ const submitPathEvaluation = async () => {
     if (pathEvaluationModal.value.action) {
       proceedWithAction()
     } else {
+      // Close modal first to prevent double-click
       closePathEvaluationModal()
-      await loadRequests() // Reload to get updated evaluation status
+
+      // Reload requests (don't await to prevent blocking modal close)
+      loadRequests().catch(err => {
+        console.error('Failed to reload requests:', err)
+      })
     }
   } catch (err) {
     error.value = err.response?.data?.message || t('messages.error.failedToSubmitEvaluation')
@@ -973,8 +1000,14 @@ const confirmAcceptLater = async () => {
     )
 
     success.value = t('messages.success.ideaAccepted')
+
+    // Close modal first to prevent double-click
     closeAcceptLaterModal()
-    await loadRequests()
+
+    // Reload requests (don't await to prevent blocking modal close)
+    loadRequests().catch(err => {
+      console.error('Failed to reload requests:', err)
+    })
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
@@ -1001,7 +1034,12 @@ const rejectIdea = async (request) => {
     )
 
     success.value = t('messages.success.ideaRejected')
-    await loadRequests()
+
+    // Reload requests (don't await to prevent blocking)
+    loadRequests().catch(err => {
+      console.error('Failed to reload requests:', err)
+    })
+
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || t('messages.error.failedToReject')
