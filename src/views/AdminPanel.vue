@@ -589,10 +589,10 @@
         <div class="form-group">
           <label>{{ $t('admin.role') }} {{ $t('admin.required') }}</label>
           <select v-model="userModal.form.role" required>
-            <option value="">{{ $t('admin.selectRole') }}</option>
-            <option v-for="role in roles" :key="role.id" :value="role.name">
-              {{ role.name }}
-            </option>
+            <option value="admin">{{ $t('admin.admin') }}</option>
+            <option value="manager">{{ $t('admin.manager') }}</option>
+            <option value="employee">{{ $t('admin.employee') }}</option>
+            <option value="user">{{ $t('admin.user') }}</option>
           </select>
         </div>
         <div class="form-group">
@@ -614,8 +614,8 @@
           <label>{{ $t('admin.user') }} {{ $t('admin.required') }}</label>
           <select v-model="assignmentModal.form.user_id" required>
             <option value="">{{ $t('admin.selectUser') }}</option>
-            <option v-for="user in users" :key="user.id" :value="user.id">
-              {{ user.name }} ({{ user.email }}) - {{ user.role }}
+            <option v-for="user in users.filter(u => ['manager', 'employee'].includes(u.role))" :key="user.id" :value="user.id">
+              {{ user.name }} ({{ user.email }})
             </option>
           </select>
         </div>
@@ -836,7 +836,7 @@ const isLoadingPathQuestions = ref(false)
 import { API_URL } from '../config/api'
 
 const departmentModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', code: '', description: '', is_active: true, is_department_a: false }, editId: null })
-const userModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', email: '', password: '', role: '', is_active: true, external_user_number: '' }, editId: null })
+const userModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', email: '', password: '', role: 'employee', is_active: true, external_user_number: '' }, editId: null })
 const externalUserLookup = ref({ isSearching: false, searchResults: [], searchQuery: '', configured: false, showDropdown: false })
 const assignmentModal = ref({ show: false, isLoading: false, form: { user_id: '', department_id: '', role: 'employee' } })
 const editRoleModal = ref({ show: false, isLoading: false, user: null, department: null, newRole: 'employee' })
@@ -1047,7 +1047,7 @@ const openUserModal = async (user = null) => {
     editId: user.id
   } : {
     show: true, isEdit: false, isLoading: false,
-    form: { name: '', email: '', password: '', role: '', is_active: true, external_user_number: '' },
+    form: { name: '', email: '', password: '', role: 'employee', is_active: true, external_user_number: '' },
     editId: null
   }
 
