@@ -831,8 +831,14 @@ const confirmAssign = async () => {
     )
 
     success.value = 'Request assigned to workflow path successfully'
+
+    // Close modal first to prevent double-click
     closeAssignModal()
-    await loadRequests()
+
+    // Reload requests (don't await to prevent blocking modal close)
+    loadRequests().catch(err => {
+      console.error('Failed to reload requests:', err)
+    })
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
@@ -873,8 +879,14 @@ const confirmRequestDetails = async () => {
     )
 
     success.value = 'More details requested from user successfully'
+
+    // Close modal first to prevent double-click
     closeDetailsModal()
-    await loadRequests()
+
+    // Reload requests (don't await to prevent blocking modal close)
+    loadRequests().catch(err => {
+      console.error('Failed to reload requests:', err)
+    })
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
@@ -915,8 +927,14 @@ const confirmReject = async () => {
     )
 
     success.value = 'Request rejected successfully'
+
+    // Close modal first to prevent double-click
     closeRejectModal()
-    await loadRequests()
+
+    // Reload requests (don't await to prevent blocking modal close)
+    loadRequests().catch(err => {
+      console.error('Failed to reload requests:', err)
+    })
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
@@ -956,13 +974,19 @@ const confirmComplete = async () => {
       }
     )
 
-    success.value = t('messages.success.requestCompleted')
+    success.value = 'Request completed successfully'
+
+    // Close modal first to prevent double-click
     closeCompleteModal()
-    await loadRequests()
+
+    // Reload requests (don't await to prevent blocking modal close)
+    loadRequests().catch(err => {
+      console.error('Failed to reload requests:', err)
+    })
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToComplete')
+    error.value = err.response?.data?.message || 'Failed to complete request'
   } finally {
     completeModal.value.isLoading = false
   }
@@ -999,8 +1023,14 @@ const confirmReturnToPrevious = async () => {
     )
 
     success.value = 'Request returned to previous department successfully'
+
+    // Close modal first to prevent double-click
     closeReturnToPreviousModal()
-    await loadRequests()
+
+    // Reload requests (don't await to prevent blocking modal close)
+    loadRequests().catch(err => {
+      console.error('Failed to reload requests:', err)
+    })
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
