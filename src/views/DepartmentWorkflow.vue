@@ -1339,7 +1339,6 @@ const rejectIdea = async (request) => {
 }
 
 .evaluation-question {
-  display: flex;
   align-items: flex-start;
   gap: var(--spacing-2);
   margin-bottom: var(--spacing-3);
