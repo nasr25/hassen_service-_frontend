@@ -614,8 +614,8 @@
           <label>{{ $t('admin.user') }} {{ $t('admin.required') }}</label>
           <select v-model="assignmentModal.form.user_id" required>
             <option value="">{{ $t('admin.selectUser') }}</option>
-            <option v-for="user in users.filter(u => ['manager', 'employee'].includes(u.role))" :key="user.id" :value="user.id">
-              {{ user.name }} ({{ user.email }})
+            <option v-for="user in users" :key="user.id" :value="user.id">
+              {{ user.name }} ({{ user.email }}) - {{ user.role }}
             </option>
           </select>
         </div>
