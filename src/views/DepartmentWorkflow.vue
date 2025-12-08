@@ -1441,6 +1441,10 @@ const rejectIdea = async (request) => {
   box-shadow: var(--shadow-2xl);
 }
 
+.evaluation-modal {
+  max-width: 800px;
+}
+
 .modal-content h2 {
   color: var(--color-text-primary);
   font-size: var(--font-size-2xl);
