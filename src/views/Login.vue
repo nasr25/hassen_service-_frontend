@@ -67,7 +67,14 @@
             <h3>{{ $t('auth.testAccounts') }}</h3>
           </div>
 
-          <div class="accounts-compact">
+          <div v-if="isLoadingAccounts" class="loading-accounts">
+            <div class="spinner"></div>
+            <p>{{ $t('common.loading') }}</p>
+          </div>
+          <div v-else-if="testAccounts.length === 0" class="no-accounts">
+            <p>{{ $t('common.noUsersFound') }}</p>
+          </div>
+          <div v-else class="accounts-compact">
             <div
               v-for="account in testAccounts"
               :key="account.email"
@@ -76,7 +83,7 @@
             >
               <span class="account-icon">{{ account.icon }}</span>
               <div class="account-info">
-                <strong>{{ account.role }}</strong>
+                <strong>{{ account.name }}</strong>
                 <code>{{ account.email }}</code>
               </div>
             </div>
@@ -158,14 +165,17 @@ import { useSettings } from '../composables/useSettings'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import BaseButton from '../components/BaseButton.vue'
 import BaseInput from '../components/BaseInput.vue'
+import axios from 'axios'
+import { API_URL } from '../config/api'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const { t } = useI18n()
 const { logo, fetchPublicSettings } = useSettings()
 
-onMounted(() => {
+onMounted(async () => {
   fetchPublicSettings()
+  await fetchDemoAccounts()
 })
 
 const form = ref({
@@ -175,25 +185,22 @@ const form = ref({
 
 const error = ref(null)
 const isLoading = ref(false)
+const testAccounts = ref([])
+const isLoadingAccounts = ref(false)
 
-const testAccounts = [
-  { icon: '👨‍💼', role: 'Admin', email: 'admin@workflow.com', category: 'Admin' },
-  { icon: '👤', role: 'User', email: 'user@workflow.com', category: 'User' },
-  { icon: '👔', role: 'Dept A Manager', email: 'manager.a@workflow.com', category: 'Managers' },
-  { icon: '🔧', role: 'Tech Manager', email: 'manager.tech@workflow.com', category: 'Managers' },
-  { icon: '💰', role: 'Finance Manager', email: 'manager.finance@workflow.com', category: 'Managers' },
-  { icon: '⚖️', role: 'Legal Manager', email: 'manager.legal@workflow.com', category: 'Managers' },
-  { icon: '📊', role: 'Strategy Manager', email: 'manager.strategy@workflow.com', category: 'Managers' },
-  { icon: '👥', role: 'HR Manager', email: 'manager.hr@workflow.com', category: 'Managers' },
-  { icon: '🔧', role: 'Tech Employee 1', email: 'emp.tech1@workflow.com', category: 'Employees' },
-  { icon: '🔧', role: 'Tech Employee 2', email: 'emp.tech2@workflow.com', category: 'Employees' },
-  { icon: '💰', role: 'Finance Employee', email: 'emp.finance@workflow.com', category: 'Employees' },
-  { icon: '⚖️', role: 'Legal Employee', email: 'emp.legal@workflow.com', category: 'Employees' },
-  { icon: '📊', role: 'Strategy Employee 1', email: 'emp.strategy1@workflow.com', category: 'Employees' },
-  { icon: '📊', role: 'Strategy Employee 2', email: 'emp.strategy2@workflow.com', category: 'Employees' },
-  { icon: '👥', role: 'HR Employee 1', email: 'emp.hr1@workflow.com', category: 'Employees' },
-  { icon: '👥', role: 'HR Employee 2', email: 'emp.hr2@workflow.com', category: 'Employees' }
-]
+const fetchDemoAccounts = async () => {
+  try {
+    isLoadingAccounts.value = true
+    const response = await axios.get(`${API_URL}/auth/demo-accounts`)
+    testAccounts.value = response.data.users
+  } catch (err) {
+    console.error('Failed to fetch demo accounts:', err)
+    // Fallback to empty array if fetch fails
+    testAccounts.value = []
+  } finally {
+    isLoadingAccounts.value = false
+  }
+}
 
 const handleLogin = async () => {
   error.value = null
@@ -331,6 +338,33 @@ html[dir="rtl"] .language-switcher-wrapper {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
   margin: 0;
+}
+
+.loading-accounts,
+.no-accounts {
+  text-align: center;
+  padding: var(--spacing-6);
+  color: var(--color-text-secondary);
+}
+
+.loading-accounts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-success-600);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .accounts-compact {
