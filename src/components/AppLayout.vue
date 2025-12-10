@@ -235,10 +235,9 @@ const pageTitle = computed(() => {
 
 const isAdmin = computed(() => authStore.user?.role?.toLowerCase() === 'admin')
 
-const canReview = computed(() => {
-  const role = authStore.user?.role
-  return role && role !== 'User' && role !== 'Employee'
-})
+const canReview = computed(() =>
+  authStore.hasAnyPermission(['workflow.view-pending', 'workflow.assign-path'])
+)
 
 const canCreateRequest = computed(() =>
   authStore.hasPermission('request.create')
