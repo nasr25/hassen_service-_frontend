@@ -240,11 +240,15 @@ const canReview = computed(() =>
 )
 
 const canCreateRequest = computed(() =>
-  !isAdmin.value && authStore.hasPermission('request.create')
+  !isAdmin.value &&
+  !authStore.hasPermission('workflow.assign-path') &&
+  authStore.hasPermission('request.create')
 )
 
 const canViewOwnRequests = computed(() =>
-  !isAdmin.value && (authStore.hasPermission('request.view-own') || authStore.hasPermission('request.view-all'))
+  !isAdmin.value &&
+  !authStore.hasPermission('workflow.assign-path') &&
+  (authStore.hasPermission('request.view-own') || authStore.hasPermission('request.view-all'))
 )
 
 const toggleSidebar = () => {
