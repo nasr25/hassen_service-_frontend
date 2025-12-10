@@ -125,6 +125,7 @@
       "totalRequests": "إجمالي الطلبات",
       "draft": "مسودة",
       "pendingRequests": "قيد الانتظار",
+      "inProgress": "قيد التنفيذ",
       "approved": "موافق عليها",
       "completed": "مكتملة",
       "rejected": "مرفوضة"

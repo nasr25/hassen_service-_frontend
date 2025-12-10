@@ -125,6 +125,7 @@
       "totalRequests": "Total Requests",
       "draft": "Draft",
       "pendingRequests": "Pending",
+      "inProgress": "In Progress",
       "approved": "Approved",
       "completed": "Completed",
       "rejected": "Rejected"

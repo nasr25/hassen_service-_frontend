@@ -53,6 +53,18 @@
         </BaseCard>
 
         <BaseCard class="stat-card">
+          <div class="stat-icon stat-icon-primary">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L9.414 11H13a1 1 0 100-2H9.414l1.293-1.293z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ stats.inProgressRequests }}</div>
+            <div class="stat-label">{{ $t('dashboard.stats.inProgress') }}</div>
+          </div>
+        </BaseCard>
+
+        <BaseCard class="stat-card">
           <div class="stat-icon stat-icon-success">
             <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -219,6 +231,7 @@ const stats = ref({
   totalRequests: 0,
   draftRequests: 0,
   pendingRequests: 0,
+  inProgressRequests: 0,
   approvedRequests: 0,
   completedRequests: 0,
   rejectedRequests: 0
@@ -243,6 +256,7 @@ const loadStatistics = async () => {
         totalRequests: response.data.stats.totalRequests || 0,
         draftRequests: response.data.stats.draftRequests || 0,
         pendingRequests: response.data.stats.pendingRequests || 0,
+        inProgressRequests: response.data.stats.inProgressRequests || 0,
         approvedRequests: response.data.stats.approvedRequests || 0,
         completedRequests: response.data.stats.completedRequests || 0,
         rejectedRequests: response.data.stats.rejectedRequests || 0
