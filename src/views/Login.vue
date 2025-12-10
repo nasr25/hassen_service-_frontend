@@ -253,9 +253,16 @@ html[dir="rtl"] .language-switcher-wrapper {
 }
 
 .logo-image {
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   object-fit: contain;
+}
+
+@media (max-width: 640px) {
+  .logo-image {
+    width: 80px;
+    height: 80px;
+  }
 }
 
 .login-header h1 {
@@ -450,10 +457,17 @@ html[dir="rtl"] .test-account:hover {
 }
 
 .welcome-logo-image {
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   object-fit: contain;
   filter: brightness(0) invert(1);
+}
+
+@media (max-width: 1024px) {
+  .welcome-logo-image {
+    width: 150px;
+    height: 150px;
+  }
 }
 
 .welcome-title {

@@ -498,17 +498,35 @@ onBeforeUnmount(() => {
 
 .logo-image {
   width: 100%;
-  max-width: 180px;
+  max-width: 200px;
   height: auto;
+  max-height: 120px;
   object-fit: contain;
   border-radius: var(--radius-md);
   background: #fff;
-  padding: var(--spacing-3);
+  padding: var(--spacing-4);
 }
 
 .sidebar-collapsed .logo-image {
-  max-width: 40px;
-  padding: 4px;
+  max-width: 48px;
+  max-height: 48px;
+  padding: var(--spacing-2);
+}
+
+/* Responsive logo sizing */
+@media (max-width: 1024px) {
+  .logo-image {
+    max-width: 160px;
+    max-height: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-image {
+    max-width: 140px;
+    max-height: 80px;
+    padding: var(--spacing-2);
+  }
 }
 
 .logo-text {
