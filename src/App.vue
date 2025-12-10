@@ -23,8 +23,8 @@ const updateDirection = (lang) => {
   document.documentElement.setAttribute('dir', dir)
   document.documentElement.setAttribute('lang', lang)
 
-  // Apply Cairo font for both languages
-  document.body.style.fontFamily = "'Cairo', 'Tajawal', sans-serif"
+  // Apply IBM Plex Sans Arabic font for both languages
+  document.body.style.fontFamily = "'IBM Plex Sans Arabic', 'Arial', sans-serif"
 }
 
 // Set direction immediately on script load
@@ -62,7 +62,7 @@ watch(documentTitle, (newTitle) => {
 }
 
 body, * {
-  font-family: 'Cairo', 'Tajawal', sans-serif !important;
+  font-family: 'IBM Plex Sans Arabic', 'Arial', sans-serif !important;
 }
 
 /* Override for monospace elements only */

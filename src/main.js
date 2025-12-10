@@ -4,6 +4,7 @@ import axios from 'axios'
 import App from './App.vue'
 import router from './router'
 import i18n from './i18n'
+import './assets/fonts.css'
 import './style.css'
 
 // Configure axios defaults
