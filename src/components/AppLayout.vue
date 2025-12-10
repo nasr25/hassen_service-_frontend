@@ -236,15 +236,15 @@ const pageTitle = computed(() => {
 const isAdmin = computed(() => authStore.user?.role?.toLowerCase() === 'admin')
 
 const canReview = computed(() =>
-  authStore.hasAnyPermission(['workflow.view-pending', 'workflow.assign-path'])
+  !isAdmin.value && authStore.hasAnyPermission(['workflow.view-pending', 'workflow.assign-path'])
 )
 
 const canCreateRequest = computed(() =>
-  authStore.hasPermission('request.create')
+  !isAdmin.value && authStore.hasPermission('request.create')
 )
 
 const canViewOwnRequests = computed(() =>
-  authStore.hasPermission('request.view-own') || authStore.hasPermission('request.view-all')
+  !isAdmin.value && (authStore.hasPermission('request.view-own') || authStore.hasPermission('request.view-all'))
 )
 
 const toggleSidebar = () => {
