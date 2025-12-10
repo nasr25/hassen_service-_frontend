@@ -244,6 +244,14 @@ html[dir="rtl"] .login-container {
   direction: rtl;
 }
 
+html[dir="rtl"] .login-panel {
+  order: 2;
+}
+
+html[dir="rtl"] .welcome-panel {
+  order: 1;
+}
+
 .language-switcher-wrapper {
   position: absolute;
   top: var(--spacing-6);
