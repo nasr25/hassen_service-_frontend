@@ -160,6 +160,7 @@ const getStatusVariant = (status) => {
     draft: 'gray',
     pending: 'warning',
     in_review: 'info',
+    in_progress: 'primary',
     need_more_details: 'warning',
     approved: 'success',
     rejected: 'error',

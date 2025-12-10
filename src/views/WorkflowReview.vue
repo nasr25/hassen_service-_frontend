@@ -606,12 +606,15 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import axios from 'axios'
 import AppLayout from '../components/AppLayout.vue'
 import BaseCard from '../components/BaseCard.vue'
 import BaseButton from '../components/BaseButton.vue'
 import BaseBadge from '../components/BaseBadge.vue'
+
+const { t } = useI18n()
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -789,6 +792,7 @@ const getStatusVariant = (status) => {
   const variants = {
     pending: 'warning',
     in_review: 'info',
+    in_progress: 'primary',
     need_more_details: 'warning',
     approved: 'success',
     rejected: 'error',
@@ -830,10 +834,10 @@ const confirmAssign = async () => {
       }
     )
 
-    success.value = t('messages.success.requestAssignedToPath')
-
-    // Close modal first to prevent double-click
+    // Close modal immediately after success
     closeAssignModal()
+
+    success.value = t('messages.success.requestAssignedToPath')
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -843,7 +847,6 @@ const confirmAssign = async () => {
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || 'Failed to assign path'
-  } finally {
     assignModal.value.isLoading = false
   }
 }
@@ -878,10 +881,10 @@ const confirmRequestDetails = async () => {
       }
     )
 
-    success.value = t('messages.success.moreDetailsRequested')
-
-    // Close modal first to prevent double-click
+    // Close modal immediately after success
     closeDetailsModal()
+
+    success.value = t('messages.success.moreDetailsRequested')
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -891,7 +894,6 @@ const confirmRequestDetails = async () => {
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || 'Failed to request details'
-  } finally {
     detailsModal.value.isLoading = false
   }
 }
@@ -926,10 +928,10 @@ const confirmReject = async () => {
       }
     )
 
-    success.value = t('messages.success.requestRejectedSuccess')
-
-    // Close modal first to prevent double-click
+    // Close modal immediately after success
     closeRejectModal()
+
+    success.value = t('messages.success.requestRejectedSuccess')
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -939,7 +941,6 @@ const confirmReject = async () => {
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || 'Failed to reject request'
-  } finally {
     rejectModal.value.isLoading = false
   }
 }
@@ -974,10 +975,10 @@ const confirmComplete = async () => {
       }
     )
 
-    success.value = t('messages.success.requestCompleted')
-
-    // Close modal first to prevent double-click
+    // Close modal immediately after success
     closeCompleteModal()
+
+    success.value = t('messages.success.requestCompleted')
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -987,7 +988,6 @@ const confirmComplete = async () => {
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || 'Failed to complete request'
-  } finally {
     completeModal.value.isLoading = false
   }
 }
@@ -1022,10 +1022,10 @@ const confirmReturnToPrevious = async () => {
       }
     )
 
-    success.value = t('messages.success.requestReturnedToPrevious')
-
-    // Close modal first to prevent double-click
+    // Close modal immediately after success
     closeReturnToPreviousModal()
+
+    success.value = t('messages.success.requestReturnedToPrevious')
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -1035,7 +1035,6 @@ const confirmReturnToPrevious = async () => {
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || 'Failed to return request'
-  } finally {
     returnToPreviousModal.value.isLoading = false
   }
 }
@@ -1144,8 +1143,6 @@ const submitEvaluationAndProceed = async () => {
       }
     )
 
-    success.value = t('messages.success.evaluationSubmitted')
-
     // Get the request and action before closing modal
     const request = evaluationModal.value.request
     const action = evaluationModal.value.nextAction
@@ -1153,17 +1150,22 @@ const submitEvaluationAndProceed = async () => {
     // Update evaluation status
     requestEvaluationStatus.value[request.id] = true
 
+    // Close modal immediately after successful submission
     closeEvaluationModal()
+
+    success.value = t('messages.success.evaluationSubmitted')
 
     // Open the appropriate modal for the action if there is one
     if (action) {
-      openModalForAction(request, action)
+      // Add small delay to ensure modal closes before opening next one
+      setTimeout(() => {
+        openModalForAction(request, action)
+      }, 100)
     }
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || 'Failed to submit evaluation'
-  } finally {
     evaluationModal.value.isSaving = false
   }
 }

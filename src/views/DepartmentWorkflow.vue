@@ -593,6 +593,7 @@ const getStatusVariant = (status) => {
     draft: 'gray',
     pending: 'warning',
     in_review: 'info',
+    in_progress: 'primary',
     need_more_details: 'warning',
     approved: 'success',
     rejected: 'error',
@@ -646,10 +647,10 @@ const confirmAssign = async () => {
       }
     )
 
-    success.value = t('messages.success.requestAssigned')
-
-    // Close modal first to prevent double-click
+    // Close modal immediately after success
     closeAssignModal()
+
+    success.value = t('messages.success.requestAssigned')
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -659,7 +660,6 @@ const confirmAssign = async () => {
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || t('messages.error.failedToAssign')
-  } finally {
     assignModal.value.isLoading = false
   }
 }
@@ -730,10 +730,10 @@ const confirmReturnToManager = async () => {
       }
     )
 
-    success.value = t('messages.success.requestReturned')
-
-    // Close modal first to prevent double-click
+    // Close modal immediately after success
     closeReturnToManagerModal()
+
+    success.value = t('messages.success.requestReturned')
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -743,7 +743,6 @@ const confirmReturnToManager = async () => {
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || t('messages.error.failedToReturn')
-  } finally {
     returnToManagerModal.value.isLoading = false
   }
 }
@@ -778,10 +777,10 @@ const confirmReturnToDeptA = async () => {
       }
     )
 
-    success.value = t('messages.success.requestReturnedDeptA')
-
-    // Close modal first to prevent double-click
+    // Close modal immediately after success
     closeReturnToDeptAModal()
+
+    success.value = t('messages.success.requestReturnedDeptA')
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -791,7 +790,6 @@ const confirmReturnToDeptA = async () => {
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || t('messages.error.failedToReturn')
-  } finally {
     returnToDeptAModal.value.isLoading = false
   }
 }
@@ -908,17 +906,36 @@ const submitPathEvaluation = async () => {
       }
     )
 
+    // Close modal immediately after successful submission
+    closePathEvaluationModal()
+
     success.value = t('messages.success.evaluationSubmitted')
     setTimeout(() => (success.value = null), 3000)
 
-    // If there's an action, proceed with it, otherwise just reload and close
+    // If there's an action, proceed with it, otherwise just reload
     if (pathEvaluationModal.value.action) {
-      proceedWithAction()
-    } else {
-      // Close modal first to prevent double-click
-      closePathEvaluationModal()
+      const request = pathEvaluationModal.value.request
+      const action = pathEvaluationModal.value.action
 
-      // Reload requests (don't await to prevent blocking modal close)
+      // Small delay to ensure modal closes before opening next modal
+      setTimeout(() => {
+        switch (action) {
+          case 'accept':
+            openAssignModal(request)
+            break
+          case 'accept_later':
+            openAcceptLaterModal(request)
+            break
+          case 'reject':
+            rejectIdea(request)
+            break
+          case 'return':
+            openReturnToDeptAModal(request)
+            break
+        }
+      }, 100)
+    } else {
+      // Reload requests (don't await to prevent blocking)
       loadRequests().catch(err => {
         console.error('Failed to reload requests:', err)
       })
@@ -999,10 +1016,10 @@ const confirmAcceptLater = async () => {
       }
     )
 
-    success.value = t('messages.success.ideaAccepted')
-
-    // Close modal first to prevent double-click
+    // Close modal immediately after success
     closeAcceptLaterModal()
+
+    success.value = t('messages.success.ideaAccepted')
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -1012,7 +1029,6 @@ const confirmAcceptLater = async () => {
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     error.value = err.response?.data?.message || t('messages.error.failedToAccept')
-  } finally {
     acceptLaterModal.value.isLoading = false
   }
 }

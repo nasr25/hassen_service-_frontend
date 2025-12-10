@@ -32,7 +32,7 @@
           <div v-for="setting in getGroupSettings('general')" :key="setting.key" class="setting-item">
             <div class="setting-header">
               <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
-              <span class="setting-description">{{ setting.description }}</span>
+              <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
             </div>
             <input
               v-if="setting.type === 'text' || setting.type === 'number'"
@@ -112,7 +112,7 @@
                class="setting-item">
             <div class="setting-header">
               <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
-              <span class="setting-description">{{ setting.description }}</span>
+              <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
             </div>
             <div class="color-input-wrapper">
               <input
@@ -139,7 +139,7 @@
           <div v-for="setting in getGroupSettings('system')" :key="setting.key" class="setting-item">
             <div class="setting-header">
               <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
-              <span class="setting-description">{{ setting.description }}</span>
+              <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
             </div>
             <input
               v-if="setting.type === 'text' || setting.type === 'number'"
@@ -168,7 +168,7 @@
           <div v-for="setting in getGroupSettings('features')" :key="setting.key" class="setting-item">
             <div class="setting-header">
               <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
-              <span class="setting-description">{{ setting.description }}</span>
+              <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
             </div>
             <div class="toggle-wrapper">
               <input
@@ -190,7 +190,7 @@
           <div v-for="setting in getGroupSettings('footer')" :key="setting.key" class="setting-item">
             <div class="setting-header">
               <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
-              <span class="setting-description">{{ setting.description }}</span>
+              <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
             </div>
             <textarea
               v-if="setting.type === 'text'"
@@ -416,7 +416,7 @@ import { useAuthStore } from '../../stores/auth'
 import AppLayout from '../../components/AppLayout.vue'
 import { API_URL, BASE_URL } from '../../config/api'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 
 const loading = ref(true)
@@ -534,6 +534,14 @@ const formatLabel = (key) => {
   }
 
   return translated
+}
+
+// Get localized description based on current locale
+const getLocalizedDescription = (setting) => {
+  if (locale.value === 'ar' && setting.description_ar) {
+    return setting.description_ar
+  }
+  return setting.description || ''
 }
 
 // Handle logo upload
