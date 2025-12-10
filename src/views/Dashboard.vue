@@ -5,7 +5,7 @@
       <div class="welcome-section">
         <div>
           <h1>{{ $t('common.welcome') }}, {{ user?.name }}!</h1>
-          <p class="welcome-subtitle">{{ $t('dashboard.subtitle') }}</p>
+          <p class="welcome-subtitle">{{ systemTitle }}</p>
         </div>
         <BaseBadge :variant="getRoleBadgeVariant(user?.role)" class="role-badge-large">
           {{ $t('admin.' + (user?.role || 'user').toLowerCase()) }}
@@ -214,7 +214,9 @@
 import { API_URL, BASE_URL } from '../config/api'
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
+import { useSettings } from '../composables/useSettings'
 import AppLayout from '../components/AppLayout.vue'
 import BaseCard from '../components/BaseCard.vue'
 import BaseButton from '../components/BaseButton.vue'
@@ -223,8 +225,13 @@ import axios from 'axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { locale } = useI18n()
+const { siteName, siteNameAr, fetchPublicSettings } = useSettings()
 
 const user = computed(() => authStore.user)
+const systemTitle = computed(() => {
+  return locale.value === 'ar' ? siteNameAr.value : siteName.value
+})
 
 // Real stats data from API
 const stats = ref({
@@ -239,6 +246,7 @@ const stats = ref({
 
 // Load statistics on mount
 onMounted(async () => {
+  await fetchPublicSettings()
   await loadStatistics()
 })
 

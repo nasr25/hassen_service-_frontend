@@ -3,12 +3,19 @@
 </template>
 
 <script setup>
-import { onMounted, watch, onBeforeMount } from 'vue'
+import { onMounted, watch, onBeforeMount, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from './stores/auth'
+import { useSettings } from './composables/useSettings'
 
 const authStore = useAuthStore()
 const { locale } = useI18n()
+const { siteName, siteNameAr, fetchPublicSettings } = useSettings()
+
+// Computed property for document title based on locale
+const documentTitle = computed(() => {
+  return locale.value === 'ar' ? siteNameAr.value : siteName.value
+})
 
 // Set direction immediately before mounting
 const updateDirection = (lang) => {
@@ -27,15 +34,23 @@ onBeforeMount(() => {
   updateDirection(locale.value)
 })
 
-onMounted(() => {
+onMounted(async () => {
+  await fetchPublicSettings()
   authStore.initializeAuth()
   updateDirection(locale.value)
+  document.title = documentTitle.value
 })
 
-// Watch for locale changes and update document direction
+// Watch for locale changes and update document direction and title
 watch(locale, (newLocale) => {
   updateDirection(newLocale)
   localStorage.setItem('locale', newLocale)
+  document.title = documentTitle.value
+})
+
+// Watch for title changes and update document title
+watch(documentTitle, (newTitle) => {
+  document.title = newTitle
 })
 </script>
 

@@ -23,7 +23,7 @@
             </svg>
           </div>
           <h1>{{ $t('auth.login') }}</h1>
-          <p class="subtitle">{{ $t('dashboard.subtitle') }}</p>
+          <p class="subtitle">{{ systemTitle }}</p>
         </div>
 
         <div v-if="error" class="alert alert-error">
@@ -112,7 +112,7 @@
         </div>
 
         <h1 class="welcome-title">{{ $t('auth.welcome') || 'مرحباً' }}</h1>
-        <p class="welcome-description">{{ $t('auth.welcomeMessage') || 'نظام إدارة سير العمل' }}</p>
+        <p class="welcome-description">{{ systemTitle }}</p>
 
         <div class="features-list">
           <div class="feature-item">
@@ -157,7 +157,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useI18n } from 'vue-i18n'
@@ -170,8 +170,13 @@ import { API_URL } from '../config/api'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const { t } = useI18n()
-const { logo, fetchPublicSettings } = useSettings()
+const { t, locale } = useI18n()
+const { logo, siteName, siteNameAr, fetchPublicSettings } = useSettings()
+
+// Computed property for system title based on locale
+const systemTitle = computed(() => {
+  return locale.value === 'ar' ? siteNameAr.value : siteName.value
+})
 
 onMounted(async () => {
   fetchPublicSettings()
