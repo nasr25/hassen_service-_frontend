@@ -837,10 +837,12 @@ onBeforeUnmount(() => {
 
 [dir="rtl"] .top-nav-left {
   text-align: right;
+  order: 2;
 }
 
 [dir="rtl"] .top-nav-right {
   flex-direction: row-reverse;
+  order: 1;
 }
 
 [dir="rtl"] .user-menu {
