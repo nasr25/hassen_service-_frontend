@@ -48,7 +48,9 @@
     "daysAgo": "{count} days ago | {count} day ago | {count} days ago",
     "english": "English",
     "arabic": "Arabic",
-    "scrollToSeeMore": "Scroll to see more →"
+    "scrollToSeeMore": "Scroll to see more →",
+    "optional": "Optional",
+    "to": "to"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -164,6 +166,7 @@
     "createRequest": "Create Request"
   },
   "request": {
+    "request": "Request",
     "title": "Request Title",
     "titlePlaceholder": "Enter a clear title for your request",
     "description": "Description",
@@ -296,6 +299,7 @@
     "in_review": "In Review",
     "in_progress": "In Progress",
     "need_more_details": "Need Details",
+    "missing_requirement": "Missing Requirement",
     "approved": "Approved",
     "rejected": "Rejected",
     "completed": "Completed"
@@ -331,8 +335,9 @@
     "assignPath": "Assign Path",
     "requestDetails": "Request Details",
     "requestMoreDetails": "Request More Details",
-    "additionalInfoNeeded": "What additional information do you need?",
+    "whatAdditionalInfo": "What additional information do you need?",
     "explainDetailsNeeded": "Explain what details are needed from the user...",
+    "additionalInfoNeeded": "What additional information do you need?",
     "reject": "Reject",
     "rejectRequest": "Reject Request",
     "permanentRejectionWarning": "This will permanently reject the request and end the workflow.",
@@ -438,11 +443,18 @@
     "canProceed": "You can proceed directly to assign this request.",
     "applied": "Applied",
     "notApplied": "Not Applied",
-    "notes": "Notes (Optional)",
+    "answer": "Answer",
+    "progress": "Progress",
+    "questionsAnswered": "questions answered",
+    "submitAndContinue": "Submit & Continue",
+    "notes": "Notes",
     "addComments": "Add any additional comments or context...",
     "saving": "Saving...",
     "saveAndContinue": "Save Evaluation & Continue",
     "proceedToAssign": "Proceed to Assign Employee",
+    "requestWillBeReturnedTo": "This will send the request back to",
+    "forValidation": "for validation",
+    "forFinalValidation": "for final validation",
     "returnRequestNote": "This will return the request to your department manager for review.",
     "returnToDeptANote": "This will send the request back to Department A for final validation.",
     "acceptLaterNote": "This idea will be accepted but scheduled for future implementation.",

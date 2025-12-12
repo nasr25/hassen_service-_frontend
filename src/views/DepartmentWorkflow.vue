@@ -192,7 +192,7 @@
                   {{ $t('department.rejectIdea') }}
                 </BaseButton>
                 <BaseButton variant="info" @click="openPathEvaluationModal(request, 'return')">
-                  {{ $t('department.returnToDeptA') }}
+                  {{ $t('common.back') }} {{ $t('common.to') }} {{ getDepartmentAName(request) }}
                 </BaseButton>
               </template>
             </template>
@@ -308,7 +308,7 @@
           <span v-if="pathEvaluationModal.action === 'accept'">{{ $t('department.acceptIdeaAction') }}</span>
           <span v-else-if="pathEvaluationModal.action === 'accept_later'">{{ $t('department.acceptLaterAction') }}</span>
           <span v-else-if="pathEvaluationModal.action === 'reject'">{{ $t('department.rejectIdeaAction') }}</span>
-          <span v-else-if="pathEvaluationModal.action === 'return'">{{ $t('department.returnToDeptAAction') }}</span>
+          <span v-else-if="pathEvaluationModal.action === 'return'">{{ $t('common.back') }} {{ $t('common.to') }} {{ getDepartmentAName(pathEvaluationModal.request) }} {{ $t('department.forValidation') }}</span>
         </div>
 
         <div v-if="pathEvaluationModal.isLoading" class="loading-state">
@@ -391,11 +391,11 @@
     <!-- Return to Department A Modal (Manager) -->
     <div v-if="returnToDeptAModal.show" class="modal-overlay" @click="closeReturnToDeptAModal">
       <div class="modal-content" @click.stop>
-        <h2>{{ $t('department.returnToDeptA') }}</h2>
+        <h2>{{ $t('common.back') }} {{ $t('common.to') }} {{ getDepartmentAName(returnToDeptAModal.request) }}</h2>
         <p class="modal-subtitle">{{ $t('request.request') }}: {{ returnToDeptAModal.request?.title }}</p>
 
         <div class="alert alert-info">
-          <strong>{{ $t('evaluations.notes') }}:</strong> {{ $t('department.returnToDeptANote') }}
+          <strong>{{ $t('evaluations.notes') }}:</strong> {{ $t('department.requestWillBeReturnedTo') }} {{ getDepartmentAName(returnToDeptAModal.request) }} {{ $t('department.forFinalValidation') }}.
         </div>
 
         <div class="form-group">
@@ -417,7 +417,7 @@
             @click="confirmReturnToDeptA"
             :disabled="!returnToDeptAModal.comments || returnToDeptAModal.isLoading"
           >
-            {{ returnToDeptAModal.isLoading ? $t('department.returning') : $t('department.returnToDeptA') }}
+            {{ returnToDeptAModal.isLoading ? $t('department.returning') : $t('common.back') + ' ' + $t('common.to') + ' ' + getDepartmentAName(returnToDeptAModal.request) }}
           </BaseButton>
         </div>
       </div>
@@ -488,6 +488,7 @@ const { t } = useI18n()
 
 const requests = ref([])
 const employees = ref([])
+const departmentA = ref(null)
 const error = ref(null)
 const success = ref(null)
 const isLoading = ref(true)
@@ -540,11 +541,17 @@ const isEmployee = (request) => {
   return authStore.user?.role === 'employee' && request.current_user_id === authStore.user?.id
 }
 
+// Get Department A name
+const getDepartmentAName = (request) => {
+  return departmentA.value?.name || 'Department A'
+}
+
 onMounted(async () => {
-  await loadRequests()
-  if (isManager.value) {
-    await loadEmployees()
-  }
+  await Promise.all([
+    loadRequests(),
+    loadDepartmentA(),
+    isManager.value ? loadEmployees() : Promise.resolve()
+  ])
 })
 
 const loadRequests = async () => {
@@ -580,6 +587,21 @@ const loadEmployees = async () => {
   }
 }
 
+const loadDepartmentA = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/departments`, {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      }
+    })
+
+    // Find the department marked as Department A
+    departmentA.value = response.data.departments.find(dept => dept.is_department_a === true)
+  } catch (err) {
+    console.error('Failed to load Department A:', err)
+  }
+}
+
 const goBack = () => {
   router.push('/dashboard')
 }
@@ -595,6 +617,7 @@ const getStatusVariant = (status) => {
     in_review: 'info',
     in_progress: 'primary',
     need_more_details: 'warning',
+    missing_requirement: 'warning',
     approved: 'success',
     rejected: 'error',
     completed: 'success'
@@ -956,7 +979,7 @@ const getActionButtonText = () => {
     case 'reject':
       return t('department.rejectIdea')
     case 'return':
-      return t('department.returnToDeptA')
+      return t('common.back') + ' ' + t('common.to') + ' ' + getDepartmentAName(pathEvaluationModal.value.request)
     default:
       return t('common.continue')
   }

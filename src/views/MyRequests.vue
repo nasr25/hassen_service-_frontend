@@ -240,6 +240,7 @@ const getStatusVariant = (status) => {
     in_review: 'info',
     in_progress: 'primary',
     need_more_details: 'warning',
+    missing_requirement: 'warning',
     approved: 'success',
     rejected: 'error',
     completed: 'success'

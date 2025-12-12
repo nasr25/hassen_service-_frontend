@@ -169,6 +169,7 @@ const getStatusVariant = (status) => {
     in_review: 'info',
     in_progress: 'primary',
     need_more_details: 'warning',
+    missing_requirement: 'warning',
     approved: 'success',
     rejected: 'error',
     completed: 'success'
@@ -326,7 +327,7 @@ const formatDate = (dateString) => {
 
 .requests-table {
   width: 100%;
-  min-width: 1200px;
+  min-width: 1000px;
   border-collapse: collapse;
   font-size: var(--font-size-sm);
 }
@@ -344,17 +345,17 @@ const formatDate = (dateString) => {
   white-space: nowrap;
 }
 
-.requests-table th:nth-child(1) { width: 60px; }   /* ID */
-.requests-table th:nth-child(2) { min-width: 200px; } /* Title */
-.requests-table th:nth-child(3) { min-width: 120px; } /* Submitted By */
-.requests-table th:nth-child(4) { min-width: 150px; } /* Workflow Path */
-.requests-table th:nth-child(5) { min-width: 140px; } /* Current Location */
-.requests-table th:nth-child(6) { min-width: 120px; } /* Assigned To */
-.requests-table th:nth-child(7) { min-width: 100px; } /* Status */
-.requests-table th:nth-child(8) { min-width: 130px; } /* Expected Date */
-.requests-table th:nth-child(9) { min-width: 150px; } /* Attachments */
-.requests-table th:nth-child(10) { min-width: 130px; } /* Last Updated */
-.requests-table th:nth-child(11) { min-width: 120px; } /* Actions */
+.requests-table th:nth-child(1) { width: 50px; }   /* ID */
+.requests-table th:nth-child(2) { min-width: 150px; } /* Title */
+.requests-table th:nth-child(3) { min-width: 100px; } /* Submitted By */
+.requests-table th:nth-child(4) { min-width: 120px; } /* Workflow Path */
+.requests-table th:nth-child(5) { min-width: 110px; } /* Current Location */
+.requests-table th:nth-child(6) { min-width: 100px; } /* Assigned To */
+.requests-table th:nth-child(7) { min-width: 90px; } /* Status */
+.requests-table th:nth-child(8) { min-width: 110px; } /* Expected Date */
+.requests-table th:nth-child(9) { min-width: 120px; } /* Attachments */
+.requests-table th:nth-child(10) { min-width: 110px; } /* Last Updated */
+.requests-table th:nth-child(11) { min-width: 100px; } /* Actions */
 
 .requests-table tbody tr {
   border-bottom: 1px solid var(--color-border);
@@ -379,7 +380,7 @@ const formatDate = (dateString) => {
 .title-cell {
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
-  max-width: 300px;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -408,7 +409,7 @@ const formatDate = (dateString) => {
 
 /* Attachments Cell */
 .attachments-cell {
-  max-width: 250px;
+  max-width: 180px;
 }
 
 .attachments-list {
@@ -459,12 +460,6 @@ const formatDate = (dateString) => {
 }
 
 /* Responsive */
-@media (max-width: 1400px) {
-  .requests-table {
-    min-width: 1400px;
-  }
-}
-
 @media (max-width: 768px) {
   .page-header {
     flex-direction: column;

@@ -441,13 +441,13 @@
             </svg>
           </button>
         </div>
-        <p class="modal-subtitle">Request: {{ detailsModal.request?.title }}</p>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ detailsModal.request?.title }}</p>
 
         <div class="form-group">
-          <label class="form-label">What additional information do you need? *</label>
+          <label class="form-label">{{ $t('workflow.whatAdditionalInfo') }} *</label>
           <textarea
             v-model="detailsModal.comments"
-            placeholder="Explain what details are needed from the user..."
+            :placeholder="$t('workflow.explainDetailsNeeded')"
             rows="4"
             class="form-textarea"
             required
@@ -456,7 +456,7 @@
 
         <div class="modal-actions">
           <BaseButton variant="secondary" @click="closeDetailsModal">
-            Cancel
+            {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
             variant="primary"
@@ -464,7 +464,7 @@
             :disabled="!detailsModal.comments || detailsModal.isLoading"
             :loading="detailsModal.isLoading"
           >
-            Request Details
+            {{ $t('workflow.requestDetails') }}
           </BaseButton>
         </div>
       </div>
@@ -794,6 +794,7 @@ const getStatusVariant = (status) => {
     in_review: 'info',
     in_progress: 'primary',
     need_more_details: 'warning',
+    missing_requirement: 'warning',
     approved: 'success',
     rejected: 'error',
     completed: 'success'

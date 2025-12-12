@@ -48,7 +48,9 @@
     "daysAgo": "منذ {count} يوم | منذ يوم | منذ يومين | منذ {count} أيام | منذ {count} يوماً",
     "english": "الإنجليزية",
     "arabic": "العربية",
-    "scrollToSeeMore": "← مرر لرؤية المزيد"
+    "scrollToSeeMore": "← مرر لرؤية المزيد",
+    "optional": "اختياري",
+    "to": "إلى"
   },
   "nav": {
     "dashboard": "لوحة التحكم",
@@ -164,6 +166,7 @@
     "createRequest": "إنشاء طلب"
   },
   "request": {
+    "request": "الطلب",
     "title": "عنوان الطلب",
     "titlePlaceholder": "أدخل عنواناً واضحاً لطلبك",
     "description": "الوصف",
@@ -296,6 +299,7 @@
     "in_review": "قيد المراجعة",
     "in_progress": "قيد التنفيذ",
     "need_more_details": "بحاجة لتفاصيل",
+    "missing_requirement": "متطلبات ناقصة",
     "approved": "موافق عليه",
     "rejected": "مرفوض",
     "completed": "مكتمل"
@@ -330,8 +334,9 @@
     "finalCommentsPlaceholder": "أضف أي تعليقات نهائية حول الإكمال...",
     "requestDetails": "طلب تفاصيل",
     "requestMoreDetails": "طلب تفاصيل إضافية",
-    "additionalInfoNeeded": "ما هي المعلومات الإضافية التي تحتاجها؟",
+    "whatAdditionalInfo": "ما هي المعلومات الإضافية التي تحتاجها؟",
     "explainDetailsNeeded": "اشرح التفاصيل المطلوبة من المستخدم...",
+    "additionalInfoNeeded": "ما هي المعلومات الإضافية التي تحتاجها؟",
     "reject": "رفض",
     "rejectRequest": "رفض الطلب",
     "permanentRejectionWarning": "سيؤدي ذلك إلى رفض الطلب بشكل دائم وإنهاء سير العمل.",
@@ -437,11 +442,18 @@
     "canProceed": "يمكنك المتابعة مباشرة لتعيين هذا الطلب.",
     "applied": "مطبق",
     "notApplied": "غير مطبق",
-    "notes": "ملاحظات (اختياري)",
+    "answer": "الإجابة",
+    "progress": "التقدم",
+    "questionsAnswered": "سؤال تم الإجابة عليه",
+    "submitAndContinue": "إرسال ومتابعة",
+    "notes": "ملاحظات",
     "addComments": "أضف أي تعليقات أو سياق إضافي...",
     "saving": "جاري الحفظ...",
     "saveAndContinue": "حفظ التقييم والمتابعة",
     "proceedToAssign": "المتابعة لتعيين موظف",
+    "requestWillBeReturnedTo": "سيؤدي هذا إلى إرسال الطلب مرة أخرى إلى",
+    "forValidation": "للتحقق",
+    "forFinalValidation": "للتحقق النهائي",
     "returnRequestNote": "سيؤدي هذا إلى إرجاع الطلب إلى مدير قسمك للمراجعة.",
     "returnToDeptANote": "سيؤدي هذا إلى إرسال الطلب مرة أخرى إلى القسم أ للتحقق النهائي.",
     "acceptLaterNote": "سيتم قبول هذه الفكرة ولكن جدولتها للتنفيذ المستقبلي.",
