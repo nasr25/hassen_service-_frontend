@@ -474,24 +474,24 @@
     <div v-if="rejectModal.show" class="modal-overlay" @click="closeRejectModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h2>Reject Request</h2>
+          <h2>{{ $t('workflow.rejectRequest') }}</h2>
           <button @click="closeRejectModal" class="modal-close">
             <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
             </svg>
           </button>
         </div>
-        <p class="modal-subtitle">Request: {{ rejectModal.request?.title }}</p>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ rejectModal.request?.title }}</p>
 
         <div class="alert alert-warning">
-          <strong>Warning:</strong> This will permanently reject the request and end the workflow.
+          <strong>{{ $t('common.warning') }}:</strong> {{ $t('workflow.permanentRejectionWarning') }}
         </div>
 
         <div class="form-group">
-          <label class="form-label">Rejection Reason *</label>
+          <label class="form-label">{{ $t('workflow.rejectionReason') }} *</label>
           <textarea
             v-model="rejectModal.reason"
-            placeholder="Explain why this request is being rejected..."
+            :placeholder="$t('workflow.explainRejection')"
             rows="4"
             class="form-textarea"
             required
@@ -500,7 +500,7 @@
 
         <div class="modal-actions">
           <BaseButton variant="secondary" @click="closeRejectModal">
-            Cancel
+            {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
             variant="error"
@@ -508,7 +508,7 @@
             :disabled="!rejectModal.reason || rejectModal.isLoading"
             :loading="rejectModal.isLoading"
           >
-            Reject Request
+            {{ $t('workflow.rejectRequest') }}
           </BaseButton>
         </div>
       </div>

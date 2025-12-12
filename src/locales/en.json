@@ -47,7 +47,8 @@
     "hoursAgo": "{count} hours ago | {count} hour ago | {count} hours ago",
     "daysAgo": "{count} days ago | {count} day ago | {count} days ago",
     "english": "English",
-    "arabic": "Arabic"
+    "arabic": "Arabic",
+    "scrollToSeeMore": "Scroll to see more →"
   },
   "nav": {
     "dashboard": "Dashboard",

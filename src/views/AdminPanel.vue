@@ -813,11 +813,13 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { useI18n } from 'vue-i18n'
 import AppLayout from '../components/AppLayout.vue'
 import axios from 'axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const activeTab = ref('departments')
 const departments = ref([])
@@ -955,13 +957,24 @@ const saveDepartment = async () => {
     error.value = null
     const url = departmentModal.value.isEdit ? `${API_URL}/admin/departments/${departmentModal.value.editId}` : `${API_URL}/admin/departments`
     const method = departmentModal.value.isEdit ? 'put' : 'post'
-    await axios[method](url, departmentModal.value.form, { headers: { Authorization: `Bearer ${authStore.token}` } })
+
+    console.log('Saving department:', { url, method, data: departmentModal.value.form })
+
+    await axios[method](url, departmentModal.value.form, {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
     success.value = departmentModal.value.isEdit ? t('messages.success.departmentUpdated') : t('messages.success.departmentCreated')
     closeDepartmentModal()
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to save department'
+    console.error('Department save error:', err)
+    console.error('Error response:', err.response)
+    error.value = err.response?.data?.message || err.message || 'Failed to save department'
   } finally {
     departmentModal.value.isLoading = false
   }

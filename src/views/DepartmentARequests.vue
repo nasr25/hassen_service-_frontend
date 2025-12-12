@@ -38,6 +38,13 @@
 
       <!-- Requests Table -->
       <BaseCard v-else class="table-card">
+        <div class="scroll-hint">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+            <path fill-rule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+          </svg>
+          <span>{{ $t('common.scrollToSeeMore') }}</span>
+        </div>
         <div class="table-container">
           <table class="requests-table">
             <thead>
@@ -186,6 +193,7 @@ const formatDate = (dateString) => {
 .department-a-requests {
   max-width: 1600px;
   margin: 0 auto;
+  width: 100%;
 }
 
 /* Page Header */
@@ -249,15 +257,76 @@ const formatDate = (dateString) => {
 /* Table Card */
 .table-card {
   padding: 0;
-  overflow: hidden;
+  overflow-x: visible;
+  overflow-y: hidden;
+  position: relative;
+}
+
+.scroll-hint {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-primary-50);
+  border-bottom: 1px solid var(--color-primary-200);
+  color: var(--color-primary-700);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.scroll-hint svg {
+  color: var(--color-primary-600);
+  animation: scroll-hint-bounce 2s ease-in-out infinite;
+}
+
+@keyframes scroll-hint-bounce {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
 }
 
 .table-container {
   overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Custom Scrollbar Styling */
+.table-container::-webkit-scrollbar {
+  height: 12px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: var(--color-gray-300);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-surface);
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-400);
+}
+
+/* For Firefox */
+.table-container {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gray-300) var(--color-surface);
 }
 
 .requests-table {
   width: 100%;
+  min-width: 1200px;
   border-collapse: collapse;
   font-size: var(--font-size-sm);
 }
@@ -274,6 +343,18 @@ const formatDate = (dateString) => {
   color: var(--color-text-primary);
   white-space: nowrap;
 }
+
+.requests-table th:nth-child(1) { width: 60px; }   /* ID */
+.requests-table th:nth-child(2) { min-width: 200px; } /* Title */
+.requests-table th:nth-child(3) { min-width: 120px; } /* Submitted By */
+.requests-table th:nth-child(4) { min-width: 150px; } /* Workflow Path */
+.requests-table th:nth-child(5) { min-width: 140px; } /* Current Location */
+.requests-table th:nth-child(6) { min-width: 120px; } /* Assigned To */
+.requests-table th:nth-child(7) { min-width: 100px; } /* Status */
+.requests-table th:nth-child(8) { min-width: 130px; } /* Expected Date */
+.requests-table th:nth-child(9) { min-width: 150px; } /* Attachments */
+.requests-table th:nth-child(10) { min-width: 130px; } /* Last Updated */
+.requests-table th:nth-child(11) { min-width: 120px; } /* Actions */
 
 .requests-table tbody tr {
   border-bottom: 1px solid var(--color-border);
@@ -378,6 +459,12 @@ const formatDate = (dateString) => {
 }
 
 /* Responsive */
+@media (max-width: 1400px) {
+  .requests-table {
+    min-width: 1400px;
+  }
+}
+
 @media (max-width: 768px) {
   .page-header {
     flex-direction: column;
@@ -385,8 +472,42 @@ const formatDate = (dateString) => {
     gap: var(--spacing-4);
   }
 
+  .page-header h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .scroll-hint {
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: var(--font-size-xs);
+  }
+
   .table-container {
     border-radius: 0;
+    margin: 0 calc(-1 * var(--spacing-4));
+  }
+
+  .requests-table {
+    font-size: var(--font-size-xs);
+  }
+
+  .requests-table th,
+  .requests-table td {
+    padding: var(--spacing-3);
+  }
+
+  .title-cell {
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .table-container {
+    margin: 0 calc(-1 * var(--spacing-3));
+  }
+
+  .requests-table th,
+  .requests-table td {
+    padding: var(--spacing-2);
   }
 }
 </style>

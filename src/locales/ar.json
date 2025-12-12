@@ -47,7 +47,8 @@
     "hoursAgo": "منذ {count} ساعة | منذ ساعة | منذ ساعتين | منذ {count} ساعات | منذ {count} ساعة",
     "daysAgo": "منذ {count} يوم | منذ يوم | منذ يومين | منذ {count} أيام | منذ {count} يوماً",
     "english": "الإنجليزية",
-    "arabic": "العربية"
+    "arabic": "العربية",
+    "scrollToSeeMore": "← مرر لرؤية المزيد"
   },
   "nav": {
     "dashboard": "لوحة التحكم",
