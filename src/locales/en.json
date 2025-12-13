@@ -431,6 +431,12 @@
     "expectedDate": "Expected Execution Date",
     "scheduleReason": "Add any notes about why this is scheduled for later...",
     "accepting": "Accepting...",
+    "acceptedForLater": "Accepted for Later Implementation",
+    "executeOn": "Execute on",
+    "dateDue": "Date Due",
+    "startImplementing": "Start Implementing",
+    "activateIdeaPrompt": "You are about to activate this idea for implementation. You can then assign it to an employee.",
+    "optionalComments": "Optional comments",
     "pathEvaluationRequired": "Path Evaluation Required",
     "action": "Action",
     "acceptIdeaAction": "Accept Idea - Assign to employee",
@@ -968,6 +974,7 @@
       "requestReturnedToPrevious": "Request returned to previous department successfully",
       "evaluationSubmitted": "Evaluation submitted successfully",
       "ideaAccepted": "Idea accepted for later implementation",
+      "ideaActivated": "Idea activated successfully. You can now assign it to an employee.",
       "ideaRejected": "Idea rejected",
       "requestCompleted": "Request completed successfully",
       "templateUpdated": "Email template updated successfully",
@@ -1021,6 +1028,7 @@
       "failedToLoadQuestions": "Failed to load evaluation questions",
       "failedToSubmitEvaluation": "Failed to submit evaluation",
       "failedToAccept": "Failed to accept idea",
+      "failedToActivate": "Failed to activate idea",
       "failedToReject": "Failed to reject idea",
       "failedToComplete": "Failed to complete request",
       "failedToFetch": "Failed to fetch data",
@@ -1061,5 +1069,9 @@
     "progress": "Progress",
     "questionsAnswered": "questions answered",
     "submitContinue": "Submit & Continue"
-  }
+  },
+  "sla.dept_a_assign_path": "SLA: Dept A Workflow Path Assignment",
+  "sla.manager_assign_employee": "SLA: Manager Employee Assignment",
+  "sla.employee_work_overdue": "SLA: Employee Work Overdue",
+  "sla.final_validation_overdue": "SLA: Final Validation Overdue"
 }

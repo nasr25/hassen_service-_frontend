@@ -430,6 +430,12 @@
     "expectedDate": "تاريخ التنفيذ المتوقع",
     "scheduleReason": "أضف أي ملاحظات حول سبب جدولة هذا للمستقبل...",
     "accepting": "جاري القبول...",
+    "acceptedForLater": "مقبول للتنفيذ لاحقاً",
+    "executeOn": "التنفيذ في",
+    "dateDue": "حان موعد التنفيذ",
+    "startImplementing": "بدء التنفيذ",
+    "activateIdeaPrompt": "أنت على وشك تفعيل هذه الفكرة للتنفيذ. يمكنك بعد ذلك تعيينها لموظف.",
+    "optionalComments": "تعليقات اختيارية",
     "pathEvaluationRequired": "تقييم المسار مطلوب",
     "action": "الإجراء",
     "acceptIdeaAction": "قبول الفكرة - تعيين لموظف",
@@ -967,6 +973,7 @@
       "requestReturnedToPrevious": "تمت إعادة الطلب إلى القسم السابق بنجاح",
       "evaluationSubmitted": "تم إرسال التقييم بنجاح",
       "ideaAccepted": "تم قبول الفكرة للتنفيذ المستقبلي",
+      "ideaActivated": "تم تفعيل الفكرة بنجاح. يمكنك الآن تعيينها لموظف.",
       "ideaRejected": "تم رفض الفكرة",
       "requestCompleted": "تم إكمال الطلب بنجاح",
       "templateUpdated": "تم تحديث قالب البريد الإلكتروني بنجاح",
@@ -1020,6 +1027,7 @@
       "failedToLoadQuestions": "فشل تحميل أسئلة التقييم",
       "failedToSubmitEvaluation": "فشل إرسال التقييم",
       "failedToAccept": "فشل قبول الفكرة",
+      "failedToActivate": "فشل تفعيل الفكرة",
       "failedToReject": "فشل رفض الفكرة",
       "failedToComplete": "فشل إكمال الطلب",
       "failedToFetch": "فشل جلب البيانات",
@@ -1060,5 +1068,9 @@
     "progress": "التقدم",
     "questionsAnswered": "أسئلة تمت الإجابة عليها",
     "submitContinue": "إرسال والمتابعة"
-  }
+  },
+  "sla.dept_a_assign_path": "SLA: تعيين مسار العمل من القسم أ",
+  "sla.manager_assign_employee": "SLA: تعيين موظف من المدير",
+  "sla.employee_work_overdue": "SLA: تأخر عمل الموظف",
+  "sla.final_validation_overdue": "SLA: تأخر التحقق النهائي"
 }

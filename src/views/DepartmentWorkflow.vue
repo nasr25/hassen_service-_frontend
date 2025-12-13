@@ -156,8 +156,29 @@
           <div class="request-actions">
             <!-- Manager Actions (only for unassigned requests) -->
             <template v-if="isManager && !request.current_user_id">
+              <!-- Pending (Accepted for Later) - Show Activate button -->
+              <template v-if="request.status === 'pending' && request.expected_execution_date">
+                <div class="pending-idea-notice">
+                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                  </svg>
+                  <span>
+                    {{ $t('department.acceptedForLater') }} - {{ $t('department.executeOn') }}: {{ formatDate(request.expected_execution_date) }}
+                    <span v-if="isExecutionDateDue(request.expected_execution_date)" class="date-due-badge">
+                      {{ $t('department.dateDue') }}!
+                    </span>
+                  </span>
+                </div>
+                <BaseButton variant="success" @click="activateIdea(request)">
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                  </svg>
+                  {{ $t('department.startImplementing') }}
+                </BaseButton>
+              </template>
+
               <!-- Show Evaluate button if evaluation is required but not completed -->
-              <template v-if="request.requires_evaluation && !request.has_evaluated">
+              <template v-else-if="request.requires_evaluation && !request.has_evaluated">
                 <BaseButton variant="primary" @click="openPathEvaluationModal(request, null)">
                   {{ $t('department.evaluateRequest') }}
                 </BaseButton>
@@ -1056,6 +1077,46 @@ const confirmAcceptLater = async () => {
   }
 }
 
+// Activate Accepted Idea
+const activateIdea = async (request) => {
+  const comments = prompt(`${t('department.activateIdeaPrompt')}\n\n${t('request.request')}: ${request.title}\n\n${t('department.optionalComments')}`)
+
+  // Allow empty comments (user can press OK without entering anything)
+  if (comments === null) return // Only cancel if user pressed Cancel
+
+  try {
+    error.value = null
+    await axios.post(
+      `${API_URL}/department/requests/${request.id}/activate`,
+      { comments: comments || 'Idea activated for implementation' },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      }
+    )
+
+    success.value = t('messages.success.ideaActivated')
+
+    // Reload requests
+    loadRequests().catch(err => {
+      console.error('Failed to reload requests:', err)
+    })
+
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || t('messages.error.failedToActivate')
+  }
+}
+
+// Helper to check if execution date is due
+const isExecutionDateDue = (executionDate) => {
+  if (!executionDate) return false
+  const today = new Date()
+  const execDate = new Date(executionDate)
+  return execDate <= today
+}
+
 const rejectIdea = async (request) => {
   const reason = prompt(`${t('department.rejectPrompt')}\n\n${t('request.request')}: ${request.title}\n\n${t('department.provideReason')}`)
   if (!reason) return
@@ -1451,6 +1512,49 @@ const rejectIdea = async (request) => {
   font-size: var(--font-size-sm);
   text-align: center;
   margin-top: var(--spacing-2);
+}
+
+.pending-idea-notice {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3);
+  background: var(--color-warning-50);
+  border: 1px solid var(--color-warning-200);
+  border-radius: var(--radius-md);
+  color: var(--color-warning-700);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-3);
+}
+
+.pending-idea-notice svg {
+  flex-shrink: 0;
+  color: var(--color-warning-600);
+}
+
+.pending-idea-notice span {
+  flex: 1;
+}
+
+.date-due-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--color-error-600);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-semibold);
+  margin-left: var(--spacing-2);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 /* Modal Styles */
