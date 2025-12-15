@@ -130,8 +130,10 @@
                   class="search-result-item"
                 >
                   <div class="employee-info">
-                    <strong>{{ employee.name }}</strong>
-                    <span class="employee-meta">{{ employee.email }} • {{ employee.department }}</span>
+                    <strong>{{ employee.username }}</strong>
+                    <span class="employee-meta">{{ employee.email }}</span>
+                    <span>{{ employee.title }}</span>
+
                   </div>
                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
@@ -469,7 +471,7 @@ const addEmployee = (employee) => {
 
   if (!exists) {
     form.value.employees.push({
-      employee_name: employee.name,
+      employee_name: employee.username,
       employee_email: employee.email,
       employee_department: employee.department,
       employee_title: employee.title

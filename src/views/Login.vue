@@ -32,10 +32,10 @@
 
         <form @submit.prevent="handleLogin" class="login-form">
           <BaseInput
-            v-model="form.email"
-            type="email"
-            :label="$t('auth.email')"
-            :placeholder="$t('auth.email')"
+            v-model="form.username"
+            type="text"
+            :label="$t('auth.username')"
+            :placeholder="$t('auth.username')"
             required
           />
 
@@ -59,6 +59,7 @@
         </form>
 
         <!-- Test Accounts Section -->
+        <!--
         <div class="test-accounts">
           <div class="test-accounts-header">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
@@ -77,14 +78,14 @@
           <div v-else class="accounts-compact">
             <div
               v-for="account in testAccounts"
-              :key="account.email"
+              :key="account.username"
               class="test-account"
-              @click="fillLogin(account.email)"
+              @click="fillLogin(account.username)"
             >
               <span class="account-icon">{{ account.icon }}</span>
               <div class="account-info">
                 <strong>{{ account.name }}</strong>
-                <code>{{ account.email }}</code>
+                <code>{{ account.username }}</code>
               </div>
             </div>
           </div>
@@ -96,6 +97,7 @@
             {{ $t('auth.passwordNote') }} <strong>{{ $t('auth.passwordValue') }}</strong>
           </div>
         </div>
+        -->
       </div>
     </div>
 
@@ -146,7 +148,7 @@ onMounted(async () => {
 })
 
 const form = ref({
-  email: '',
+  username: '',
   password: ''
 })
 
@@ -173,7 +175,7 @@ const handleLogin = async () => {
   error.value = null
   isLoading.value = true
 
-  const result = await authStore.login(form.value.email, form.value.password)
+  const result = await authStore.login(form.value.username, form.value.password)
 
   isLoading.value = false
 
@@ -184,8 +186,8 @@ const handleLogin = async () => {
   }
 }
 
-const fillLogin = async (email) => {
-  form.value.email = email
+const fillLogin = async (username) => {
+  form.value.username = username
   form.value.password = 'password'
   // Auto-submit the form after filling
   await handleLogin()
@@ -253,8 +255,8 @@ html[dir="rtl"] .language-switcher-wrapper {
 }
 
 .logo-image {
-  width: 120px;
-  height: 120px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
@@ -457,8 +459,8 @@ html[dir="rtl"] .test-account:hover {
 }
 
 .welcome-logo-image {
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   filter: brightness(0) invert(1);
 }

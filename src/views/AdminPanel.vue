@@ -558,8 +558,9 @@
                 @click="selectExternalUser(user)"
                 class="autocomplete-item"
               >
-                <div class="autocomplete-item-name">{{ user.name || user.full_name || 'N/A' }}</div>
+                <div class="autocomplete-item-name">{{ user.name || user.name_en || 'N/A' }}</div>
                 <div class="autocomplete-item-details">{{ user.email || user.id || user.number }}</div>
+                <div class="autocomplete-item-name">{{ user.name || user.username || 'N/A' }}</div>
               </div>
             </div>
             <div v-if="externalUserLookup.showDropdown && !externalUserLookup.isSearching && externalUserLookup.searchResults.length === 0 && externalUserLookup.searchQuery" class="autocomplete-empty">
@@ -568,24 +569,34 @@
           </div>
           <small class="form-hint">{{ $t('admin.searchHint') }}</small>
         </div>
-
+        
+        <!--
         <div v-if="!userModal.isEdit && externalUserLookup.configured" class="form-group">
           <label>{{ $t('admin.externalUserNumber') }}</label>
           <input v-model="userModal.form.external_user_number" type="text" readonly disabled />
         </div>
+        -->
 
         <div class="form-group">
           <label>{{ $t('admin.name') }} {{ $t('admin.required') }}</label>
           <input v-model="userModal.form.name" type="text" required />
         </div>
+
+        <div class="form-group">
+          <label>{{ $t('admin.fullname') }} {{ $t('admin.required') }}</label>
+          <input v-model="userModal.form.username" type="text" required />
+        </div>
+
         <div class="form-group">
           <label>{{ $t('admin.email') }} {{ $t('admin.required') }}</label>
           <input v-model="userModal.form.email" type="email" required />
         </div>
+        <!--
         <div class="form-group">
           <label>{{ $t('admin.password') }} {{ userModal.isEdit ? $t('admin.passwordLeaveBlank') : $t('admin.required') }}</label>
           <input v-model="userModal.form.password" type="password" :required="!userModal.isEdit" />
         </div>
+        -->
         <div class="form-group">
           <label>{{ $t('admin.role') }} {{ $t('admin.required') }}</label>
           <select v-model="userModal.form.role" required>
@@ -1046,7 +1057,8 @@ const selectExternalUser = (user) => {
   // Assuming the external API returns user objects with 'id', 'name', 'email', etc.
   // Adjust these fields based on your actual API response structure
   userModal.value.form.external_user_number = user.id || user.number || user.user_id || ''
-  if (user.name) userModal.value.form.name = user.name
+  if (user.username) userModal.value.form.name = user.username
+  if (user.name_en) userModal.value.form.username = user.name_en
   if (user.email) userModal.value.form.email = user.email
 
   externalUserLookup.value.showDropdown = false
@@ -1056,11 +1068,11 @@ const selectExternalUser = (user) => {
 const openUserModal = async (user = null) => {
   userModal.value = user ? {
     show: true, isEdit: true, isLoading: false,
-    form: { name: user.name, email: user.email, password: '', role: user.role, is_active: user.is_active, external_user_number: user.external_user_number || '' },
+    form: { name: user.name, email: user.email, password: '', role: user.role, is_active: user.is_active, username: user.username || '' },
     editId: user.id
   } : {
     show: true, isEdit: false, isLoading: false,
-    form: { name: '', email: '', password: '', role: 'employee', is_active: true, external_user_number: '' },
+    form: { name: '', email: '', password: '', role: 'user', is_active: true, username: '' },
     editId: null
   }
 
@@ -1824,7 +1836,11 @@ html[dir="rtl"] .badge {
 .badge-user { background: #95e1d3; color: white; }
 .badge-dept { background: #e3f2fd; color: #1976d2; margin-right: 4px; }
 .badge-info { background: #2196f3; color: white; }
-.dept-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+.dept-badges { 
+  /* display: flex;  */
+  flex-wrap: wrap; 
+  gap: 4px; 
+}
 
 /* RTL Support for department badges */
 html[dir="rtl"] .dept-badges {
@@ -1836,7 +1852,10 @@ html[dir="rtl"] .badge-dept {
   margin-left: 4px;
 }
 .text-muted { color: #999; font-style: italic; }
-.actions { display: flex; gap: 8px; }
+.actions {
+  /* display: flex; */
+  gap: 8px;
+}
 .btn-icon { padding: 6px 10px; background: #f5f5f5; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; transition: all 0.2s; }
 .btn-icon:hover { background: #e0e0e0; transform: scale(1.1); }
 .btn-icon.btn-danger:hover { background: #ffebee; }

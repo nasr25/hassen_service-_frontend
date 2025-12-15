@@ -287,7 +287,7 @@
               <label>{{ $t('settings.body') }} ({{ $t('settings.english') }})</label>
               <textarea
                 v-model="templateEditorModal.form.body_en"
-                rows="10"
+                rows="12"
                 class="form-textarea"
                 placeholder="Email body..."
               ></textarea>
@@ -311,7 +311,7 @@
               <label>{{ $t('settings.body') }} ({{ $t('settings.arabic') }})</label>
               <textarea
                 v-model="templateEditorModal.form.body_ar"
-                rows="10"
+                rows="12"
                 class="form-textarea"
                 placeholder="نص البريد..."
                 dir="rtl"
@@ -1321,7 +1321,7 @@ html[dir="rtl"] .btn-large {
 }
 
 .template-header {
-  display: flex;
+  /* display: flex; */
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: var(--spacing-3);
@@ -1496,7 +1496,7 @@ html[dir="rtl"] .btn-large {
   background: white;
   border-radius: var(--radius-xl);
   padding: var(--spacing-6);
-  max-width: 500px;
+  max-width: auto;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
