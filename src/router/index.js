@@ -115,10 +115,24 @@ router.beforeEach((to, from, next) => {
     next('/login')
   } else if (to.path === '/login' && authStore.isAuthenticated) {
     next('/dashboard')
-  } else if (to.meta.requiresUserRole && authStore.user?.role !== 'user') {
+  // } else if (to.meta.requiresUserRole && authStore.user?.role !== 'user') {
+  }else if (to.meta.requiresUserRole && !['user', 'employee'].includes(authStore.user?.role)) {
     // Only users with 'user' role can access this route
     next('/dashboard')
-  } else if (to.meta.requiresAdmin && authStore.user?.role?.toLowerCase() !== 'admin') {
+  }
+  // else if (to.meta.requiresUserRole && authStore.user?.role === 'employee') {
+  //   // Check if 'manager' user is associated with any department
+  //   const userDepartments = authStore.user?.departments || []
+
+  //   if (userDepartments.length === 0) {
+  //     // If the manager has no departments, allow access
+  //     next()
+  //   } else {
+  //     // If the manager is associated with any department, redirect to dashboard
+  //     next('/dashboard')
+  //   }
+  // } 
+  else if (to.meta.requiresAdmin && authStore.user?.role?.toLowerCase() !== 'admin') {
     // Only admins can access this route
     next('/dashboard')
   } else {

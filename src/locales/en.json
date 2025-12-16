@@ -681,7 +681,8 @@
     "pathCodePlaceholder": "Enter path code (e.g., PATH_001)",
     "pathDescriptionPlaceholder": "Brief description of this workflow path...",
     "pathOrderPlaceholder": "1",
-    "noPathsFound": "No workflow paths found"
+    "noPathsFound": "No workflow paths found",
+    "supervisor" : "Supervisor"
   },
   "manager": {
     "request_assigned": "Request Assigned to Department",

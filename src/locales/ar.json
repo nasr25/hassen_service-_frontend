@@ -680,7 +680,8 @@
     "pathCodePlaceholder": "أدخل رمز المسار (مثال: PATH_001)",
     "pathDescriptionPlaceholder": "وصف مختصر لمسار العمل...",
     "pathOrderPlaceholder": "1",
-    "noPathsFound": "لم يتم العثور على مسارات عمل"
+    "noPathsFound": "لم يتم العثور على مسارات عمل",
+    "supervisor" : "المشرف العام"
   },
   "manager": {
     "request_assigned": "تم تعيين الطلب للقسم",

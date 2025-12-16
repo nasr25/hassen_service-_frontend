@@ -601,6 +601,7 @@
           <label>{{ $t('admin.role') }} {{ $t('admin.required') }}</label>
           <select v-model="userModal.form.role" required>
             <option value="admin">{{ $t('admin.admin') }}</option>
+            <option value="supervisor">{{ $t('admin.supervisor') }}</option>
             <option value="manager">{{ $t('admin.manager') }}</option>
             <option value="employee">{{ $t('admin.employee') }}</option>
             <option value="user">{{ $t('admin.user') }}</option>
@@ -1832,8 +1833,9 @@ html[dir="rtl"] .badge {
 .badge-inactive { background: #9e9e9e; color: white; }
 .badge-admin { background: #ff6b6b; color: white; }
 .badge-manager { background: #4ecdc4; color: white; }
+.badge-supervisor { background: #ff6f3dc4; color: white; }
 .badge-employee { background: #ffd93d; color: #333; }
-.badge-user { background: #95e1d3; color: white; }
+.badge-user { background: #8badff; color: white; }
 .badge-dept { background: #e3f2fd; color: #1976d2; margin-right: 4px; }
 .badge-info { background: #2196f3; color: white; }
 .dept-badges { 

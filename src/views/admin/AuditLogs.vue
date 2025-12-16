@@ -75,7 +75,7 @@
             />
           </div>
 
-          <div class="filter-item">
+          <div class="filter-item" style="margin-top: 29px;">
             <button @click="clearFilters" class="btn-secondary">
               {{ $t('audit.clearFilters') }}
             </button>
@@ -570,7 +570,7 @@ onMounted(() => {
 
 .logs-table th {
   padding: 16px;
-  text-align: left;
+  text-align: center;
   font-size: 13px;
   font-weight: 600;
   color: var(--color-text-primary, #1a1a1a);
@@ -583,6 +583,7 @@ onMounted(() => {
   padding: 16px;
   border-bottom: 1px solid #f3f4f6;
   font-size: 14px;
+  text-align: center;
 }
 
 .logs-table tbody tr:hover {
