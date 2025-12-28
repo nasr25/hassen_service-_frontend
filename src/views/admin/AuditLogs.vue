@@ -451,7 +451,7 @@ onMounted(() => {
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: var(--color-primary, #10b981);
+  background: var(--color-primary, #02735E);
   color: white;
   border: none;
   border-radius: 8px;
@@ -462,7 +462,7 @@ onMounted(() => {
 }
 
 .btn-refresh:hover {
-  background: var(--color-primary-dark, #059669);
+  background: var(--color-primary-dark, #015a4a);
   transform: translateY(-1px);
 }
 
@@ -520,7 +520,7 @@ onMounted(() => {
 .form-input:focus,
 .form-select:focus {
   outline: none;
-  border-color: var(--color-primary, #10b981);
+  border-color: var(--color-primary, #02735E);
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
@@ -706,7 +706,7 @@ onMounted(() => {
 
 .btn-pagination {
   padding: 8px 16px;
-  background: var(--color-primary, #10b981);
+  background: var(--color-primary, #02735E);
   color: white;
   border: none;
   border-radius: 6px;
@@ -722,7 +722,7 @@ onMounted(() => {
 }
 
 .btn-pagination:not(:disabled):hover {
-  background: var(--color-primary-dark, #059669);
+  background: var(--color-primary-dark, #015a4a);
 }
 
 .pagination-info {
@@ -846,7 +846,7 @@ onMounted(() => {
 
 .json-view {
   background: #1f2937;
-  color: #10b981;
+  color: #02735E;
   padding: 16px;
   border-radius: 8px;
   font-size: 12px;

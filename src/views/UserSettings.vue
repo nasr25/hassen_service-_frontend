@@ -23,120 +23,8 @@
 
       <!-- Settings Content -->
       <div v-else class="settings-content">
-        <!-- Email Notifications Settings -->
-        <div class="settings-card">
-          <div class="card-header">
-            <div class="header-left">
-              <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
-              </svg>
-              <div>
-                <h2>{{ $t('userSettings.emailNotifications') }}</h2>
-                <p class="card-description">{{ $t('userSettings.emailNotificationsDesc') }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="card-body">
-            <div class="settings-list">
-              <div class="setting-item">
-                <div class="setting-info">
-                  <label class="setting-label">{{ $t('userSettings.requestCreated') }}</label>
-                  <span class="setting-description">{{ $t('userSettings.requestCreatedDesc') }}</span>
-                </div>
-                <div class="toggle-wrapper">
-                  <input
-                    id="email-request-created"
-                    v-model="settings.email.request_created"
-                    type="checkbox"
-                    class="toggle-input"
-                  />
-                  <label for="email-request-created" class="toggle-label"></label>
-                </div>
-              </div>
-
-              <div class="setting-item">
-                <div class="setting-info">
-                  <label class="setting-label">{{ $t('userSettings.requestStatusChange') }}</label>
-                  <span class="setting-description">{{ $t('userSettings.requestStatusChangeDesc') }}</span>
-                </div>
-                <div class="toggle-wrapper">
-                  <input
-                    id="email-status-change"
-                    v-model="settings.email.request_status_changed"
-                    type="checkbox"
-                    class="toggle-input"
-                  />
-                  <label for="email-status-change" class="toggle-label"></label>
-                </div>
-              </div>
-
-              <div class="setting-item">
-                <div class="setting-info">
-                  <label class="setting-label">{{ $t('userSettings.requestAssigned') }}</label>
-                  <span class="setting-description">{{ $t('userSettings.requestAssignedDesc') }}</span>
-                </div>
-                <div class="toggle-wrapper">
-                  <input
-                    id="email-request-assigned"
-                    v-model="settings.email.request_assigned"
-                    type="checkbox"
-                    class="toggle-input"
-                  />
-                  <label for="email-request-assigned" class="toggle-label"></label>
-                </div>
-              </div>
-
-              <div class="setting-item">
-                <div class="setting-info">
-                  <label class="setting-label">{{ $t('userSettings.requestApproved') }}</label>
-                  <span class="setting-description">{{ $t('userSettings.requestApprovedDesc') }}</span>
-                </div>
-                <div class="toggle-wrapper">
-                  <input
-                    id="email-request-approved"
-                    v-model="settings.email.request_approved"
-                    type="checkbox"
-                    class="toggle-input"
-                  />
-                  <label for="email-request-approved" class="toggle-label"></label>
-                </div>
-              </div>
-
-              <div class="setting-item">
-                <div class="setting-info">
-                  <label class="setting-label">{{ $t('userSettings.requestRejected') }}</label>
-                  <span class="setting-description">{{ $t('userSettings.requestRejectedDesc') }}</span>
-                </div>
-                <div class="toggle-wrapper">
-                  <input
-                    id="email-request-rejected"
-                    v-model="settings.email.request_rejected"
-                    type="checkbox"
-                    class="toggle-input"
-                  />
-                  <label for="email-request-rejected" class="toggle-label"></label>
-                </div>
-              </div>
-
-              <div class="setting-item">
-                <div class="setting-info">
-                  <label class="setting-label">{{ $t('userSettings.requestCompleted') }}</label>
-                  <span class="setting-description">{{ $t('userSettings.requestCompletedDesc') }}</span>
-                </div>
-                <div class="toggle-wrapper">
-                  <input
-                    id="email-request-completed"
-                    v-model="settings.email.request_completed"
-                    type="checkbox"
-                    class="toggle-input"
-                  />
-                  <label for="email-request-completed" class="toggle-label"></label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <!-- Email Notifications Settings - Hidden (Always Enabled) -->
+        <!-- Email notifications are always enabled and cannot be disabled by users -->
 
         <!-- In-App Notifications Settings -->
         <div class="settings-card">
@@ -342,8 +230,21 @@ const saveSettings = async () => {
     successMessage.value = null
     error.value = null
 
+    // Ensure email notifications are always enabled
+    const settingsToSave = {
+      ...settings.value,
+      email: {
+        request_created: true,
+        request_status_changed: true,
+        request_assigned: true,
+        request_approved: true,
+        request_rejected: true,
+        request_completed: true
+      }
+    }
+
     await axios.post('${API_URL}/user/settings', {
-      settings: settings.value
+      settings: settingsToSave
     }, {
       headers: {
         Authorization: `Bearer ${authStore.token}`
@@ -389,7 +290,7 @@ onMounted(() => {
   justify-content: space-between;
   margin-bottom: var(--spacing-8);
   padding: var(--spacing-6);
-  background: linear-gradient(135deg, #084 0%, #66a459 100%);
+  background: linear-gradient(135deg, #02735E 0%, #02735E 100%);
   border-radius: var(--radius-2xl);
   color: white;
 }
@@ -455,7 +356,7 @@ html[dir="rtl"] .btn-save {
   width: 40px;
   height: 40px;
   border: 3px solid var(--color-border);
-  border-top-color: #22c55e;
+  border-top-color: #02735E;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: var(--spacing-4);
@@ -481,7 +382,7 @@ html[dir="rtl"] .btn-save {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: linear-gradient(135deg, #02735E, #015a4a);
   color: white;
   border: none;
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
@@ -586,7 +487,7 @@ html[dir="rtl"] .header-left {
 }
 
 .header-left svg {
-  color: #16a34a;
+  color: #015a4a;
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -594,7 +495,7 @@ html[dir="rtl"] .header-left {
 .card-header h2 {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
-  color: #16a34a;
+  color: #015a4a;
   margin: 0 0 var(--spacing-1) 0;
 }
 
@@ -694,7 +595,7 @@ html[dir="rtl"] .setting-info {
 }
 
 .toggle-input:checked + .toggle-label {
-  background: #22c55e;
+  background: #02735E;
 }
 
 .toggle-input:checked + .toggle-label::after {

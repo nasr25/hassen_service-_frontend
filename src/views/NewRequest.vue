@@ -34,7 +34,7 @@
 
       <!-- Form Card -->
       <BaseCard class="form-card">
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleSubmit" novalidate>
           <!-- Idea Title -->
           <BaseInput
             v-model="form.title"
@@ -58,17 +58,6 @@
             :help="!validationErrors.description ? $t('request.ideaDescriptionCharCount', { count: form.description.length }) : ''"
           />
 
-          <!-- Idea Type -->
-          <BaseSelect
-            v-model="form.idea_type"
-            :label="$t('request.ideaType')"
-            :placeholder="$t('request.ideaTypePlaceholder')"
-            required
-            :options="ideaTypeOptions"
-            :error="validationErrors.idea_type"
-            :help="$t('request.ideaTypeHelp')"
-          />
-
           <!-- Department -->
           <BaseSelect
             v-model="form.department"
@@ -89,7 +78,9 @@
                   type="radio"
                   v-model="form.idea_ownership_type"
                   value="individual"
+                  name="idea_ownership"
                   class="radio-input"
+                  :checked="form.idea_ownership_type === 'individual'"
                 />
                 <span>{{ $t('request.individualIdea') }}</span>
               </label>
@@ -98,12 +89,17 @@
                   type="radio"
                   v-model="form.idea_ownership_type"
                   value="shared"
+                  name="idea_ownership"
                   class="radio-input"
+                  :checked="form.idea_ownership_type === 'shared'"
                 />
                 <span>{{ $t('request.sharedIdea') }}</span>
               </label>
             </div>
             <span class="form-help">{{ $t('request.ideaOwnershipHelp') }}</span>
+            <small style="color: var(--color-text-secondary); font-size: var(--font-size-xs); margin-top: 4px; display: block;">
+              Debug: Current value = {{ form.idea_ownership_type }}
+            </small>
           </div>
 
           <!-- Employee Search (Shared Ideas Only) -->
@@ -187,6 +183,35 @@
             :rows="4"
             :help="$t('request.benefitsHelp')"
           />
+
+          <!-- Idea Type (Optional) -->
+          <div class="form-group">
+            <label class="form-label">
+              {{ $t('request.ideaType') }}
+              <span class="optional-text">({{ $t('common.optional') }})</span>
+            </label>
+            <div class="radio-group idea-type-radio-group">
+              <label
+                v-for="type in ideaTypes"
+                :key="type.id"
+                class="radio-label idea-type-option"
+                :class="{ 'active': form.idea_type === type.id.toString() }"
+              >
+                <input
+                  type="radio"
+                  v-model="form.idea_type"
+                  :value="type.id.toString()"
+                  class="radio-input"
+                />
+                <span class="radio-text">{{ locale === 'ar' ? type.name_ar : type.name }}</span>
+                <div class="idea-type-tooltip">
+                  {{ locale === 'ar' ? type.description_ar : type.description }}
+                </div>
+              </label>
+            </div>
+            <span v-if="validationErrors.idea_type" class="form-error">{{ validationErrors.idea_type }}</span>
+            <span v-else class="form-help">{{ $t('request.ideaTypeHelp') }}</span>
+          </div>
 
           <!-- Additional Details (Edit Mode Only) -->
           <BaseInput
@@ -355,7 +380,6 @@ const isFormValid = computed(() => {
     form.value.title.length > 0 &&
     form.value.title.length <= 200 &&
     form.value.description.length >= 25 &&
-    form.value.idea_type !== '' &&
     form.value.department !== '' &&
     uploadedFiles.value.length <= 5
   )
@@ -419,6 +443,26 @@ const loadRequest = async (id) => {
     })
 
     const request = response.data.request
+    console.log('============ LOADING REQUEST FOR EDIT ============')
+    console.log('Full request object:', request)
+    console.log('Request.idea_type (ownership):', request.idea_type)
+    console.log('Type of idea_type:', typeof request.idea_type)
+    console.log('Request.idea_type_id (category):', request.idea_type_id)
+    console.log('Request.employees:', request.employees)
+
+    // Determine ownership type - ensure it's a string and handle all cases
+    let ownershipType = 'individual' // Default
+    if (request.idea_type) {
+      ownershipType = String(request.idea_type).toLowerCase().trim()
+      // Ensure it's exactly 'individual' or 'shared'
+      if (ownershipType !== 'individual' && ownershipType !== 'shared') {
+        console.warn('Invalid idea_type value:', ownershipType, '- defaulting to individual')
+        ownershipType = 'individual'
+      }
+    }
+    console.log('Determined ownership type:', ownershipType)
+
+    // Completely replace the form object
     form.value = {
       title: request.title || '',
       description: request.description || '',
@@ -426,10 +470,19 @@ const loadRequest = async (id) => {
       department: request.department_id?.toString() || 'unknown',
       benefits: request.benefits || '',
       additional_details: request.additional_details || '',
-      idea_ownership_type: request.idea_type || 'individual',
-      employees: request.employees || []
+      idea_ownership_type: ownershipType,
+      employees: Array.isArray(request.employees) ? request.employees : []
     }
+
+    console.log('============ FORM AFTER LOADING ============')
+    console.log('form.idea_ownership_type:', form.value.idea_ownership_type)
+    console.log('Type of form.idea_ownership_type:', typeof form.value.idea_ownership_type)
+    console.log('form.idea_ownership_type === "individual":', form.value.idea_ownership_type === 'individual')
+    console.log('form.idea_ownership_type === "shared":', form.value.idea_ownership_type === 'shared')
+    console.log('form.employees length:', form.value.employees.length)
+    console.log('===============================================')
   } catch (err) {
+    console.error('Failed to load request:', err)
     error.value = t('request.errorMessages.loadRequestFailed')
   }
 }
@@ -503,11 +556,6 @@ const validateForm = () => {
     errors.description = t('request.validationErrors.descriptionRequired')
   } else if (form.value.description.length < 25) {
     errors.description = t('request.validationErrors.descriptionTooShort')
-  }
-
-  // Idea Type validation
-  if (!form.value.idea_type) {
-    errors.idea_type = t('request.validationErrors.ideaTypeRequired')
   }
 
   // Department validation
@@ -645,6 +693,10 @@ const saveDraft = async () => {
     error.value = null
     success.value = null
 
+    console.log('============ SAVING DRAFT ============')
+    console.log('Current form.idea_ownership_type:', form.value.idea_ownership_type)
+    console.log('Type:', typeof form.value.idea_ownership_type)
+
     const formData = new FormData()
     formData.append('title', form.value.title)
     formData.append('description', form.value.description)
@@ -653,6 +705,9 @@ const saveDraft = async () => {
     formData.append('benefits', form.value.benefits || '')
     formData.append('status', 'draft')
     formData.append('idea_ownership_type', form.value.idea_ownership_type)
+
+    console.log('Sent idea_ownership_type:', form.value.idea_ownership_type)
+    console.log('=======================================')
 
     // Append employees if shared idea
     if (form.value.idea_ownership_type === 'shared' && form.value.employees.length > 0) {
@@ -1066,6 +1121,105 @@ const goBack = () => {
 
   .file-upload-label {
     padding: var(--spacing-6);
+  }
+}
+
+/* Idea Type Radio Group with Tooltips */
+.idea-type-radio-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-3);
+}
+
+.idea-type-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.idea-type-option:hover {
+  background: rgba(2, 115, 94, 0.05);
+  border-color: #02735E;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.idea-type-option.active {
+  background: rgba(2, 115, 94, 0.05);
+  border-color: #02735E;
+  box-shadow: 0 0 0 3px rgba(2, 115, 94, 0.1);
+}
+
+.idea-type-option .radio-input {
+  flex-shrink: 0;
+  accent-color: #02735E;
+}
+
+.idea-type-option .radio-text {
+  flex: 1;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+/* Tooltip */
+.idea-type-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-gray-900);
+  color: white;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  white-space: normal;
+  max-width: 300px;
+  min-width: 200px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-fast);
+  z-index: 100;
+  box-shadow: var(--shadow-xl);
+  pointer-events: none;
+}
+
+.idea-type-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--color-gray-900);
+}
+
+.idea-type-option:hover .idea-type-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
+}
+
+/* RTL Support for Tooltips */
+html[dir="rtl"] .idea-type-tooltip {
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .idea-type-radio-group {
+    grid-template-columns: 1fr;
+  }
+
+  .idea-type-tooltip {
+    max-width: 250px;
+    min-width: 150px;
   }
 }
 </style>

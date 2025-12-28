@@ -3,14 +3,18 @@
 </template>
 
 <script setup>
-import { onMounted, watch, onBeforeMount, computed } from 'vue'
+import { onMounted, watch, onBeforeMount, onUnmounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import { useSettings } from './composables/useSettings'
 
 const authStore = useAuthStore()
 const { locale } = useI18n()
+const router = useRouter()
 const { siteName, siteNameAr, fetchPublicSettings } = useSettings()
+
+let sessionCheckInterval = null
 
 // Computed property for document title based on locale
 const documentTitle = computed(() => {
@@ -39,6 +43,22 @@ onMounted(async () => {
   authStore.initializeAuth()
   updateDirection(locale.value)
   document.title = documentTitle.value
+
+  // Start periodic session check (every 60 seconds)
+  sessionCheckInterval = setInterval(() => {
+    if (authStore.token && authStore.checkSessionExpired()) {
+      console.log('Session expired detected by interval check')
+      authStore.handleSessionExpired()
+      router.push('/login')
+    }
+  }, 60000) // Check every minute
+})
+
+onUnmounted(() => {
+  // Clear interval when component unmounts
+  if (sessionCheckInterval) {
+    clearInterval(sessionCheckInterval)
+  }
 })
 
 // Watch for locale changes and update document direction and title

@@ -52,9 +52,18 @@
         <BaseCard v-for="request in requests" :key="request.id" class="request-card">
           <div class="request-header">
             <h3>{{ request.title }}</h3>
-            <BaseBadge :variant="getStatusVariant(request.status)">
-              {{ $t('status.' + request.status) }}
-            </BaseBadge>
+            <div class="header-actions">
+              <BaseBadge :variant="getStatusVariant(request.status)">
+                {{ $t('status.' + request.status) }}
+              </BaseBadge>
+              <button class="view-details-btn" @click="viewRequestDetails(request)">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                </svg>
+                {{ $t('request.viewDetails') }}
+              </button>
+            </div>
           </div>
 
           <div class="request-body">
@@ -189,43 +198,94 @@
 
               <!-- Show action buttons only after evaluation is complete or not required -->
               <template v-else>
-                <!-- If was previously assigned to employee and returned, show Return to Employee -->
+                <!-- Always show all buttons, but disable based on state -->
                 <BaseButton
-                  v-if="request.was_assigned_to_employee && request.last_assigned_user_id"
-                  variant="primary"
-                  @click="returnToEmployee(request)"
-                >
-                  {{ $t('department.returnToEmployee') }}
-                </BaseButton>
-                <!-- Otherwise show Accept Idea -->
-                <BaseButton
-                  v-else
                   variant="success"
                   @click="openPathEvaluationModal(request, 'accept')"
+                  :disabled="request.returned_from_employee"
                 >
                   {{ $t('department.acceptIdea') }}
                 </BaseButton>
 
-                <BaseButton variant="warning" @click="openPathEvaluationModal(request, 'accept_later')">
+                <!-- Show Return to Employee button only if was assigned to employee -->
+                <BaseButton
+                  v-if="request.last_assigned_user_id"
+                  variant="primary"
+                  @click="openReturnToEmployeeModal(request)"
+                >
+                  {{ $t('department.returnToEmployee') }}
+                </BaseButton>
+
+                <BaseButton
+                  variant="warning"
+                  @click="openPathEvaluationModal(request, 'accept_later')"
+                  :disabled="request.returned_from_employee"
+                >
                   {{ $t('department.acceptForLater') }}
                 </BaseButton>
-                <BaseButton variant="danger" @click="openPathEvaluationModal(request, 'reject')">
+
+                <BaseButton
+                  variant="danger"
+                  @click="openPathEvaluationModal(request, 'reject')"
+                  :disabled="request.returned_from_employee"
+                >
                   {{ $t('department.rejectIdea') }}
                 </BaseButton>
-                <BaseButton variant="info" @click="openPathEvaluationModal(request, 'return')">
+
+                <BaseButton
+                  variant="info"
+                  @click="openPathEvaluationModal(request, 'return')"
+                >
                   {{ $t('common.back') }} {{ $t('common.to') }} {{ getDepartmentAName(request) }}
                 </BaseButton>
               </template>
             </template>
 
-            <!-- Employee: Return to Manager -->
-            <BaseButton
-              v-if="isEmployee(request) && request.current_user_id === authStore.user?.id"
-              variant="warning"
-              @click="openReturnToManagerModal(request)"
-            >
-              {{ $t('department.returnToManager') }}
-            </BaseButton>
+            <!-- Employee Actions -->
+            <template v-if="isEmployee(request) && request.current_user_id === authStore.user?.id">
+              <!-- Not yet accepted: Show Reject/Accept -->
+              <template v-if="request.status !== 'in_progress'">
+                <BaseButton
+                  variant="danger"
+                  @click="openEmployeeRejectModal(request)"
+                >
+                  {{ $t('department.rejectRequest') }}
+                </BaseButton>
+                <BaseButton
+                  variant="success"
+                  @click="openEmployeeAcceptModal(request)"
+                >
+                  {{ $t('department.acceptRequest') }}
+                </BaseButton>
+              </template>
+
+              <!-- In progress: Show progress tracking -->
+              <template v-else>
+                <div class="progress-display">
+                  <div class="progress-label">
+                    {{ $t('department.currentProgress') }}: {{ request.progress_percentage }}%
+                  </div>
+                  <div class="progress-bar-container">
+                    <div class="progress-bar" :style="{ width: request.progress_percentage + '%' }"></div>
+                  </div>
+                </div>
+
+                <BaseButton
+                  variant="primary"
+                  @click="openEmployeeUpdateProgressModal(request)"
+                >
+                  {{ $t('department.updateProgress') }}
+                </BaseButton>
+
+                <BaseButton
+                  v-if="request.progress_percentage === 100"
+                  variant="success"
+                  @click="openEmployeeCompleteModal(request)"
+                >
+                  {{ $t('department.completeRequest') }}
+                </BaseButton>
+              </template>
+            </template>
           </div>
         </BaseCard>
       </div>
@@ -239,7 +299,10 @@
 
         <div class="form-group">
           <label>{{ $t('department.selectEmployee') }} *</label>
-          <div class="employees-list">
+          <div v-if="employees.length === 0" class="alert alert-info">
+            {{ $t('messages.loading.employees') }}
+          </div>
+          <div v-else class="employees-list">
             <div
               v-for="employee in employees"
               :key="employee.id"
@@ -276,6 +339,41 @@
       </div>
     </div>
 
+    <!-- Return to Employee Modal (Manager) -->
+    <div v-if="returnToEmployeeModal.show" class="modal-overlay" @click="closeReturnToEmployeeModal">
+      <div class="modal-content" @click.stop>
+        <h2>{{ $t('department.returnToEmployee') }}</h2>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ returnToEmployeeModal.request?.title }}</p>
+
+        <div class="alert alert-info">
+          <strong>{{ $t('evaluations.notes') }}:</strong> {{ $t('department.returnToEmployeeNote') }}
+        </div>
+
+        <div class="form-group">
+          <label>{{ $t('department.returnComments') }} *</label>
+          <textarea
+            v-model="returnToEmployeeModal.comments"
+            :placeholder="$t('department.explainReturn')"
+            rows="5"
+            required
+          ></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <BaseButton variant="secondary" @click="closeReturnToEmployeeModal">
+            {{ $t('common.cancel') }}
+          </BaseButton>
+          <BaseButton
+            variant="primary"
+            @click="confirmReturnToEmployee"
+            :disabled="!returnToEmployeeModal.comments || returnToEmployeeModal.isLoading"
+          >
+            {{ returnToEmployeeModal.isLoading ? $t('department.returning') : $t('department.returnToEmployee') }}
+          </BaseButton>
+        </div>
+      </div>
+    </div>
+
     <!-- Return to Manager Modal (Employee) -->
     <div v-if="returnToManagerModal.show" class="modal-overlay" @click="closeReturnToManagerModal">
       <div class="modal-content" @click.stop>
@@ -306,6 +404,159 @@
             :disabled="!returnToManagerModal.comments || returnToManagerModal.isLoading"
           >
             {{ returnToManagerModal.isLoading ? $t('department.returning') : $t('department.returnToManager') }}
+          </BaseButton>
+        </div>
+      </div>
+    </div>
+
+    <!-- Employee Reject Modal -->
+    <div v-if="employeeRejectModal.show" class="modal-overlay" @click="closeEmployeeRejectModal">
+      <div class="modal-content" @click.stop>
+        <h2>{{ $t('department.rejectRequest') }}</h2>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ employeeRejectModal.request?.title }}</p>
+
+        <div class="alert alert-warning">
+          <strong>{{ $t('evaluations.notes') }}:</strong> {{ $t('department.rejectRequestNote') }}
+        </div>
+
+        <div class="form-group">
+          <label>{{ $t('department.rejectionReason') }} *</label>
+          <textarea
+            v-model="employeeRejectModal.comments"
+            :placeholder="$t('department.explainRejection')"
+            rows="5"
+            required
+          ></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <BaseButton variant="secondary" @click="closeEmployeeRejectModal">
+            {{ $t('common.cancel') }}
+          </BaseButton>
+          <BaseButton
+            variant="danger"
+            @click="confirmEmployeeReject"
+            :disabled="!employeeRejectModal.comments || employeeRejectModal.isLoading"
+          >
+            {{ employeeRejectModal.isLoading ? $t('department.rejecting') : $t('department.rejectRequest') }}
+          </BaseButton>
+        </div>
+      </div>
+    </div>
+
+    <!-- Employee Accept Modal -->
+    <div v-if="employeeAcceptModal.show" class="modal-overlay" @click="closeEmployeeAcceptModal">
+      <div class="modal-content" @click.stop>
+        <h2>{{ $t('department.acceptRequest') }}</h2>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ employeeAcceptModal.request?.title }}</p>
+
+        <div class="alert alert-success">
+          <strong>{{ $t('evaluations.notes') }}:</strong> {{ $t('department.acceptRequestNote') }}
+        </div>
+
+        <div class="form-group">
+          <label>{{ $t('department.commentsOptional') }}</label>
+          <textarea
+            v-model="employeeAcceptModal.comments"
+            :placeholder="$t('department.addNotes')"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <BaseButton variant="secondary" @click="closeEmployeeAcceptModal">
+            {{ $t('common.cancel') }}
+          </BaseButton>
+          <BaseButton
+            variant="success"
+            @click="confirmEmployeeAccept"
+            :disabled="employeeAcceptModal.isLoading"
+          >
+            {{ employeeAcceptModal.isLoading ? $t('department.accepting') : $t('department.acceptRequest') }}
+          </BaseButton>
+        </div>
+      </div>
+    </div>
+
+    <!-- Employee Update Progress Modal -->
+    <div v-if="employeeUpdateProgressModal.show" class="modal-overlay" @click="closeEmployeeUpdateProgressModal">
+      <div class="modal-content" @click.stop>
+        <h2>{{ $t('department.updateProgress') }}</h2>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ employeeUpdateProgressModal.request?.title }}</p>
+
+        <div class="form-group">
+          <label>{{ $t('department.progressPercentage') }} *</label>
+          <div class="progress-input-container">
+            <input
+              type="range"
+              v-model.number="employeeUpdateProgressModal.progress"
+              min="0"
+              max="100"
+              step="5"
+              class="progress-slider"
+            />
+            <div class="progress-value">{{ employeeUpdateProgressModal.progress }}%</div>
+          </div>
+          <div class="progress-bar-preview">
+            <div class="progress-bar" :style="{ width: employeeUpdateProgressModal.progress + '%' }"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>{{ $t('department.progressComments') }} *</label>
+          <textarea
+            v-model="employeeUpdateProgressModal.comments"
+            :placeholder="$t('department.describeProgress')"
+            rows="4"
+            required
+          ></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <BaseButton variant="secondary" @click="closeEmployeeUpdateProgressModal">
+            {{ $t('common.cancel') }}
+          </BaseButton>
+          <BaseButton
+            variant="primary"
+            @click="confirmEmployeeUpdateProgress"
+            :disabled="!employeeUpdateProgressModal.comments || employeeUpdateProgressModal.isLoading"
+          >
+            {{ employeeUpdateProgressModal.isLoading ? $t('department.updating') : $t('department.updateProgress') }}
+          </BaseButton>
+        </div>
+      </div>
+    </div>
+
+    <!-- Employee Complete Modal -->
+    <div v-if="employeeCompleteModal.show" class="modal-overlay" @click="closeEmployeeCompleteModal">
+      <div class="modal-content" @click.stop>
+        <h2>{{ $t('department.completeRequest') }}</h2>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ employeeCompleteModal.request?.title }}</p>
+
+        <div class="alert alert-success">
+          <strong>{{ $t('evaluations.notes') }}:</strong> {{ $t('department.completeRequestNote') }}
+        </div>
+
+        <div class="form-group">
+          <label>{{ $t('department.completionSummary') }} *</label>
+          <textarea
+            v-model="employeeCompleteModal.comments"
+            :placeholder="$t('department.describeCompletion')"
+            rows="5"
+            required
+          ></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <BaseButton variant="secondary" @click="closeEmployeeCompleteModal">
+            {{ $t('common.cancel') }}
+          </BaseButton>
+          <BaseButton
+            variant="success"
+            @click="confirmEmployeeComplete"
+            :disabled="!employeeCompleteModal.comments || employeeCompleteModal.isLoading"
+          >
+            {{ employeeCompleteModal.isLoading ? $t('department.completing') : $t('department.completeRequest') }}
           </BaseButton>
         </div>
       </div>
@@ -523,7 +774,43 @@ const assignModal = ref({
   isLoading: false
 })
 
+const returnToEmployeeModal = ref({
+  show: false,
+  request: null,
+  comments: '',
+  isLoading: false
+})
+
 const returnToManagerModal = ref({
+  show: false,
+  request: null,
+  comments: '',
+  isLoading: false
+})
+
+const employeeRejectModal = ref({
+  show: false,
+  request: null,
+  comments: '',
+  isLoading: false
+})
+
+const employeeAcceptModal = ref({
+  show: false,
+  request: null,
+  comments: '',
+  isLoading: false
+})
+
+const employeeUpdateProgressModal = ref({
+  show: false,
+  request: null,
+  progress: 0,
+  comments: '',
+  isLoading: false
+})
+
+const employeeCompleteModal = ref({
   show: false,
   request: null,
   comments: '',
@@ -603,8 +890,10 @@ const loadEmployees = async () => {
     })
 
     employees.value = response.data.employees
+    console.log('Loaded employees:', employees.value)
   } catch (err) {
     console.error('Failed to load employees:', err)
+    error.value = 'Failed to load employees. Please refresh the page.'
   }
 }
 
@@ -625,6 +914,10 @@ const loadDepartmentA = async () => {
 
 const goBack = () => {
   router.push('/dashboard')
+}
+
+const viewRequestDetails = (request) => {
+  router.push(`/request-history/${request.id}`)
 }
 
 const toggleEvaluation = (requestId) => {
@@ -671,6 +964,7 @@ const closeAssignModal = () => {
   assignModal.value.request = null
   assignModal.value.employeeId = null
   assignModal.value.comments = ''
+  assignModal.value.isLoading = false
 }
 
 const confirmAssign = async () => {
@@ -708,7 +1002,7 @@ const confirmAssign = async () => {
   }
 }
 
-// Return request to the previously assigned employee
+// Return request to the previously assigned employee (quick action without modal)
 const returnToEmployee = async (request) => {
   if (!request.last_assigned_user_id) {
     error.value = t('messages.error.noPreviousEmployee')
@@ -744,6 +1038,48 @@ const returnToEmployee = async (request) => {
   }
 }
 
+// Return to Employee Modal (with comments)
+const openReturnToEmployeeModal = (request) => {
+  returnToEmployeeModal.value.show = true
+  returnToEmployeeModal.value.request = request
+  returnToEmployeeModal.value.comments = ''
+}
+
+const closeReturnToEmployeeModal = () => {
+  returnToEmployeeModal.value.show = false
+  returnToEmployeeModal.value.request = null
+  returnToEmployeeModal.value.comments = ''
+  returnToEmployeeModal.value.isLoading = false
+}
+
+const confirmReturnToEmployee = async () => {
+  try {
+    returnToEmployeeModal.value.isLoading = true
+    error.value = null
+
+    await axios.post(
+      `${API_URL}/department/requests/${returnToEmployeeModal.value.request.id}/assign-employee`,
+      {
+        employee_id: returnToEmployeeModal.value.request.last_assigned_user_id,
+        comments: returnToEmployeeModal.value.comments
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      }
+    )
+
+    closeReturnToEmployeeModal()
+    success.value = t('messages.success.requestReturnedToEmployee')
+    loadRequests().catch(err => console.error('Failed to reload requests:', err))
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || t('messages.error.failedToAssign')
+    returnToEmployeeModal.value.isLoading = false
+  }
+}
+
 // Return to Manager Modal (Employee)
 const openReturnToManagerModal = (request) => {
   returnToManagerModal.value.show = true
@@ -755,6 +1091,7 @@ const closeReturnToManagerModal = () => {
   returnToManagerModal.value.show = false
   returnToManagerModal.value.request = null
   returnToManagerModal.value.comments = ''
+  returnToManagerModal.value.isLoading = false
 }
 
 const confirmReturnToManager = async () => {
@@ -791,6 +1128,173 @@ const confirmReturnToManager = async () => {
   }
 }
 
+// Employee Reject Modal
+const openEmployeeRejectModal = (request) => {
+  employeeRejectModal.value.show = true
+  employeeRejectModal.value.request = request
+  employeeRejectModal.value.comments = ''
+}
+
+const closeEmployeeRejectModal = () => {
+  employeeRejectModal.value.show = false
+  employeeRejectModal.value.request = null
+  employeeRejectModal.value.comments = ''
+  employeeRejectModal.value.isLoading = false
+}
+
+const confirmEmployeeReject = async () => {
+  try {
+    employeeRejectModal.value.isLoading = true
+    error.value = null
+
+    await axios.post(
+      `${API_URL}/department/requests/${employeeRejectModal.value.request.id}/employee-reject`,
+      {
+        comments: employeeRejectModal.value.comments
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      }
+    )
+
+    closeEmployeeRejectModal()
+    success.value = t('messages.success.requestRejected')
+    loadRequests().catch(err => console.error('Failed to reload requests:', err))
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || t('messages.error.failedToReject')
+    employeeRejectModal.value.isLoading = false
+  }
+}
+
+// Employee Accept Modal
+const openEmployeeAcceptModal = (request) => {
+  employeeAcceptModal.value.show = true
+  employeeAcceptModal.value.request = request
+  employeeAcceptModal.value.comments = ''
+}
+
+const closeEmployeeAcceptModal = () => {
+  employeeAcceptModal.value.show = false
+  employeeAcceptModal.value.request = null
+  employeeAcceptModal.value.comments = ''
+  employeeAcceptModal.value.isLoading = false
+}
+
+const confirmEmployeeAccept = async () => {
+  try {
+    employeeAcceptModal.value.isLoading = true
+    error.value = null
+
+    await axios.post(
+      `${API_URL}/department/requests/${employeeAcceptModal.value.request.id}/employee-accept`,
+      {
+        comments: employeeAcceptModal.value.comments
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      }
+    )
+
+    closeEmployeeAcceptModal()
+    success.value = t('messages.success.requestAccepted')
+    loadRequests().catch(err => console.error('Failed to reload requests:', err))
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || t('messages.error.failedToAccept')
+    employeeAcceptModal.value.isLoading = false
+  }
+}
+
+// Employee Update Progress Modal
+const openEmployeeUpdateProgressModal = (request) => {
+  employeeUpdateProgressModal.value.show = true
+  employeeUpdateProgressModal.value.request = request
+  employeeUpdateProgressModal.value.progress = request.progress_percentage || 0
+  employeeUpdateProgressModal.value.comments = ''
+}
+
+const closeEmployeeUpdateProgressModal = () => {
+  employeeUpdateProgressModal.value.show = false
+  employeeUpdateProgressModal.value.request = null
+  employeeUpdateProgressModal.value.progress = 0
+  employeeUpdateProgressModal.value.comments = ''
+  employeeUpdateProgressModal.value.isLoading = false
+}
+
+const confirmEmployeeUpdateProgress = async () => {
+  try {
+    employeeUpdateProgressModal.value.isLoading = true
+    error.value = null
+
+    await axios.post(
+      `${API_URL}/department/requests/${employeeUpdateProgressModal.value.request.id}/employee-update-progress`,
+      {
+        progress_percentage: employeeUpdateProgressModal.value.progress,
+        comments: employeeUpdateProgressModal.value.comments
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      }
+    )
+
+    closeEmployeeUpdateProgressModal()
+    success.value = t('messages.success.progressUpdated')
+    loadRequests().catch(err => console.error('Failed to reload requests:', err))
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || t('messages.error.failedToUpdateProgress')
+    employeeUpdateProgressModal.value.isLoading = false
+  }
+}
+
+// Employee Complete Modal
+const openEmployeeCompleteModal = (request) => {
+  employeeCompleteModal.value.show = true
+  employeeCompleteModal.value.request = request
+  employeeCompleteModal.value.comments = ''
+}
+
+const closeEmployeeCompleteModal = () => {
+  employeeCompleteModal.value.show = false
+  employeeCompleteModal.value.request = null
+  employeeCompleteModal.value.comments = ''
+  employeeCompleteModal.value.isLoading = false
+}
+
+const confirmEmployeeComplete = async () => {
+  try {
+    employeeCompleteModal.value.isLoading = true
+    error.value = null
+
+    await axios.post(
+      `${API_URL}/department/requests/${employeeCompleteModal.value.request.id}/employee-complete`,
+      {
+        comments: employeeCompleteModal.value.comments
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`
+        }
+      }
+    )
+
+    closeEmployeeCompleteModal()
+    success.value = t('messages.success.requestCompleted')
+    loadRequests().catch(err => console.error('Failed to reload requests:', err))
+    setTimeout(() => (success.value = null), 5000)
+  } catch (err) {
+    error.value = err.response?.data?.message || t('messages.error.failedToComplete')
+    employeeCompleteModal.value.isLoading = false
+  }
+}
+
 // Return to Department A Modal (Manager)
 const openReturnToDeptAModal = (request) => {
   returnToDeptAModal.value.show = true
@@ -802,6 +1306,7 @@ const closeReturnToDeptAModal = () => {
   returnToDeptAModal.value.show = false
   returnToDeptAModal.value.request = null
   returnToDeptAModal.value.comments = ''
+  returnToDeptAModal.value.isLoading = false
 }
 
 const confirmReturnToDeptA = async () => {
@@ -917,6 +1422,8 @@ const closePathEvaluationModal = () => {
   pathEvaluationModal.value.request = null
   pathEvaluationModal.value.questions = []
   pathEvaluationModal.value.evaluations = {}
+  pathEvaluationModal.value.isLoading = false
+  pathEvaluationModal.value.isSaving = false
 }
 
 const setEvaluation = (questionId, isApplied) => {
@@ -1040,6 +1547,7 @@ const closeAcceptLaterModal = () => {
   acceptLaterModal.value.request = null
   acceptLaterModal.value.expectedDate = ''
   acceptLaterModal.value.comments = ''
+  acceptLaterModal.value.isLoading = false
 }
 
 const confirmAcceptLater = async () => {
@@ -1283,6 +1791,43 @@ const rejectIdea = async (request) => {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
   margin: 0;
+  flex: 1;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.view-details-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-gray-100);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.view-details-btn:hover {
+  background: var(--color-gray-200);
+  border-color: var(--color-gray-400);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.view-details-btn:active {
+  transform: translateY(0);
+}
+
+.view-details-btn svg {
+  flex-shrink: 0;
 }
 
 .request-body {
@@ -1821,6 +2366,103 @@ const rejectIdea = async (request) => {
   text-align: center;
   font-size: var(--font-size-sm);
   margin-top: var(--spacing-4);
+}
+
+/* Progress Display */
+.progress-display {
+  width: 100%;
+  margin-bottom: var(--spacing-3);
+}
+
+.progress-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-2);
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 24px;
+  background: var(--color-gray-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary-500), var(--color-primary-600));
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar-preview {
+  width: 100%;
+  height: 20px;
+  background: var(--color-gray-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: var(--spacing-2);
+}
+
+/* Progress Input */
+.progress-input-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-2);
+}
+
+.progress-slider {
+  flex: 1;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-gray-200);
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.progress-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-primary-600);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+}
+
+.progress-slider::-webkit-slider-thumb:hover {
+  background: var(--color-primary-700);
+  transform: scale(1.1);
+}
+
+.progress-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-primary-600);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+}
+
+.progress-slider::-moz-range-thumb:hover {
+  background: var(--color-primary-700);
+  transform: scale(1.1);
+}
+
+.progress-value {
+  min-width: 50px;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-600);
+  text-align: right;
 }
 
 /* Responsive */

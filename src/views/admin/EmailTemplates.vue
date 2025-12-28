@@ -516,7 +516,7 @@ onMounted(() => {
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: var(--color-primary, #10b981);
+  background: var(--color-primary, #02735E);
   color: white;
   border: none;
   border-radius: 8px;
@@ -527,7 +527,7 @@ onMounted(() => {
 }
 
 .btn-refresh:hover {
-  background: var(--color-primary-dark, #059669);
+  background: var(--color-primary-dark, #015a4a);
   transform: translateY(-1px);
 }
 
@@ -575,17 +575,17 @@ onMounted(() => {
 }
 
 .tab:hover {
-  color: var(--color-primary, #10b981);
+  color: var(--color-primary, #02735E);
   background: rgba(16, 185, 129, 0.05);
 }
 
 .tab.active {
-  color: var(--color-primary, #10b981);
-  border-bottom-color: var(--color-primary, #10b981);
+  color: var(--color-primary, #02735E);
+  border-bottom-color: var(--color-primary, #02735E);
 }
 
 .tab-badge {
-  background: #10b981;
+  background: #02735E;
   color: white;
   padding: 2px 8px;
   border-radius: 12px;
@@ -651,7 +651,7 @@ onMounted(() => {
 }
 
 .recipient-badge.badge-user {
-  background: #10b981;
+  background: #02735E;
   color: white;
 }
 
@@ -853,7 +853,7 @@ onMounted(() => {
 .btn-link {
   background: none;
   border: none;
-  color: var(--color-primary, #10b981);
+  color: var(--color-primary, #02735E);
   font-size: 13px;
   cursor: pointer;
   padding: 4px 8px;
@@ -879,7 +879,7 @@ onMounted(() => {
 .form-input:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #10b981);
+  border-color: var(--color-primary, #02735E);
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
@@ -1011,12 +1011,12 @@ onMounted(() => {
 }
 
 .btn-primary {
-  background: var(--color-primary, #10b981);
+  background: var(--color-primary, #02735E);
   color: white;
 }
 
 .btn-primary:hover {
-  background: var(--color-primary-dark, #059669);
+  background: var(--color-primary-dark, #015a4a);
 }
 
 .btn-primary:disabled {

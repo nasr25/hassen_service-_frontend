@@ -139,12 +139,20 @@
                 </div>
               </div>
 
-              <button class="view-btn" @click.stop="viewDetails(request.id)">
-                {{ $t('request.viewDetails') }}
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                </svg>
-              </button>
+              <div class="action-buttons">
+                <button v-if="request.status === 'draft' || request.status === 'need_more_details'" class="edit-btn" @click.stop="editRequest(request.id)">
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                  </svg>
+                  {{ $t('common.edit') }}
+                </button>
+                <button class="view-btn" @click.stop="viewDetails(request.id)">
+                  {{ $t('request.viewDetails') }}
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </BaseCard>
         </div>
@@ -227,6 +235,10 @@ const loadRequests = async () => {
 
 const createNew = () => {
   router.push('/requests/new')
+}
+
+const editRequest = (id) => {
+  router.push(`/requests/${id}/edit`)
 }
 
 const viewDetails = (id) => {
@@ -555,6 +567,34 @@ const truncate = (text, length) => {
   white-space: nowrap;
 }
 
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-2);
+  width: 100%;
+}
+
+.edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  background: var(--color-primary-600);
+  border: 1px solid var(--color-primary-600);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex: 1;
+}
+
+.edit-btn:hover {
+  background: var(--color-primary-700);
+  border-color: var(--color-primary-700);
+}
+
 .view-btn {
   display: flex;
   align-items: center;
@@ -569,7 +609,7 @@ const truncate = (text, length) => {
   color: var(--color-primary-600);
   cursor: pointer;
   transition: all var(--transition-fast);
-  width: 100%;
+  flex: 1;
 }
 
 .view-btn:hover {

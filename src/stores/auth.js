@@ -9,7 +9,9 @@ export const useAuthStore = defineStore('auth', {
     permissions: [],
     roles: [],
     isLoading: false,
-    error: null
+    error: null,
+    lastActivity: localStorage.getItem('lastActivity') || null,
+    sessionTimeout: 30 * 60 * 1000 // 30 minutes in milliseconds
   }),
 
   getters: {
@@ -53,6 +55,9 @@ export const useAuthStore = defineStore('auth', {
         localStorage.setItem('permissions', JSON.stringify(this.permissions))
         localStorage.setItem('roles', JSON.stringify(this.roles))
 
+        // Set initial activity time
+        this.updateLastActivity()
+
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
 
         return { success: true }
@@ -78,9 +83,11 @@ export const useAuthStore = defineStore('auth', {
         this.user = null
         this.permissions = []
         this.roles = []
+        this.lastActivity = null
         localStorage.removeItem('token')
         localStorage.removeItem('permissions')
         localStorage.removeItem('roles')
+        localStorage.removeItem('lastActivity')
         delete axios.defaults.headers.common['Authorization']
       }
     },
@@ -129,6 +136,29 @@ export const useAuthStore = defineStore('auth', {
         axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
         this.fetchUser()
       }
+    },
+
+    updateLastActivity() {
+      const now = Date.now()
+      this.lastActivity = now
+      localStorage.setItem('lastActivity', now.toString())
+    },
+
+    checkSessionExpired() {
+      if (!this.lastActivity || !this.token) {
+        return false
+      }
+
+      const now = Date.now()
+      const timeSinceLastActivity = now - parseInt(this.lastActivity)
+
+      return timeSinceLastActivity > this.sessionTimeout
+    },
+
+    async handleSessionExpired() {
+      console.log('Session expired - logging out')
+      await this.logout()
+      return true
     }
   }
 })

@@ -858,7 +858,7 @@ const questionModal = ref({ show: false, isEdit: false, isLoading: false, form: 
 const pathQuestionModal = ref({ show: false, isEdit: false, isLoading: false, form: { workflow_path_id: '', question: '', order: 0, is_active: true }, editId: null })
 const roleModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', permissions: [] }, editId: null })
 const userRoleModal = ref({ show: false, isLoading: false, user: null, form: { user_id: '', role_name: '' } })
-const ideaTypeModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', name_ar: '', description: '', description_ar: '', color: '#22c55e', is_active: true, order: 0 }, editId: null })
+const ideaTypeModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', name_ar: '', description: '', description_ar: '', color: '#02735E', is_active: true, order: 0 }, editId: null })
 const pathModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', code: '', description: '', order: 0, is_active: true }, editId: null })
 
 const totalWeight = computed(() => {
@@ -1510,7 +1510,7 @@ const openIdeaTypeModal = (ideaType = null) => {
         name_ar: '',
         description: '',
         description_ar: '',
-        color: '#22c55e',
+        color: '#02735E',
         is_active: true,
         order: ideaTypes.value.length
       },
@@ -1529,7 +1529,7 @@ const closeIdeaTypeModal = () => {
       name_ar: '',
       description: '',
       description_ar: '',
-      color: '#22c55e',
+      color: '#02735E',
       is_active: true,
       order: 0
     },
@@ -1701,7 +1701,7 @@ const deletePath = async (path) => {
   justify-content: space-between;
   margin-bottom: var(--spacing-8);
   padding: var(--spacing-6);
-  background: linear-gradient(135deg, #084 0%, #66a459 100%);
+  background: linear-gradient(135deg, #02735E 0%, #02735E 100%);
   border-radius: var(--radius-2xl);
   color: white;
 }
@@ -1744,8 +1744,8 @@ const deletePath = async (path) => {
 .alert-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #4caf50; }
 .tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid #e0e0e0; flex-wrap: wrap; }
 .tab { padding: 12px 24px; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; font-size: 15px; font-weight: 500; color: #666; transition: all 0.3s; }
-.tab:hover { color: #22c55e; }
-.tab.active { color: #22c55e; border-bottom-color: #22c55e; }
+.tab:hover { color: #02735E; }
+.tab.active { color: #02735E; border-bottom-color: #02735E; }
 .tab-link { text-decoration: none; display: flex; align-items: center; }
 
 /* RTL Support for tabs */
@@ -1793,8 +1793,8 @@ html[dir="ltr"] .welcome-subtitle {
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .section-header h2 { color: #333; font-size: 20px; margin: 0; }
-.btn-primary { padding: 10px 20px; background: #22c55e; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-.btn-primary:hover:not(:disabled) { background: #16a34a; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); }
+.btn-primary { padding: 10px 20px; background: #02735E; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-primary:hover:not(:disabled) { background: #015a4a; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); }
 .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 .loading { text-align: center; padding: 40px; color: #666; font-size: 16px; }
 .table-container { overflow-x: auto; }
@@ -1869,7 +1869,7 @@ html[dir="rtl"] .badge-dept {
 html[dir="rtl"] .assignment-card {
   direction: rtl;
 }
-.assignment-card:hover { border-color: #22c55e; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2); }
+.assignment-card:hover { border-color: #02735E; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2); }
 .assignment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 2px solid #e0e0e0; }
 .assignment-header h3 { color: #333; font-size: 16px; margin: 0; }
 .empty-message { text-align: center; padding: 20px; color: #999; font-style: italic; }
@@ -1971,7 +1971,7 @@ html[dir="rtl"] .modal-actions {
 }
 
 .question-card:hover {
-  border-color: #22c55e;
+  border-color: #02735E;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
 }
@@ -1984,7 +1984,7 @@ html[dir="rtl"] .modal-actions {
 }
 
 .question-order {
-  background: #22c55e;
+  background: #02735E;
   color: white;
   padding: 4px 10px;
   border-radius: 6px;
@@ -2038,7 +2038,7 @@ html[dir="rtl"] .question-actions {
 }
 
 .weight-badge {
-  background: #22c55e;
+  background: #02735E;
   color: white;
   padding: 4px 10px;
   border-radius: 6px;
@@ -2093,7 +2093,7 @@ html[dir="rtl"] .question-actions {
 }
 
 .user-role-card:hover {
-  border-color: #22c55e;
+  border-color: #02735E;
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
 }
 
@@ -2151,12 +2151,12 @@ html[dir="rtl"] .user-role-body {
 }
 
 .category-title {
-  color: #22c55e;
+  color: #02735E;
   font-size: 16px;
   font-weight: 600;
   margin: 0 0 15px 0;
   padding-bottom: 10px;
-  border-bottom: 2px solid #22c55e;
+  border-bottom: 2px solid #02735E;
 }
 
 .permission-list {
@@ -2213,12 +2213,12 @@ html[dir="rtl"] .permission-item {
 }
 
 .permission-group-title {
-  color: #22c55e;
+  color: #02735E;
   font-size: 14px;
   font-weight: 600;
   margin: 0 0 10px 0;
   padding-bottom: 8px;
-  border-bottom: 2px solid #22c55e;
+  border-bottom: 2px solid #02735E;
 }
 
 .permission-checkboxes {
@@ -2337,7 +2337,7 @@ html[dir="rtl"] .path-title {
 }
 
 .external-user-lookup label {
-  color: #084;
+  color: #02735E;
   font-weight: 600;
   margin-bottom: 8px;
   display: block;
@@ -2372,7 +2372,7 @@ html[dir="rtl"] .path-title {
 
 .autocomplete-input:focus {
   outline: none;
-  border-color: #084;
+  border-color: #02735E;
 }
 
 .autocomplete-loading {
@@ -2386,7 +2386,7 @@ html[dir="rtl"] .path-title {
   width: 16px;
   height: 16px;
   border: 2px solid #f3f3f3;
-  border-top: 2px solid #084;
+  border-top: 2px solid #02735E;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }

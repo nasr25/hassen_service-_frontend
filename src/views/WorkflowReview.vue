@@ -82,39 +82,134 @@
                 <h3>{{ request.title }}</h3>
                 <p class="request-id">#{{ request.id }}</p>
               </div>
-              <BaseBadge :variant="getStatusVariant(request.status)">
-                {{ $t('status.' + request.status) }}
-              </BaseBadge>
+              <div class="header-actions">
+                <BaseBadge :variant="getStatusVariant(request.status)">
+                  {{ $t('status.' + request.status) }}
+                </BaseBadge>
+                <button class="view-details-btn" @click="viewRequestDetails(request)">
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                  </svg>
+                  {{ $t('request.viewDetails') }}
+                </button>
+              </div>
             </div>
 
             <!-- Request Description -->
-            <p class="request-description">{{ request.description }}</p>
+            <div class="request-description-section">
+              <label class="section-label">{{ $t('request.ideaDescription') }}</label>
+              <p class="request-description">{{ request.description }}</p>
+            </div>
 
-            <!-- Request Meta -->
-            <div class="request-meta">
-              <div class="meta-item">
+            <!-- Request Details Grid -->
+            <div class="request-details-grid">
+              <!-- Submitter -->
+              <div class="detail-item">
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                 </svg>
-                <span>{{ request.user?.name }}</span>
+                <div class="detail-content">
+                  <span class="detail-label">{{ $t('workflow.submittedBy') }}</span>
+                  <span class="detail-value">{{ request.user?.name }}</span>
+                </div>
               </div>
-              <div class="meta-item">
+
+              <!-- Submission Date -->
+              <div class="detail-item">
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
                 </svg>
-                <span>{{ formatDate(request.submitted_at) }}</span>
+                <div class="detail-content">
+                  <span class="detail-label">{{ $t('workflow.submittedOn') }}</span>
+                  <span class="detail-value">{{ formatDate(request.submitted_at) }}</span>
+                </div>
               </div>
-              <div v-if="request.expected_execution_date" class="meta-item expected-date">
+
+              <!-- Department -->
+              <div v-if="request.department" class="detail-item">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+                </svg>
+                <div class="detail-content">
+                  <span class="detail-label">{{ $t('request.department') }}</span>
+                  <span class="detail-value">{{ request.department.name }}</span>
+                </div>
+              </div>
+
+              <!-- Idea Type -->
+              <div v-if="request.idea_type" class="detail-item">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                </svg>
+                <div class="detail-content">
+                  <span class="detail-label">{{ $t('request.ideaOwnership') }}</span>
+                  <span class="detail-value">
+                    <span :class="['ownership-badge', request.idea_type === 'shared' ? 'shared' : 'individual']">
+                      {{ request.idea_type === 'shared' ? $t('request.sharedIdea') : $t('request.individualIdea') }}
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Idea Category -->
+              <div v-if="request.ideaType" class="detail-item">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
+                </svg>
+                <div class="detail-content">
+                  <span class="detail-label">{{ $t('request.ideaType') }}</span>
+                  <span class="detail-value">
+                    <span class="idea-type-badge" :style="{ backgroundColor: request.ideaType.color + '20', color: request.ideaType.color, borderColor: request.ideaType.color }">
+                      {{ $i18n.locale === 'ar' ? request.ideaType.name_ar : request.ideaType.name }}
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Expected Execution Date -->
+              <div v-if="request.expected_execution_date" class="detail-item expected-date-item">
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                 </svg>
-                <span>{{ $t('request.expectedDate') }}: {{ formatDate(request.expected_execution_date) }}</span>
+                <div class="detail-content">
+                  <span class="detail-label">{{ $t('request.expectedDate') }}</span>
+                  <span class="detail-value">{{ formatDate(request.expected_execution_date) }}</span>
+                </div>
               </div>
-              <div v-if="request.attachments?.length > 0" class="meta-item">
+
+              <!-- Attachments Count -->
+              <div v-if="request.attachments?.length > 0" class="detail-item">
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
                 </svg>
-                <span>{{ request.attachments.length }} {{ $t('request.attachments') }}</span>
+                <div class="detail-content">
+                  <span class="detail-label">{{ $t('request.attachments') }}</span>
+                  <span class="detail-value">{{ request.attachments.length }} {{ $t('common.files') }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Benefits Section -->
+            <div v-if="request.benefits" class="benefits-section">
+              <label class="section-label">{{ $t('request.benefits') }}</label>
+              <p class="benefits-text">{{ request.benefits }}</p>
+            </div>
+
+            <!-- Latest Transition Comment -->
+            <div v-if="getLatestComment(request)" class="latest-comment-section">
+              <div class="comment-header">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+                </svg>
+                <span class="comment-title">{{ $t('workflow.latestComment') }}</span>
+                <span v-if="getLatestTransition(request)" class="comment-by">
+                  {{ getLatestTransition(request).actionedBy?.name }}
+                </span>
+              </div>
+              <div class="comment-content">
+                <div class="comment-action-label">{{ getLatestActionLabel(request) }}</div>
+                <p class="comment-text">{{ getLatestComment(request) }}</p>
               </div>
             </div>
 
@@ -233,52 +328,103 @@
                 </BaseButton>
               </template>
 
-              <!-- Request returned from department for final validation -->
+              <!-- Request returned from department - Check if went through employee processing -->
               <template v-else-if="request.status === 'in_review' && request.workflow_path_id">
-                <BaseButton
-                  variant="success"
-                  size="sm"
-                  @click="checkEvaluationAndOpen(request, 'complete')"
-                  :disabled="!requestEvaluationStatus[request.id]"
-                >
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                  </svg>
-                  {{ $t('workflow.complete') }}
-                </BaseButton>
-                <BaseButton
-                  variant="warning"
-                  size="sm"
-                  @click="checkEvaluationAndOpen(request, 'returnPrevious')"
-                  :disabled="!requestEvaluationStatus[request.id]"
-                >
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M7.707 3.293a1 1 0 010 1.414L5.414 7H11a7 7 0 017 7v2a1 1 0 11-2 0v-2a5 5 0 00-5-5H5.414l2.293 2.293a1 1 0 11-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                  </svg>
-                  {{ $t('workflow.returnToPrevious') }}
-                </BaseButton>
-                <BaseButton
-                  variant="error"
-                  size="sm"
-                  @click="checkEvaluationAndOpen(request, 'reject')"
-                  :disabled="!requestEvaluationStatus[request.id]"
-                >
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                  </svg>
-                  {{ $t('workflow.reject') }}
-                </BaseButton>
-                <BaseButton
-                  variant="secondary"
-                  size="sm"
-                  @click="openEvaluationModal(request, null)"
-                >
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
-                  </svg>
-                  {{ requestEvaluationStatus[request.id] ? $t('workflow.viewEditEvaluation') : $t('workflow.startEvaluation') }}
-                </BaseButton>
+                <!-- If request went through employee processing, show final actions -->
+                <template v-if="request.went_through_employee_processing">
+                  <BaseButton
+                    variant="success"
+                    size="sm"
+                    @click="checkEvaluationAndOpen(request, 'complete')"
+                    :disabled="!requestEvaluationStatus[request.id]"
+                  >
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ $t('workflow.complete') }}
+                  </BaseButton>
+                  <BaseButton
+                    variant="warning"
+                    size="sm"
+                    @click="checkEvaluationAndOpen(request, 'returnPrevious')"
+                    :disabled="!requestEvaluationStatus[request.id]"
+                  >
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M7.707 3.293a1 1 0 010 1.414L5.414 7H11a7 7 0 017 7v2a1 1 0 11-2 0v-2a5 5 0 00-5-5H5.414l2.293 2.293a1 1 0 11-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ $t('workflow.returnToPrevious') }}
+                  </BaseButton>
+                  <BaseButton
+                    variant="error"
+                    size="sm"
+                    @click="checkEvaluationAndOpen(request, 'reject')"
+                    :disabled="!requestEvaluationStatus[request.id]"
+                  >
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ $t('workflow.reject') }}
+                  </BaseButton>
+                  <BaseButton
+                    variant="secondary"
+                    size="sm"
+                    @click="openEvaluationModal(request, null)"
+                  >
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                      <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ requestEvaluationStatus[request.id] ? $t('workflow.viewEditEvaluation') : $t('workflow.startEvaluation') }}
+                  </BaseButton>
+                </template>
+
+                <!-- If request returned WITHOUT employee processing, show initial actions -->
+                <template v-else>
+                  <BaseButton
+                    variant="success"
+                    size="sm"
+                    @click="checkEvaluationAndOpen(request, 'assign')"
+                    :disabled="!requestEvaluationStatus[request.id]"
+                  >
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ $t('workflow.assignPath') }}
+                  </BaseButton>
+                  <BaseButton
+                    variant="outline"
+                    size="sm"
+                    @click="checkEvaluationAndOpen(request, 'details')"
+                    :disabled="!requestEvaluationStatus[request.id]"
+                  >
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                    </svg>
+                    {{ $t('workflow.requestDetails') }}
+                  </BaseButton>
+                  <BaseButton
+                    variant="error"
+                    size="sm"
+                    @click="checkEvaluationAndOpen(request, 'reject')"
+                    :disabled="!requestEvaluationStatus[request.id]"
+                  >
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ $t('workflow.reject') }}
+                  </BaseButton>
+                  <BaseButton
+                    variant="secondary"
+                    size="sm"
+                    @click="openEvaluationModal(request, null)"
+                  >
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                      <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ requestEvaluationStatus[request.id] ? $t('workflow.viewEditEvaluation') : $t('workflow.startEvaluation') }}
+                  </BaseButton>
+                </template>
               </template>
             </div>
           </BaseCard>
@@ -802,6 +948,11 @@ const getStatusVariant = (status) => {
   return variants[status] || 'gray'
 }
 
+// View request details
+const viewRequestDetails = (request) => {
+  router.push(`/requests/${request.id}`)
+}
+
 // Assign Path Modal
 const openAssignModal = (request) => {
   assignModal.value.show = true
@@ -1190,6 +1341,43 @@ const openModalForAction = (request, action) => {
       break
   }
 }
+
+// Helper functions to get latest transition comment
+const getLatestTransition = (request) => {
+  if (!request.transitions || request.transitions.length === 0) {
+    return null
+  }
+  // Get the most recent transition with comments
+  const transitionsWithComments = request.transitions.filter(t => t.comments)
+  if (transitionsWithComments.length === 0) {
+    return null
+  }
+  // Sort by created_at descending and get the first one
+  return transitionsWithComments.sort((a, b) =>
+    new Date(b.created_at) - new Date(a.created_at)
+  )[0]
+}
+
+const getLatestComment = (request) => {
+  const latestTransition = getLatestTransition(request)
+  return latestTransition?.comments || null
+}
+
+const getLatestActionLabel = (request) => {
+  const latestTransition = getLatestTransition(request)
+  if (!latestTransition) return ''
+
+  // Map action types to labels
+  const actionLabels = {
+    'complete': t('workflow.returnedToDeptA'),
+    'assign': t('workflow.assignedToEmployee'),
+    'requestDetails': t('workflow.moreDetailsRequested'),
+    'reject': t('workflow.rejected'),
+    'submit': t('workflow.submitted')
+  }
+
+  return actionLabels[latestTransition.action] || latestTransition.action
+}
 </script>
 
 <style scoped>
@@ -1353,11 +1541,260 @@ const openModalForAction = (request, action) => {
   margin: 0;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  flex-shrink: 0;
+}
+
+.view-details-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: #000000;
+  border: 1px solid #000000;
+  border-radius: var(--radius-lg);
+  color: #ffffff;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.view-details-btn:hover {
+  background: #1a1a1a;
+  border-color: #333333;
+  color: #ffffff;
+}
+
+.view-details-btn svg {
+  flex-shrink: 0;
+}
+
 .request-description {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   line-height: var(--line-height-relaxed);
   margin-bottom: var(--spacing-4);
+}
+
+/* Request Description Section */
+.request-description-section {
+  margin-bottom: var(--spacing-5);
+}
+
+.section-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-2);
+}
+
+.request-description-section .request-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: 0;
+  background: var(--color-surface);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-lg);
+  border-left: 3px solid var(--color-primary-500);
+}
+
+/* Request Details Grid */
+.request-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-5);
+}
+
+.detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+}
+
+.detail-item:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-300);
+}
+
+.detail-item > svg {
+  color: var(--color-primary-600);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.detail-value {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Ownership Badge */
+.ownership-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.ownership-badge.individual {
+  background: var(--color-blue-50);
+  color: var(--color-blue-700);
+  border-color: var(--color-blue-300);
+}
+
+.ownership-badge.shared {
+  background: var(--color-purple-50);
+  color: var(--color-purple-700);
+  border-color: var(--color-purple-300);
+}
+
+/* Idea Type Badge */
+.idea-type-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+/* Expected Date Item - Highlight */
+.expected-date-item {
+  background: var(--color-orange-50);
+  border-color: var(--color-orange-300);
+}
+
+.expected-date-item:hover {
+  background: var(--color-orange-100);
+  border-color: var(--color-orange-400);
+}
+
+.expected-date-item svg {
+  color: var(--color-orange-600) !important;
+}
+
+.expected-date-item .detail-label {
+  color: var(--color-orange-700);
+}
+
+.expected-date-item .detail-value {
+  color: var(--color-orange-900);
+}
+
+/* Benefits Section */
+.benefits-section {
+  margin-bottom: var(--spacing-5);
+}
+
+.benefits-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: 0;
+  background: var(--color-green-50);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-lg);
+  border-left: 3px solid var(--color-green-500);
+}
+
+/* Latest Comment Section */
+.latest-comment-section {
+  margin-bottom: var(--spacing-5);
+  background: var(--color-yellow-50);
+  border: 1px solid var(--color-yellow-300);
+  border-left: 4px solid var(--color-yellow-600);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: var(--color-yellow-100);
+  border-bottom: 1px solid var(--color-yellow-200);
+}
+
+.comment-header svg {
+  color: var(--color-yellow-700);
+  flex-shrink: 0;
+}
+
+.comment-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-yellow-900);
+  flex: 1;
+}
+
+.comment-by {
+  font-size: var(--font-size-xs);
+  color: var(--color-yellow-700);
+  padding: var(--spacing-1) var(--spacing-2);
+  background: var(--color-yellow-200);
+  border-radius: var(--radius-full);
+}
+
+.comment-content {
+  padding: var(--spacing-4);
+}
+
+.comment-action-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-yellow-800);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-2);
+}
+
+.comment-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .request-meta {

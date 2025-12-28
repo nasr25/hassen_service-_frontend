@@ -310,7 +310,7 @@ onMounted(() => {
   justify-content: space-between;
   margin-bottom: var(--spacing-8);
   padding: var(--spacing-6);
-  background: linear-gradient(135deg, #084 0%, #66a459 100%);
+  background: linear-gradient(135deg, #02735E 0%, #02735E 100%);
   border-radius: var(--radius-2xl);
   color: white;
 }
@@ -346,7 +346,7 @@ html[dir="rtl"] .welcome-section {
   width: 40px;
   height: 40px;
   border: 3px solid var(--color-border);
-  border-top-color: #22c55e;
+  border-top-color: #02735E;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: var(--spacing-4);
@@ -402,7 +402,7 @@ html[dir="rtl"] .profile-card {
 .card-header h2 {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
-  color: #16a34a;
+  color: #015a4a;
   margin: 0;
 }
 
@@ -427,7 +427,7 @@ html[dir="rtl"] .profile-avatar-section {
 .profile-avatar-large {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: linear-gradient(135deg, #02735E, #015a4a);
   color: white;
   border-radius: var(--radius-full);
   display: flex;
@@ -510,13 +510,13 @@ html[dir="rtl"] .department-item {
 
 .department-item:hover {
   background: #f0fdf4;
-  border-color: #22c55e;
+  border-color: #02735E;
 }
 
 .department-icon {
   width: 40px;
   height: 40px;
-  background: #22c55e;
+  background: #02735E;
   color: white;
   border-radius: var(--radius-lg);
   display: flex;
@@ -598,7 +598,7 @@ html[dir="rtl"] .stat-item {
 }
 
 .stat-icon-success {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: linear-gradient(135deg, #02735E, #015a4a);
 }
 
 .stat-icon-purple {

@@ -16,8 +16,8 @@
               <path d="M24 14L34 20V28L24 34L14 28V20L24 14Z" fill="white" opacity="0.9" />
               <defs>
                 <linearGradient id="gradient" x1="0" y1="0" x2="48" y2="48">
-                  <stop offset="0%" stop-color="#084" />
-                  <stop offset="100%" stop-color="#66a459" />
+                  <stop offset="0%" stop-color="#02735E" />
+                  <stop offset="100%" stop-color="#02735E" />
                 </linearGradient>
               </defs>
             </svg>
@@ -59,7 +59,6 @@
         </form>
 
         <!-- Test Accounts Section -->
-        <!--
         <div class="test-accounts">
           <div class="test-accounts-header">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
@@ -97,7 +96,6 @@
             {{ $t('auth.passwordNote') }} <strong>{{ $t('auth.passwordValue') }}</strong>
           </div>
         </div>
-        -->
       </div>
     </div>
 
@@ -313,7 +311,7 @@ html[dir="rtl"] .language-switcher-wrapper {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  color: var(--color-success-600);
+  color: #02735E;
   margin-bottom: var(--spacing-4);
   justify-content: center;
 }
@@ -342,7 +340,7 @@ html[dir="rtl"] .language-switcher-wrapper {
   width: 32px;
   height: 32px;
   border: 3px solid var(--color-border);
-  border-top-color: var(--color-success-600);
+  border-top-color: #02735E;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -372,8 +370,8 @@ html[dir="rtl"] .language-switcher-wrapper {
 }
 
 .test-account:hover {
-  border-color: var(--color-success-500);
-  background: var(--color-success-50);
+  border-color: #02735E;
+  background: rgba(2, 115, 94, 0.05);
   transform: translateX(4px);
   box-shadow: var(--shadow-sm);
 }
@@ -406,8 +404,8 @@ html[dir="rtl"] .test-account:hover {
 
 .account-info code {
   font-size: 10px;
-  color: var(--color-success-700);
-  background: var(--color-success-100);
+  color: #02735E;
+  background: rgba(2, 115, 94, 0.1);
   padding: 2px var(--spacing-2);
   border-radius: var(--radius-sm);
   font-family: var(--font-family-mono);
@@ -437,7 +435,7 @@ html[dir="rtl"] .test-account:hover {
 
 /* Right Panel - Green Background with Welcome */
 .welcome-panel {
-  background: linear-gradient(135deg, #084 0%, #66a459 100%);
+  background: linear-gradient(135deg, #02735E 0%, #02735E 100%);
   display: flex;
   align-items: center;
   justify-content: center;
