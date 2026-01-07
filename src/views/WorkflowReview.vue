@@ -71,21 +71,22 @@
 
         <!-- Requests Grid -->
         <div class="requests-grid">
-          <BaseCard
+          <RequestCard
             v-for="request in filteredRequests"
             :key="request.id"
-            class="request-card"
+            :request="request"
+            :show-description="true"
+            :show-submitter="true"
+            :show-department="true"
+            :show-date="true"
+            :show-expected-date="true"
+            :show-attachments="true"
+            :show-attachments-list="true"
+            :show-latest-comment="true"
           >
-            <!-- Request Header -->
-            <div class="request-header">
-              <div class="request-title-section">
-                <h3>{{ request.title }}</h3>
-                <p class="request-id">#{{ request.id }}</p>
-              </div>
-              <div class="header-actions">
-                <BaseBadge :variant="getStatusVariant(request.status)">
-                  {{ $t('status.' + request.status) }}
-                </BaseBadge>
+            <template #extra-content>
+              <!-- View Details Button -->
+              <div class="view-details-container">
                 <button class="view-details-btn" @click="viewRequestDetails(request)">
                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
@@ -94,192 +95,70 @@
                   {{ $t('request.viewDetails') }}
                 </button>
               </div>
-            </div>
 
-            <!-- Request Description -->
-            <div class="request-description-section">
-              <label class="section-label">{{ $t('request.ideaDescription') }}</label>
-              <p class="request-description">{{ request.description }}</p>
-            </div>
-
-            <!-- Request Details Grid -->
-            <div class="request-details-grid">
-              <!-- Submitter -->
-              <div class="detail-item">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                </svg>
-                <div class="detail-content">
-                  <span class="detail-label">{{ $t('workflow.submittedBy') }}</span>
-                  <span class="detail-value">{{ request.user?.name }}</span>
-                </div>
-              </div>
-
-              <!-- Submission Date -->
-              <div class="detail-item">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
-                </svg>
-                <div class="detail-content">
-                  <span class="detail-label">{{ $t('workflow.submittedOn') }}</span>
-                  <span class="detail-value">{{ formatDate(request.submitted_at) }}</span>
-                </div>
-              </div>
-
-              <!-- Department -->
-              <div v-if="request.department" class="detail-item">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
-                </svg>
-                <div class="detail-content">
-                  <span class="detail-label">{{ $t('request.department') }}</span>
-                  <span class="detail-value">{{ request.department.name }}</span>
-                </div>
-              </div>
-
-              <!-- Idea Type -->
-              <div v-if="request.idea_type" class="detail-item">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
-                </svg>
-                <div class="detail-content">
-                  <span class="detail-label">{{ $t('request.ideaOwnership') }}</span>
-                  <span class="detail-value">
-                    <span :class="['ownership-badge', request.idea_type === 'shared' ? 'shared' : 'individual']">
-                      {{ request.idea_type === 'shared' ? $t('request.sharedIdea') : $t('request.individualIdea') }}
-                    </span>
-                  </span>
-                </div>
-              </div>
-
-              <!-- Idea Category -->
-              <div v-if="request.ideaType" class="detail-item">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
-                </svg>
-                <div class="detail-content">
-                  <span class="detail-label">{{ $t('request.ideaType') }}</span>
-                  <span class="detail-value">
-                    <span class="idea-type-badge" :style="{ backgroundColor: request.ideaType.color + '20', color: request.ideaType.color, borderColor: request.ideaType.color }">
-                      {{ $i18n.locale === 'ar' ? request.ideaType.name_ar : request.ideaType.name }}
-                    </span>
-                  </span>
-                </div>
-              </div>
-
-              <!-- Expected Execution Date -->
-              <div v-if="request.expected_execution_date" class="detail-item expected-date-item">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                </svg>
-                <div class="detail-content">
-                  <span class="detail-label">{{ $t('request.expectedDate') }}</span>
-                  <span class="detail-value">{{ formatDate(request.expected_execution_date) }}</span>
-                </div>
-              </div>
-
-              <!-- Attachments Count -->
-              <div v-if="request.attachments?.length > 0" class="detail-item">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
-                </svg>
-                <div class="detail-content">
-                  <span class="detail-label">{{ $t('request.attachments') }}</span>
-                  <span class="detail-value">{{ request.attachments.length }} {{ $t('common.files') }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Benefits Section -->
-            <div v-if="request.benefits" class="benefits-section">
-              <label class="section-label">{{ $t('request.benefits') }}</label>
-              <p class="benefits-text">{{ request.benefits }}</p>
-            </div>
-
-            <!-- Latest Transition Comment -->
-            <div v-if="getLatestComment(request)" class="latest-comment-section">
-              <div class="comment-header">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
-                </svg>
-                <span class="comment-title">{{ $t('workflow.latestComment') }}</span>
-                <span v-if="getLatestTransition(request)" class="comment-by">
-                  {{ getLatestTransition(request).actionedBy?.name }}
+              <!-- Idea Ownership Badge -->
+              <div v-if="request.idea_ownership" class="idea-type-section">
+                <span :class="['ownership-badge', request.idea_ownership === 'shared' ? 'shared' : 'individual']">
+                  {{ request.idea_ownership === 'shared' ? $t('request.sharedIdea') : $t('request.individualIdea') }}
                 </span>
               </div>
-              <div class="comment-content">
-                <div class="comment-action-label">{{ getLatestActionLabel(request) }}</div>
-                <p class="comment-text">{{ getLatestComment(request) }}</p>
-              </div>
-            </div>
 
-            <!-- Attachments List -->
-            <div v-if="request.attachments && request.attachments.length > 0" class="attachments-section">
-              <div class="attachments-header">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
-                </svg>
-                <span>{{ $t('request.attachments') }}:</span>
+              <!-- Idea Category Badge -->
+              <div v-if="request.ideaType" class="idea-category-section">
+                <span class="idea-type-badge" :style="{ backgroundColor: request.ideaType.color + '20', color: request.ideaType.color, borderColor: request.ideaType.color }">
+                  {{ $i18n.locale === 'ar' ? request.ideaType.name_ar : request.ideaType.name }}
+                </span>
               </div>
-              <div class="attachments-list">
-                <a v-for="attachment in request.attachments" :key="attachment.id"
-                   :href="`${BASE_URL}/storage/${attachment.file_path}`"
-                   target="_blank"
-                   class="attachment-item">
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
-                  </svg>
-                  <span class="attachment-name">{{ attachment.file_name }}</span>
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
-                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
-                  </svg>
-                </a>
-              </div>
-            </div>
 
-            <!-- Collaborating Employees Section -->
-            <div v-if="request.employees && request.employees.length > 0" class="employees-section">
-              <div class="employees-header">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
-                </svg>
-                <span>{{ $t('request.collaboratingEmployees') }} ({{ request.employees.length }}):</span>
+              <!-- Benefits Section -->
+              <div v-if="request.benefits" class="benefits-section">
+                <label class="section-label">{{ $t('request.benefits') }}</label>
+                <p class="benefits-text">{{ request.benefits }}</p>
               </div>
-              <div class="employees-list">
-                <div v-for="employee in request.employees" :key="employee.id" class="employee-item">
-                  <div class="employee-avatar">
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                    </svg>
-                  </div>
-                  <div class="employee-info">
-                    <span class="employee-name">{{ employee.employee_name }}</span>
-                    <span v-if="employee.employee_email" class="employee-detail">{{ employee.employee_email }}</span>
-                    <span v-if="employee.employee_department" class="employee-detail">{{ employee.employee_department }}</span>
+
+              <!-- Collaborating Employees Section -->
+              <div v-if="request.employees && request.employees.length > 0" class="employees-section">
+                <div class="employees-header">
+                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                  </svg>
+                  <span>{{ $t('request.collaboratingEmployees') }} ({{ request.employees.length }}):</span>
+                </div>
+                <div class="employees-list">
+                  <div v-for="employee in request.employees" :key="employee.id" class="employee-item">
+                    <div class="employee-avatar">
+                      <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                      </svg>
+                    </div>
+                    <div class="employee-info">
+                      <span class="employee-name">{{ employee.employee_name }}</span>
+                      <span v-if="employee.employee_email" class="employee-detail">{{ employee.employee_email }}</span>
+                      <span v-if="employee.employee_department" class="employee-detail">{{ employee.employee_department }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Evaluation Status -->
-            <div class="evaluation-status">
-              <div v-if="!requestEvaluationStatus[request.id]" class="evaluation-warning">
-                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                </svg>
-                {{ $t('workflow.evaluationRequired') }}
+              <!-- Evaluation Status -->
+              <div class="evaluation-status">
+                <div v-if="!requestEvaluationStatus[request.id]" class="evaluation-warning">
+                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                  {{ $t('workflow.evaluationRequired') }}
+                </div>
+                <div v-else class="evaluation-complete">
+                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  {{ $t('workflow.evaluationCompleted') }}
+                </div>
               </div>
-              <div v-else class="evaluation-complete">
-                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-                {{ $t('workflow.evaluationCompleted') }}
-              </div>
-            </div>
+            </template>
 
             <!-- Action Buttons -->
-            <div class="request-actions">
+            <template #actions>
               <!-- Initial pending request actions -->
               <template v-if="request.status === 'pending' && !request.workflow_path_id">
                 <BaseButton
@@ -426,8 +305,8 @@
                   </BaseButton>
                 </template>
               </template>
-            </div>
-          </BaseCard>
+            </template>
+          </RequestCard>
         </div>
       </div>
     </div>
@@ -759,8 +638,10 @@ import AppLayout from '../components/AppLayout.vue'
 import BaseCard from '../components/BaseCard.vue'
 import BaseButton from '../components/BaseButton.vue'
 import BaseBadge from '../components/BaseBadge.vue'
+import RequestCard from '../components/RequestCard.vue'
 
 const { t } = useI18n()
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -841,6 +722,7 @@ const filteredRequests = computed(() => {
 })
 
 import { API_URL } from '../config/api'
+import { useAlert } from '../composables/useAlert'
 
 onMounted(async () => {
   await loadWorkflowPaths()
@@ -895,7 +777,7 @@ const loadRequests = async () => {
   } catch (err) {
     console.error('WorkflowReview: Failed to load requests:', err)
     console.error('WorkflowReview: Error response:', err.response?.data)
-    error.value = err.response?.data?.message || err.message || 'Failed to load requests'
+    showError(err.response?.data?.message || err.message || 'Failed to load requests')
   } finally {
     isLoading.value = false
   }
@@ -989,7 +871,7 @@ const confirmAssign = async () => {
     // Close modal immediately after success
     closeAssignModal()
 
-    success.value = t('messages.success.requestAssignedToPath')
+    showSuccess(t('messages.success.requestAssignedToPath'))
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -998,7 +880,7 @@ const confirmAssign = async () => {
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to assign path'
+    showError(err.response?.data?.message || 'Failed to assign path')
     assignModal.value.isLoading = false
   }
 }
@@ -1036,7 +918,7 @@ const confirmRequestDetails = async () => {
     // Close modal immediately after success
     closeDetailsModal()
 
-    success.value = t('messages.success.moreDetailsRequested')
+    showSuccess(t('messages.success.moreDetailsRequested'))
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -1045,7 +927,7 @@ const confirmRequestDetails = async () => {
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to request details'
+    showError(err.response?.data?.message || 'Failed to request details')
     detailsModal.value.isLoading = false
   }
 }
@@ -1083,7 +965,7 @@ const confirmReject = async () => {
     // Close modal immediately after success
     closeRejectModal()
 
-    success.value = t('messages.success.requestRejectedSuccess')
+    showSuccess(t('messages.success.requestRejectedSuccess'))
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -1092,7 +974,7 @@ const confirmReject = async () => {
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to reject request'
+    showError(err.response?.data?.message || 'Failed to reject request')
     rejectModal.value.isLoading = false
   }
 }
@@ -1130,7 +1012,7 @@ const confirmComplete = async () => {
     // Close modal immediately after success
     closeCompleteModal()
 
-    success.value = t('messages.success.requestCompleted')
+    showSuccess(t('messages.success.requestCompleted'))
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -1139,7 +1021,7 @@ const confirmComplete = async () => {
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to complete request'
+    showError(err.response?.data?.message || 'Failed to complete request')
     completeModal.value.isLoading = false
   }
 }
@@ -1177,7 +1059,7 @@ const confirmReturnToPrevious = async () => {
     // Close modal immediately after success
     closeReturnToPreviousModal()
 
-    success.value = t('messages.success.requestReturnedToPrevious')
+    showSuccess(t('messages.success.requestReturnedToPrevious'))
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -1186,7 +1068,7 @@ const confirmReturnToPrevious = async () => {
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to return request'
+    showError(err.response?.data?.message || 'Failed to return request')
     returnToPreviousModal.value.isLoading = false
   }
 }
@@ -1212,7 +1094,7 @@ const checkEvaluationAndOpen = async (request, action) => {
       await openEvaluationModal(request, action)
     }
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to check evaluation'
+    showError(err.response?.data?.message || 'Failed to check evaluation')
   }
 }
 
@@ -1246,7 +1128,7 @@ const openEvaluationModal = async (request, nextAction) => {
 
     evaluationModal.value.answers = answers
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to load evaluation questions'
+    showError(err.response?.data?.message || 'Failed to load evaluation questions')
     closeEvaluationModal()
   } finally {
     evaluationModal.value.isLoading = false
@@ -1305,7 +1187,7 @@ const submitEvaluationAndProceed = async () => {
     // Close modal immediately after successful submission
     closeEvaluationModal()
 
-    success.value = t('messages.success.evaluationSubmitted')
+    showSuccess(t('messages.success.evaluationSubmitted'))
 
     // Open the appropriate modal for the action if there is one
     if (action) {
@@ -1317,7 +1199,7 @@ const submitEvaluationAndProceed = async () => {
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to submit evaluation'
+    showError(err.response?.data?.message || 'Failed to submit evaluation')
     evaluationModal.value.isSaving = false
   }
 }
@@ -1546,6 +1428,17 @@ const getLatestActionLabel = (request) => {
   align-items: center;
   gap: var(--spacing-3);
   flex-shrink: 0;
+}
+
+.view-details-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--spacing-4);
+}
+
+.idea-type-section,
+.idea-category-section {
+  margin-bottom: var(--spacing-3);
 }
 
 .view-details-btn {

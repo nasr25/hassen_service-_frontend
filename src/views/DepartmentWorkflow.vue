@@ -49,13 +49,23 @@
 
       <!-- Requests List -->
       <div v-else class="requests-grid">
-        <BaseCard v-for="request in requests" :key="request.id" class="request-card">
-          <div class="request-header">
-            <h3>{{ request.title }}</h3>
-            <div class="header-actions">
-              <BaseBadge :variant="getStatusVariant(request.status)">
-                {{ $t('status.' + request.status) }}
-              </BaseBadge>
+        <RequestCard
+          v-for="request in requests"
+          :key="request.id"
+          :request="request"
+          :show-description="true"
+          :show-submitter="true"
+          :show-department="true"
+          :show-workflow-path="true"
+          :show-date="true"
+          :show-expected-date="true"
+          :show-assigned-to="true"
+          :show-attachments="true"
+          :show-attachments-list="true"
+        >
+          <template #extra-content>
+            <!-- View Details Button -->
+            <div class="view-details-container">
               <button class="view-details-btn" @click="viewRequestDetails(request)">
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
@@ -63,62 +73,6 @@
                 </svg>
                 {{ $t('request.viewDetails') }}
               </button>
-            </div>
-          </div>
-
-          <div class="request-body">
-            <p class="description">{{ request.description }}</p>
-
-            <div class="request-meta">
-              <div class="meta-item">
-                <strong>{{ $t('department.submittedBy') }}:</strong>
-                <span>{{ request.user?.name }}</span>
-              </div>
-              <div class="meta-item">
-                <strong>{{ $t('request.department') }}:</strong>
-                <span>{{ request.current_department?.name }}</span>
-              </div>
-              <div class="meta-item">
-                <strong>{{ $t('department.workflowPath') }}:</strong>
-                <span>{{ request.workflow_path?.name }}</span>
-              </div>
-              <div v-if="request.current_assignee" class="meta-item">
-                <strong>{{ $t('department.assignedTo') }}:</strong>
-                <span>{{ request.current_assignee?.name }}</span>
-              </div>
-              <div class="meta-item">
-                <strong>{{ $t('department.lastUpdated') }}:</strong>
-                <span>{{ formatDate(request.updated_at) }}</span>
-              </div>
-              <div v-if="request.expected_execution_date" class="meta-item expected-date-item">
-                <strong>{{ $t('department.expectedExecution') }}:</strong>
-                <span>{{ formatDate(request.expected_execution_date) }}</span>
-              </div>
-            </div>
-
-            <!-- Attachments List -->
-            <div v-if="request.attachments && request.attachments.length > 0" class="attachments-section">
-              <div class="attachments-header">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
-                </svg>
-                <span>{{ $t('request.attachments') }}:</span>
-              </div>
-              <div class="attachments-list">
-                <a v-for="attachment in request.attachments" :key="attachment.id"
-                   :href="`${BASE_URL}/storage/${attachment.file_path}`"
-                   target="_blank"
-                   class="attachment-item">
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
-                  </svg>
-                  <span class="attachment-name">{{ attachment.file_name }}</span>
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
-                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
-                  </svg>
-                </a>
-              </div>
             </div>
 
             <!-- Evaluation Results -->
@@ -160,9 +114,9 @@
                 </div>
               </div>
             </div>
-          </div>
+          </template>
 
-          <div class="request-actions">
+          <template #actions>
             <!-- Manager Actions (only for unassigned requests) -->
             <template v-if="isManager && !request.current_user_id">
               <!-- Pending (Accepted for Later) - Show Activate button -->
@@ -273,6 +227,7 @@
                 <BaseButton
                   variant="primary"
                   @click="openEmployeeUpdateProgressModal(request)"
+                  :disabled="request.progress_percentage === 100"
                 >
                   {{ $t('department.updateProgress') }}
                 </BaseButton>
@@ -286,8 +241,8 @@
                 </BaseButton>
               </template>
             </template>
-          </div>
-        </BaseCard>
+          </template>
+        </RequestCard>
       </div>
     </div>
 
@@ -455,6 +410,17 @@
         </div>
 
         <div class="form-group">
+          <label>{{ $t('request.expectedExecutionDate') }} <span class="required">*</span></label>
+          <input
+            type="date"
+            v-model="employeeAcceptModal.expectedExecutionDate"
+            class="date-input"
+            :min="new Date().toISOString().split('T')[0]"
+            required
+          />
+        </div>
+
+        <div class="form-group">
           <label>{{ $t('department.commentsOptional') }}</label>
           <textarea
             v-model="employeeAcceptModal.comments"
@@ -470,7 +436,7 @@
           <BaseButton
             variant="success"
             @click="confirmEmployeeAccept"
-            :disabled="employeeAcceptModal.isLoading"
+            :disabled="employeeAcceptModal.isLoading || !employeeAcceptModal.expectedExecutionDate"
           >
             {{ employeeAcceptModal.isLoading ? $t('department.accepting') : $t('department.acceptRequest') }}
           </BaseButton>
@@ -752,11 +718,14 @@ import AppLayout from '../components/AppLayout.vue'
 import BaseCard from '../components/BaseCard.vue'
 import BaseButton from '../components/BaseButton.vue'
 import BaseBadge from '../components/BaseBadge.vue'
+import RequestCard from '../components/RequestCard.vue'
 import { API_URL, BASE_URL } from '../config/api'
+import { useAlert } from '../composables/useAlert'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const { t } = useI18n()
+const { showSuccess, showError, showConfirm, showInput } = useAlert()
 
 const requests = ref([])
 const employees = ref([])
@@ -799,6 +768,7 @@ const employeeAcceptModal = ref({
   show: false,
   request: null,
   comments: '',
+  expectedExecutionDate: '',
   isLoading: false
 })
 
@@ -875,7 +845,7 @@ const loadRequests = async () => {
 
     requests.value = response.data.requests
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToLoadRequests')
+    showError(err.response?.data?.message || t('messages.error.failedToLoadRequests'))
   } finally {
     isLoading.value = false
   }
@@ -893,7 +863,7 @@ const loadEmployees = async () => {
     console.log('Loaded employees:', employees.value)
   } catch (err) {
     console.error('Failed to load employees:', err)
-    error.value = 'Failed to load employees. Please refresh the page.'
+    showError('Failed to load employees. Please refresh the page.')
   }
 }
 
@@ -917,7 +887,7 @@ const goBack = () => {
 }
 
 const viewRequestDetails = (request) => {
-  router.push(`/request-history/${request.id}`)
+  router.push(`/requests/${request.id}`)
 }
 
 const toggleEvaluation = (requestId) => {
@@ -988,7 +958,7 @@ const confirmAssign = async () => {
     // Close modal immediately after success
     closeAssignModal()
 
-    success.value = t('messages.success.requestAssigned')
+    showSuccess(t('messages.success.requestAssigned'))
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -997,7 +967,7 @@ const confirmAssign = async () => {
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToAssign')
+    showError(err.response?.data?.message || t('messages.error.failedToAssign'))
     assignModal.value.isLoading = false
   }
 }
@@ -1005,7 +975,7 @@ const confirmAssign = async () => {
 // Return request to the previously assigned employee (quick action without modal)
 const returnToEmployee = async (request) => {
   if (!request.last_assigned_user_id) {
-    error.value = t('messages.error.noPreviousEmployee')
+    showError(t('messages.error.noPreviousEmployee'))
     return
   }
 
@@ -1025,7 +995,7 @@ const returnToEmployee = async (request) => {
       }
     )
 
-    success.value = t('messages.success.requestReturnedToEmployee')
+    showSuccess(t('messages.success.requestReturnedToEmployee'))
 
     // Reload requests (don't await to prevent blocking)
     loadRequests().catch(err => {
@@ -1034,7 +1004,7 @@ const returnToEmployee = async (request) => {
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToAssign')
+    showError(err.response?.data?.message || t('messages.error.failedToAssign'))
   }
 }
 
@@ -1071,11 +1041,11 @@ const confirmReturnToEmployee = async () => {
     )
 
     closeReturnToEmployeeModal()
-    success.value = t('messages.success.requestReturnedToEmployee')
+    showSuccess(t('messages.success.requestReturnedToEmployee'))
     loadRequests().catch(err => console.error('Failed to reload requests:', err))
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToAssign')
+    showError(err.response?.data?.message || t('messages.error.failedToAssign'))
     returnToEmployeeModal.value.isLoading = false
   }
 }
@@ -1114,7 +1084,7 @@ const confirmReturnToManager = async () => {
     // Close modal immediately after success
     closeReturnToManagerModal()
 
-    success.value = t('messages.success.requestReturned')
+    showSuccess(t('messages.success.requestReturned'))
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -1123,7 +1093,7 @@ const confirmReturnToManager = async () => {
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToReturn')
+    showError(err.response?.data?.message || t('messages.error.failedToReturn'))
     returnToManagerModal.value.isLoading = false
   }
 }
@@ -1160,11 +1130,11 @@ const confirmEmployeeReject = async () => {
     )
 
     closeEmployeeRejectModal()
-    success.value = t('messages.success.requestRejected')
+    showSuccess(t('messages.success.requestRejected'))
     loadRequests().catch(err => console.error('Failed to reload requests:', err))
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToReject')
+    showError(err.response?.data?.message || t('messages.error.failedToReject'))
     employeeRejectModal.value.isLoading = false
   }
 }
@@ -1180,6 +1150,7 @@ const closeEmployeeAcceptModal = () => {
   employeeAcceptModal.value.show = false
   employeeAcceptModal.value.request = null
   employeeAcceptModal.value.comments = ''
+  employeeAcceptModal.value.expectedExecutionDate = ''
   employeeAcceptModal.value.isLoading = false
 }
 
@@ -1191,7 +1162,8 @@ const confirmEmployeeAccept = async () => {
     await axios.post(
       `${API_URL}/department/requests/${employeeAcceptModal.value.request.id}/employee-accept`,
       {
-        comments: employeeAcceptModal.value.comments
+        comments: employeeAcceptModal.value.comments,
+        expected_execution_date: employeeAcceptModal.value.expectedExecutionDate
       },
       {
         headers: {
@@ -1201,11 +1173,11 @@ const confirmEmployeeAccept = async () => {
     )
 
     closeEmployeeAcceptModal()
-    success.value = t('messages.success.requestAccepted')
+    showSuccess(t('messages.success.requestAccepted'))
     loadRequests().catch(err => console.error('Failed to reload requests:', err))
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToAccept')
+    showError(err.response?.data?.message || t('messages.error.failedToAccept'))
     employeeAcceptModal.value.isLoading = false
   }
 }
@@ -1245,11 +1217,11 @@ const confirmEmployeeUpdateProgress = async () => {
     )
 
     closeEmployeeUpdateProgressModal()
-    success.value = t('messages.success.progressUpdated')
+    showSuccess(t('messages.success.progressUpdated'))
     loadRequests().catch(err => console.error('Failed to reload requests:', err))
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToUpdateProgress')
+    showError(err.response?.data?.message || t('messages.error.failedToUpdateProgress'))
     employeeUpdateProgressModal.value.isLoading = false
   }
 }
@@ -1286,11 +1258,11 @@ const confirmEmployeeComplete = async () => {
     )
 
     closeEmployeeCompleteModal()
-    success.value = t('messages.success.requestCompleted')
+    showSuccess(t('messages.success.requestCompleted'))
     loadRequests().catch(err => console.error('Failed to reload requests:', err))
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToComplete')
+    showError(err.response?.data?.message || t('messages.error.failedToComplete'))
     employeeCompleteModal.value.isLoading = false
   }
 }
@@ -1329,7 +1301,7 @@ const confirmReturnToDeptA = async () => {
     // Close modal immediately after success
     closeReturnToDeptAModal()
 
-    success.value = t('messages.success.requestReturnedDeptA')
+    showSuccess(t('messages.success.requestReturnedDeptA'))
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -1338,7 +1310,7 @@ const confirmReturnToDeptA = async () => {
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToReturn')
+    showError(err.response?.data?.message || t('messages.error.failedToReturn'))
     returnToDeptAModal.value.isLoading = false
   }
 }
@@ -1410,7 +1382,7 @@ const openPathEvaluationModal = async (request, action) => {
       })
     }
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToLoadQuestions')
+    showError(err.response?.data?.message || t('messages.error.failedToLoadQuestions'))
     closePathEvaluationModal()
   } finally {
     pathEvaluationModal.value.isLoading = false
@@ -1460,7 +1432,7 @@ const submitPathEvaluation = async () => {
     // Close modal immediately after successful submission
     closePathEvaluationModal()
 
-    success.value = t('messages.success.evaluationSubmitted')
+    showSuccess(t('messages.success.evaluationSubmitted'))
     setTimeout(() => (success.value = null), 3000)
 
     // If there's an action, proceed with it, otherwise just reload
@@ -1492,7 +1464,7 @@ const submitPathEvaluation = async () => {
       })
     }
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToSubmitEvaluation')
+    showError(err.response?.data?.message || t('messages.error.failedToSubmitEvaluation'))
   } finally {
     pathEvaluationModal.value.isSaving = false
   }
@@ -1571,7 +1543,7 @@ const confirmAcceptLater = async () => {
     // Close modal immediately after success
     closeAcceptLaterModal()
 
-    success.value = t('messages.success.ideaAccepted')
+    showSuccess(t('messages.success.ideaAccepted'))
 
     // Reload requests (don't await to prevent blocking modal close)
     loadRequests().catch(err => {
@@ -1580,17 +1552,24 @@ const confirmAcceptLater = async () => {
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToAccept')
+    showError(err.response?.data?.message || t('messages.error.failedToAccept'))
     acceptLaterModal.value.isLoading = false
   }
 }
 
 // Activate Accepted Idea
 const activateIdea = async (request) => {
-  const comments = prompt(`${t('department.activateIdeaPrompt')}\n\n${t('request.request')}: ${request.title}\n\n${t('department.optionalComments')}`)
+  const { value: comments, isConfirmed } = await showInput({
+    title: t('department.activateIdeaPrompt'),
+    text: `${t('request.request')}: ${request.title}`,
+    inputType: 'textarea',
+    inputPlaceholder: t('department.optionalComments'),
+    confirmButtonText: t('common.confirm'),
+    cancelButtonText: t('common.cancel')
+  })
 
   // Allow empty comments (user can press OK without entering anything)
-  if (comments === null) return // Only cancel if user pressed Cancel
+  if (!isConfirmed) return // Only cancel if user pressed Cancel
 
   try {
     error.value = null
@@ -1604,7 +1583,7 @@ const activateIdea = async (request) => {
       }
     )
 
-    success.value = t('messages.success.ideaActivated')
+    showSuccess(t('messages.success.ideaActivated'))
 
     // Reload requests
     loadRequests().catch(err => {
@@ -1613,7 +1592,7 @@ const activateIdea = async (request) => {
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToActivate')
+    showError(err.response?.data?.message || t('messages.error.failedToActivate'))
   }
 }
 
@@ -1626,13 +1605,25 @@ const isExecutionDateDue = (executionDate) => {
 }
 
 const rejectIdea = async (request) => {
-  const reason = prompt(`${t('department.rejectPrompt')}\n\n${t('request.request')}: ${request.title}\n\n${t('department.provideReason')}`)
-  if (!reason) return
+  const { value: reason, isConfirmed } = await showInput({
+    title: t('department.rejectIdea'),
+    text: `${t('request.request')}: ${request.title}`,
+    inputType: 'textarea',
+    inputPlaceholder: t('department.provideReason'),
+    confirmButtonText: t('common.confirm'),
+    cancelButtonText: t('common.cancel'),
+    inputValidator: (value) => {
+      if (!value || !value.trim()) {
+        return t('department.reasonRequired')
+      }
+    }
+  })
+  if (!isConfirmed || !reason) return
 
   try {
     error.value = null
     await axios.post(
-      `${API_URL}/department/requests/${request.id}/reject`,
+      `${API_URL}/department/requests/${request.id}/return-to-dept-a`,
       { comments: reason },
       {
         headers: {
@@ -1641,7 +1632,7 @@ const rejectIdea = async (request) => {
       }
     )
 
-    success.value = t('messages.success.ideaRejected')
+    showSuccess(t('messages.success.requestReturnedDeptA'))
 
     // Reload requests (don't await to prevent blocking)
     loadRequests().catch(err => {
@@ -1650,7 +1641,7 @@ const rejectIdea = async (request) => {
 
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToReject')
+    showError(err.response?.data?.message || t('messages.error.failedToReject'))
   }
 }
 </script>
@@ -1798,6 +1789,12 @@ const rejectIdea = async (request) => {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
+}
+
+.view-details-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--spacing-4);
 }
 
 .view-details-btn {
@@ -2155,6 +2152,11 @@ const rejectIdea = async (request) => {
   color: var(--color-text-primary);
   font-weight: var(--font-weight-medium);
   font-size: var(--font-size-sm);
+}
+
+.form-group label .required {
+  color: var(--color-error-500, #ef4444);
+  margin-left: 2px;
 }
 
 .form-group textarea,

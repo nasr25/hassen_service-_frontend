@@ -411,12 +411,14 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useAlert } from '../composables/useAlert'
 import axios from 'axios'
 import { useAuthStore } from '../../stores/auth'
 import AppLayout from '../../components/AppLayout.vue'
 import { API_URL, BASE_URL } from '../../config/api'
 
 const { t, locale } = useI18n()
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
 const authStore = useAuthStore()
 
 const loading = ref(true)
@@ -494,7 +496,7 @@ const fetchSettings = async () => {
     }
   } catch (err) {
     console.error('Failed to fetch settings:', err)
-    error.value = t('settings.failedToLoad')
+    showError(t('settings.failedToLoad'))
   } finally {
     loading.value = false
   }
@@ -688,7 +690,7 @@ const saveAllSettings = async () => {
     }, 3000)
   } catch (err) {
     console.error('Failed to save settings:', err)
-    error.value = t('settings.failedToSave')
+    showError(t('settings.failedToSave'))
   } finally {
     isSaving.value = false
   }
@@ -797,7 +799,7 @@ const saveTemplate = async () => {
     }, 3000)
   } catch (err) {
     console.error('Failed to save template:', err)
-    error.value = t('settings.failedToSaveTemplate')
+    showError(t('settings.failedToSaveTemplate'))
   } finally {
     templateEditorModal.value.isSaving = false
   }
@@ -821,7 +823,7 @@ const toggleTemplateStatus = async (template) => {
     }, 3000)
   } catch (err) {
     console.error('Failed to toggle template status:', err)
-    error.value = t('settings.failedToToggleStatus')
+    showError(t('settings.failedToToggleStatus'))
   }
 }
 

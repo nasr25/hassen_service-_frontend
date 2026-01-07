@@ -168,11 +168,13 @@
 import { API_URL, BASE_URL } from '../config/api'
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useAlert } from '../composables/useAlert'
 import axios from 'axios'
 import { useAuthStore } from '../stores/auth'
 import AppLayout from '../components/AppLayout.vue'
 
 const { t } = useI18n()
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
 const authStore = useAuthStore()
 
 const loading = ref(true)
@@ -217,7 +219,7 @@ const fetchSettings = async () => {
     console.error('Failed to fetch settings:', err)
     // If 404, settings don't exist yet, use defaults
     if (err.response?.status !== 404) {
-      error.value = t('userSettings.failedToLoad')
+      showError(t('userSettings.failedToLoad'))
     }
   } finally {
     loading.value = false
@@ -260,7 +262,7 @@ const saveSettings = async () => {
     }, 3000)
   } catch (err) {
     console.error('Failed to save settings:', err)
-    error.value = t('userSettings.failedToSave')
+    showError(t('userSettings.failedToSave'))
 
     // Auto-hide error message after 5 seconds
     setTimeout(() => {

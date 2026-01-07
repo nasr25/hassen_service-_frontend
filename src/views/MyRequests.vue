@@ -65,96 +65,37 @@
 
         <!-- Requests Grid -->
         <div class="requests-grid">
-          <BaseCard
+          <RequestCard
             v-for="request in filteredRequests"
             :key="request.id"
-            class="request-card"
+            :request="request"
+            :clickable="true"
+            :show-description="true"
+            :truncate-description="true"
+            :description-length="120"
+            :show-submitter="false"
+            :show-department="true"
+            :show-date="true"
+            :show-expected-date="true"
+            :show-attachments="true"
+            :show-attachments-list="true"
             @click="viewDetails(request.id)"
           >
-            <div class="request-header">
-              <div class="request-title-section">
-                <h3>{{ request.title }}</h3>
-                <p class="request-id">#{{ request.id }}</p>
-              </div>
-              <BaseBadge :variant="getStatusVariant(request.status)">
-                {{ formatStatus(request.status) }}
-              </BaseBadge>
-            </div>
-
-            <p class="request-description">{{ truncate(request.description, 120) }}</p>
-
-            <div class="request-footer">
-              <div class="request-meta">
-                <div class="meta-item">
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
-                  </svg>
-                  <span>{{ formatDate(request.submitted_at || request.created_at) }}</span>
-                </div>
-
-                <div v-if="request.current_department" class="meta-item">
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
-                  </svg>
-                  <span>{{ request.current_department.name }}</span>
-                </div>
-
-                <div v-if="request.expected_execution_date" class="meta-item expected-date">
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                  </svg>
-                  <span>{{ $t('request.expectedDate') }}: {{ formatDate(request.expected_execution_date) }}</span>
-                </div>
-
-                <div v-if="request.attachments && request.attachments.length > 0" class="meta-item">
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
-                  </svg>
-                  <span>{{ request.attachments.length }} {{ $t('request.attachments') }}</span>
-                </div>
-              </div>
-
-              <!-- Attachments List -->
-              <div v-if="request.attachments && request.attachments.length > 0" class="attachments-section">
-                <div class="attachments-header">
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
-                  </svg>
-                  <span>{{ $t('request.attachments') }}:</span>
-                </div>
-                <div class="attachments-list">
-                  <a v-for="attachment in request.attachments" :key="attachment.id"
-                     :href="`${BASE_URL}/storage/${attachment.file_path}`"
-                     target="_blank"
-                     class="attachment-item">
-                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
-                    </svg>
-                    <span class="attachment-name">{{ attachment.file_name }}</span>
-                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
-                      <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-
-              <div class="action-buttons">
-                <button v-if="request.status === 'draft' || request.status === 'need_more_details'" class="edit-btn" @click.stop="editRequest(request.id)">
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-                  </svg>
-                  {{ $t('common.edit') }}
-                </button>
-                <button class="view-btn" @click.stop="viewDetails(request.id)">
-                  {{ $t('request.viewDetails') }}
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </BaseCard>
+            <template #actions>
+              <button v-if="request.status === 'draft' || request.status === 'need_more_details' || request.status === 'rejected'" class="edit-btn" @click.stop="editRequest(request.id)">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                </svg>
+                {{ $t('common.edit') }}
+              </button>
+              <button class="view-btn" @click.stop="viewDetails(request.id)">
+                {{ $t('request.viewDetails') }}
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </template>
+          </RequestCard>
         </div>
       </div>
     </div>
@@ -171,10 +112,13 @@ import AppLayout from '../components/AppLayout.vue'
 import BaseCard from '../components/BaseCard.vue'
 import BaseButton from '../components/BaseButton.vue'
 import BaseBadge from '../components/BaseBadge.vue'
+import RequestCard from '../components/RequestCard.vue'
+import { useAlert } from '../composables/useAlert'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const { t } = useI18n()
+const { showSuccess, showError } = useAlert()
 
 const requests = ref([])
 const error = ref(null)
@@ -227,7 +171,7 @@ const loadRequests = async () => {
   } catch (err) {
     console.error('Failed to load requests:', err)
     console.error('Error response:', err.response?.data)
-    error.value = err.response?.data?.message || err.message || 'Failed to load requests'
+    showError(err.response?.data?.message || err.message || 'Failed to load requests')
   } finally {
     isLoading.value = false
   }

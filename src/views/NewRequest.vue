@@ -42,9 +42,10 @@
             :label="$t('request.ideaTitle')"
             :placeholder="$t('request.ideaTitlePlaceholder')"
             required
-            :error="validationErrors.title"
+            :error="touched.title ? validationErrors.title : ''"
             :help="!validationErrors.title ? $t('request.ideaTitleCharCount', { count: form.title.length }) : ''"
-          />
+          
+            @blur="handleBlur('title')"/>
 
           <!-- Idea Description -->
           <BaseInput
@@ -54,8 +55,8 @@
             :placeholder="$t('request.ideaDescriptionPlaceholder')"
             :rows="6"
             required
-            :error="validationErrors.description"
-            :help="!validationErrors.description ? $t('request.ideaDescriptionCharCount', { count: form.description.length }) : ''"
+            :error="touched.description ? validationErrors.description : ''"
+            @blur="handleBlur('description')"
           />
 
           <!-- Department -->
@@ -65,14 +66,15 @@
             :placeholder="$t('request.departmentPlaceholder')"
             required
             :options="departmentOptions"
-            :error="validationErrors.department"
+            :error="touched.department ? validationErrors.department : ''"
             :help="$t('request.departmentHelp')"
-          />
+          
+            @blur="handleBlur('department')"/>
 
           <!-- Idea Ownership Type -->
           <div class="form-group">
             <label class="form-label">{{ $t('request.ideaOwnership') }}</label>
-            <div class="radio-group">
+            <div class="radio-group" :key="'ownership-' + formKey">
               <label class="radio-label">
                 <input
                   type="radio"
@@ -80,7 +82,6 @@
                   value="individual"
                   name="idea_ownership"
                   class="radio-input"
-                  :checked="form.idea_ownership_type === 'individual'"
                 />
                 <span>{{ $t('request.individualIdea') }}</span>
               </label>
@@ -91,15 +92,11 @@
                   value="shared"
                   name="idea_ownership"
                   class="radio-input"
-                  :checked="form.idea_ownership_type === 'shared'"
                 />
                 <span>{{ $t('request.sharedIdea') }}</span>
               </label>
             </div>
             <span class="form-help">{{ $t('request.ideaOwnershipHelp') }}</span>
-            <small style="color: var(--color-text-secondary); font-size: var(--font-size-xs); margin-top: 4px; display: block;">
-              Debug: Current value = {{ form.idea_ownership_type }}
-            </small>
           </div>
 
           <!-- Employee Search (Shared Ideas Only) -->
@@ -126,10 +123,9 @@
                   class="search-result-item"
                 >
                   <div class="employee-info">
-                    <strong>{{ employee.username }}</strong>
+                    <strong>{{ employee.name }}</strong>
                     <span class="employee-meta">{{ employee.email }}</span>
                     <span>{{ employee.title }}</span>
-
                   </div>
                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
@@ -310,7 +306,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useI18n } from 'vue-i18n'
@@ -321,11 +317,13 @@ import BaseButton from '../components/BaseButton.vue'
 import BaseInput from '../components/BaseInput.vue'
 import BaseSelect from '../components/BaseSelect.vue'
 import { API_URL } from '../config/api'
+import { useAlert } from '../composables/useAlert'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 const { t, locale } = useI18n()
+const { showSuccess, showError } = useAlert()
 
 const form = ref({
   title: '',
@@ -345,7 +343,9 @@ const success = ref(null)
 const isLoading = ref(false)
 const isDraftSave = ref(false)
 const validationErrors = ref({})
+const touched = ref({})
 const isEditMode = ref(false)
+const formKey = ref(0)
 const departments = ref([])
 const ideaTypes = ref([])
 const employeeSearchQuery = ref('')
@@ -445,34 +445,39 @@ const loadRequest = async (id) => {
     const request = response.data.request
     console.log('============ LOADING REQUEST FOR EDIT ============')
     console.log('Full request object:', request)
-    console.log('Request.idea_type (ownership):', request.idea_type)
-    console.log('Type of idea_type:', typeof request.idea_type)
+    console.log('Request.idea_ownership:', request.idea_ownership)
+    console.log('Type of idea_ownership:', typeof request.idea_ownership)
     console.log('Request.idea_type_id (category):', request.idea_type_id)
     console.log('Request.employees:', request.employees)
 
-    // Determine ownership type - ensure it's a string and handle all cases
+    // Determine ownership type - use idea_ownership field (not idea_type which is overwritten by relationship)
     let ownershipType = 'individual' // Default
-    if (request.idea_type) {
-      ownershipType = String(request.idea_type).toLowerCase().trim()
+    if (request.idea_ownership) {
+      ownershipType = String(request.idea_ownership).toLowerCase().trim()
       // Ensure it's exactly 'individual' or 'shared'
       if (ownershipType !== 'individual' && ownershipType !== 'shared') {
-        console.warn('Invalid idea_type value:', ownershipType, '- defaulting to individual')
+        console.warn('Invalid idea_ownership value:', ownershipType, '- defaulting to individual')
         ownershipType = 'individual'
       }
     }
     console.log('Determined ownership type:', ownershipType)
 
-    // Completely replace the form object
-    form.value = {
-      title: request.title || '',
-      description: request.description || '',
-      idea_type: request.idea_type_id?.toString() || '',
-      department: request.department_id?.toString() || 'unknown',
-      benefits: request.benefits || '',
-      additional_details: request.additional_details || '',
-      idea_ownership_type: ownershipType,
-      employees: Array.isArray(request.employees) ? request.employees : []
-    }
+    // Update form properties individually for better Vue reactivity
+    form.value.title = request.title || ''
+    form.value.description = request.description || ''
+    form.value.idea_type = request.idea_type_id?.toString() || ''
+    form.value.department = request.department_id?.toString() || 'unknown'
+    form.value.benefits = request.benefits || ''
+    form.value.additional_details = request.additional_details || ''
+    form.value.employees = Array.isArray(request.employees) ? [...request.employees] : []
+
+    // Update idea_ownership_type after a tick to ensure Vue reactivity updates the radio buttons
+    await nextTick()
+    form.value.idea_ownership_type = ownershipType
+
+    // Increment formKey to force Vue to re-render the radio buttons with the new value
+    await nextTick()
+    formKey.value++
 
     console.log('============ FORM AFTER LOADING ============')
     console.log('form.idea_ownership_type:', form.value.idea_ownership_type)
@@ -483,7 +488,7 @@ const loadRequest = async (id) => {
     console.log('===============================================')
   } catch (err) {
     console.error('Failed to load request:', err)
-    error.value = t('request.errorMessages.loadRequestFailed')
+    showError(t('request.errorMessages.loadRequestFailed'))
   }
 }
 
@@ -524,7 +529,7 @@ const addEmployee = (employee) => {
 
   if (!exists) {
     form.value.employees.push({
-      employee_name: employee.username,
+      employee_name: employee.name,
       employee_email: employee.email,
       employee_department: employee.department,
       employee_title: employee.title
@@ -541,18 +546,78 @@ const removeEmployee = (index) => {
   form.value.employees.splice(index, 1)
 }
 
+// Validate a single field
+const validateField = (fieldName) => {
+  const errors = { ...validationErrors.value }
+
+  switch (fieldName) {
+    case 'title':
+      if (!form.value.title || form.value.title.trim() === '') {
+        errors.title = t('request.validationErrors.titleRequired')
+      } else if (form.value.title.length > 200) {
+        errors.title = t('request.validationErrors.titleTooLong')
+      } else {
+        delete errors.title
+      }
+      break
+
+    case 'description':
+      if (!form.value.description || form.value.description.trim() === '') {
+        errors.description = t('request.validationErrors.descriptionRequired')
+      } else if (form.value.description.length < 25) {
+        errors.description = t('request.validationErrors.descriptionTooShort')
+      } else {
+        delete errors.description
+      }
+      break
+
+    case 'department':
+      if (!form.value.department) {
+        errors.department = t('request.validationErrors.departmentRequired')
+      } else {
+        delete errors.department
+      }
+      break
+
+    case 'attachments':
+      if (uploadedFiles.value.length > 5) {
+        errors.attachments = t('request.validationErrors.maxFilesExceeded', { max: 5 })
+      } else {
+        delete errors.attachments
+      }
+      break
+  }
+
+  validationErrors.value = errors
+}
+
+// Handle field blur - mark as touched and validate
+const handleBlur = (fieldName) => {
+  touched.value[fieldName] = true
+  validateField(fieldName)
+}
+
+// Validate all fields
 const validateForm = () => {
+  // Mark all fields as touched
+  touched.value = {
+    title: true,
+    description: true,
+    department: true,
+    attachments: true
+  }
+
   const errors = {}
 
   // Title validation
-  if (!form.value.title) {
+  if (!form.value.title || form.value.title.trim() === '') {
     errors.title = t('request.validationErrors.titleRequired')
   } else if (form.value.title.length > 200) {
     errors.title = t('request.validationErrors.titleTooLong')
   }
 
   // Description validation
-  if (!form.value.description) {
+  if (!form.value.description || form.value.description.trim() === '') {
     errors.description = t('request.validationErrors.descriptionRequired')
   } else if (form.value.description.length < 25) {
     errors.description = t('request.validationErrors.descriptionTooShort')
@@ -615,15 +680,12 @@ const formatFileSize = (bytes) => {
 
 const handleSubmit = async () => {
   if (!validateForm()) {
-    error.value = t('request.validationErrors.fixValidationErrors')
+    showError(t('request.validationErrors.fixValidationErrors'))
     return
   }
 
   try {
     isLoading.value = true
-    error.value = null
-    success.value = null
-
     const formData = new FormData()
     formData.append('title', form.value.title)
     formData.append('description', form.value.description)
@@ -669,14 +731,14 @@ const handleSubmit = async () => {
       })
     }
 
-    success.value = isEditMode.value ? t('request.successMessages.ideaUpdated') : t('request.successMessages.ideaSubmitted')
+    showSuccess(isEditMode.value ? t('request.successMessages.ideaUpdated') : t('request.successMessages.ideaSubmitted'))
 
     setTimeout(() => {
       router.push('/requests')
     }, 2000)
 
   } catch (err) {
-    error.value = err.response?.data?.message || t('request.errorMessages.submitFailed')
+    showError(err.response?.data?.message || t('request.errorMessages.submitFailed'))
   } finally {
     isLoading.value = false
   }
@@ -684,15 +746,12 @@ const handleSubmit = async () => {
 
 const saveDraft = async () => {
   if (!form.value.title || !form.value.description) {
-    error.value = t('request.validationErrors.draftRequiresTitle')
+    showError(t('request.validationErrors.draftRequiresTitle'))
     return
   }
 
   try {
     isDraftSave.value = true
-    error.value = null
-    success.value = null
-
     console.log('============ SAVING DRAFT ============')
     console.log('Current form.idea_ownership_type:', form.value.idea_ownership_type)
     console.log('Type:', typeof form.value.idea_ownership_type)
@@ -724,21 +783,26 @@ const saveDraft = async () => {
       formData.append(`attachments[${index}]`, file)
     })
 
-    await axios.post(`${API_URL}/requests`, formData, {
+    // Use update endpoint if editing existing request
+    const url = isEditMode.value
+      ? `${API_URL}/requests/${route.params.id}`
+      : `${API_URL}/requests`
+
+    await axios.post(url, formData, {
       headers: {
         Authorization: `Bearer ${authStore.token}`,
         'Content-Type': 'multipart/form-data'
       }
     })
 
-    success.value = t('request.successMessages.draftSaved')
+    showSuccess(isEditMode.value ? t('request.successMessages.ideaUpdated') : t('request.successMessages.draftSaved'))
 
     setTimeout(() => {
       router.push('/requests')
     }, 2000)
 
   } catch (err) {
-    error.value = err.response?.data?.message || t('request.errorMessages.draftFailed')
+    showError(err.response?.data?.message || t('request.errorMessages.draftFailed'))
   } finally {
     isDraftSave.value = false
   }

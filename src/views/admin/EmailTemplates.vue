@@ -298,8 +298,10 @@ import axios from 'axios'
 import { useAuthStore } from '../../stores/auth'
 import AppLayout from '../../components/AppLayout.vue'
 import { API_URL } from '../../config/api'
+import { useAlert } from '../composables/useAlert'
 
 const { t } = useI18n()
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
 const authStore = useAuthStore()
 
 const activeTab = ref('user')
@@ -365,7 +367,7 @@ const fetchTemplates = async () => {
     })
     templates.value = response.data.templates || []
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToFetch')
+    showError(err.response?.data?.message || t('messages.error.failedToFetch'))
   } finally {
     isLoading.value = false
   }
@@ -413,11 +415,11 @@ const saveTemplate = async () => {
     await axios.put(`${API_URL}/email-templates/${editForm.value.id}`, editForm.value, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
-    success.value = t('messages.success.templateUpdated')
+    showSuccess(t('messages.success.templateUpdated'))
     closeEditModal()
     fetchTemplates()
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToUpdate')
+    showError(err.response?.data?.message || t('messages.error.failedToUpdate'))
   }
 }
 
@@ -429,10 +431,10 @@ const toggleTemplateStatus = async (template) => {
     }, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
-    success.value = t('messages.success.statusUpdated')
+    showSuccess(t('messages.success.statusUpdated'))
     fetchTemplates()
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToUpdate')
+    showError(err.response?.data?.message || t('messages.error.failedToUpdate'))
   }
 }
 
@@ -462,17 +464,17 @@ const sendTestEmail = async () => {
     }, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
-    success.value = t('messages.success.testEmailSent')
+    showSuccess(t('messages.success.testEmailSent'))
     closeTestEmailModal()
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToSend')
+    showError(err.response?.data?.message || t('messages.error.failedToSend'))
   }
 }
 
 const copyPlaceholders = () => {
   const placeholders = '{user_name}, {request_id}, {request_title}, {status}, {department}, {created_at}, {employee_name}, {assigned_by}'
   navigator.clipboard.writeText(placeholders)
-  success.value = t('messages.success.copiedToClipboard')
+  showSuccess(t('messages.success.copiedToClipboard'))
   setTimeout(() => {
     success.value = ''
   }, 2000)

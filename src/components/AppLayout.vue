@@ -150,7 +150,7 @@
               </svg>
             </div>
             <div class="user-info">
-              <div class="user-name">{{ authStore.user?.name }}</div>
+              <div class="user-name">{{ authStore.user?.username }}</div>
               <div class="user-role">
                 <BaseBadge :variant="getRoleBadgeVariant(authStore.user?.role)">
                   {{ authStore.user?.role }}

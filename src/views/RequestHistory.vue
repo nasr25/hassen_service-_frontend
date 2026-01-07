@@ -73,6 +73,18 @@
               <strong>{{ $t('requestHistory.expectedExecutionDate') }}</strong>
               <span>{{ formatDate(request.expected_execution_date) }}</span>
             </div>
+            <div v-if="request.idea_ownership" class="info-item">
+              <strong>{{ $t('request.ideaOwnership') }}</strong>
+              <span :class="['ownership-badge', request.idea_ownership === 'shared' ? 'shared' : 'individual']">
+                {{ request.idea_ownership === 'shared' ? $t('request.sharedIdea') : $t('request.individualIdea') }}
+              </span>
+            </div>
+            <div v-if="request.ideaType" class="info-item">
+              <strong>{{ $t('request.ideaType') }}</strong>
+              <span class="idea-type-badge" :style="{ backgroundColor: request.ideaType.color + '20', color: request.ideaType.color, borderColor: request.ideaType.color }">
+                {{ $i18n.locale === 'ar' ? request.ideaType.name_ar : request.ideaType.name }}
+              </span>
+            </div>
             <div class="info-item info-full">
               <strong>{{ $t('requestHistory.description') }}</strong>
               <p class="description">{{ request.description }}</p>
@@ -238,6 +250,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useI18n } from 'vue-i18n'
+import { useAlert } from '../composables/useAlert'
 import axios from 'axios'
 import AppLayout from '../components/AppLayout.vue'
 import BaseCard from '../components/BaseCard.vue'
@@ -249,6 +262,7 @@ const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 const { t } = useI18n()
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
 
 const request = ref(null)
 const error = ref(null)
@@ -272,7 +286,7 @@ const loadRequest = async () => {
 
     request.value = response.data.request
   } catch (err) {
-    error.value = err.response?.data?.message || t('requestHistory.failedToLoad')
+    showError(err.response?.data?.message || t('requestHistory.failedToLoad'))
   } finally {
     isLoading.value = false
   }
@@ -431,6 +445,35 @@ const formatDate = (dateString) => {
   white-space: pre-wrap;
   color: var(--color-text-primary);
   font-size: var(--font-size-base);
+}
+
+/* Ownership Badge */
+.ownership-badge {
+  display: inline-block;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.ownership-badge.shared {
+  background: var(--color-info-100);
+  color: var(--color-info-700);
+}
+
+.ownership-badge.individual {
+  background: var(--color-success-100);
+  color: var(--color-success-700);
+}
+
+/* Idea Type Badge */
+.idea-type-badge {
+  display: inline-block;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid;
 }
 
 /* Attachments */

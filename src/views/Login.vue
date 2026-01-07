@@ -129,10 +129,12 @@ import BaseButton from '../components/BaseButton.vue'
 import BaseInput from '../components/BaseInput.vue'
 import axios from 'axios'
 import { API_URL } from '../config/api'
+import { useAlert } from '../composables/useAlert'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const { t, locale } = useI18n()
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
 const { logo, siteName, siteNameAr, fetchPublicSettings } = useSettings()
 
 // Computed property for system title based on locale
@@ -180,7 +182,7 @@ const handleLogin = async () => {
   if (result.success) {
     router.push('/dashboard')
   } else {
-    error.value = result.error || t('auth.loginFailed')
+    showError(result.error || t('auth.loginFailed'))
   }
 }
 

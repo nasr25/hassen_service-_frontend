@@ -267,8 +267,10 @@ import axios from 'axios'
 import { useAuthStore } from '../../stores/auth'
 import AppLayout from '../../components/AppLayout.vue'
 import { API_URL } from '../../config/api'
+import { useAlert } from '../composables/useAlert'
 
 const { t } = useI18n()
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
 const authStore = useAuthStore()
 
 const logs = ref([])
@@ -320,7 +322,7 @@ const fetchLogs = async (page = 1) => {
     logs.value = response.data.logs || []
     pagination.value = response.data.pagination || {}
   } catch (err) {
-    error.value = err.response?.data?.message || t('messages.error.failedToFetch')
+    showError(err.response?.data?.message || t('messages.error.failedToFetch'))
   } finally {
     isLoading.value = false
   }

@@ -832,6 +832,7 @@ import axios from 'axios'
 const router = useRouter()
 const authStore = useAuthStore()
 const { t } = useI18n()
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
 
 const activeTab = ref('departments')
 const departments = ref([])
@@ -848,6 +849,7 @@ const isLoading = ref(true)
 const isLoadingPathQuestions = ref(false)
 
 import { API_URL } from '../config/api'
+import { useAlert } from '../composables/useAlert'
 
 const departmentModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', code: '', description: '', is_active: true, is_department_a: false }, editId: null })
 const userModal = ref({ show: false, isEdit: false, isLoading: false, form: { name: '', email: '', password: '', role: 'employee', is_active: true, external_user_number: '' }, editId: null })
@@ -905,7 +907,7 @@ const getRolesForPermission = (permissionId) => {
 
 onMounted(async () => {
   if (authStore.user?.role !== 'admin') {
-    error.value = t('messages.error.accessDenied')
+    showError(t('messages.error.accessDenied'))
     setTimeout(() => router.push('/dashboard'), 2000)
     return
   }
@@ -935,7 +937,7 @@ const loadData = async () => {
     permissions.value = permsRes.data.permissions
     ideaTypes.value = ideaTypesRes.data.ideaTypes
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to load data'
+    showError(err.response?.data?.message || 'Failed to load data')
   } finally {
     isLoading.value = false
   }
@@ -943,8 +945,7 @@ const loadData = async () => {
 
 const refresh = async () => {
   await loadData()
-  success.value = t('messages.success.refreshed')
-  setTimeout(() => (success.value = null), 3000)
+  showSuccess(t('messages.success.refreshed'))
 }
 
 const goBack = () => router.push('/dashboard')
@@ -979,28 +980,32 @@ const saveDepartment = async () => {
         'Accept': 'application/json'
       }
     })
-    success.value = departmentModal.value.isEdit ? t('messages.success.departmentUpdated') : t('messages.success.departmentCreated')
+    showSuccess(departmentModal.value.isEdit ? t('messages.success.departmentUpdated') : t('messages.success.departmentCreated'))
     closeDepartmentModal()
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
     console.error('Department save error:', err)
     console.error('Error response:', err.response)
-    error.value = err.response?.data?.message || err.message || 'Failed to save department'
+    showError(err.response?.data?.message || err.message || 'Failed to save department')
   } finally {
     departmentModal.value.isLoading = false
   }
 }
 
 const deleteDepartment = async (dept) => {
-  if (!confirm(`Delete ${dept.name}?`)) return
+  const { isConfirmed } = await showDeleteConfirm({
+    title: t('common.confirmDelete'),
+    text: `${t('common.deleteConfirmMessage')} ${dept.name}?`
+  })
+  if (!isConfirmed) return
   try {
     await axios.delete(`${API_URL}/admin/departments/${dept.id}`, { headers: { Authorization: `Bearer ${authStore.token}` } })
-    success.value = t('messages.success.departmentDeleted')
+    showSuccess(t('messages.success.departmentDeleted'))
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to delete'
+    showError(err.response?.data?.message || 'Failed to delete')
   }
 }
 
@@ -1093,12 +1098,12 @@ const saveUser = async () => {
     const url = userModal.value.isEdit ? `${API_URL}/admin/users/${userModal.value.editId}` : `${API_URL}/admin/users`
     const method = userModal.value.isEdit ? 'put' : 'post'
     await axios[method](url, userModal.value.form, { headers: { Authorization: `Bearer ${authStore.token}` } })
-    success.value = userModal.value.isEdit ? t('messages.success.userUpdated') : t('messages.success.userCreated')
+    showSuccess(userModal.value.isEdit ? t('messages.success.userUpdated') : t('messages.success.userCreated'))
     closeUserModal()
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to save user'
+    showError(err.response?.data?.message || 'Failed to save user')
   } finally {
     userModal.value.isLoading = false
   }
@@ -1106,17 +1111,21 @@ const saveUser = async () => {
 
 const deleteUser = async (user) => {
   if (user.id === authStore.user?.id) {
-    error.value = t('messages.error.cannotDeleteOwnAccount')
+    showError(t('messages.error.cannotDeleteOwnAccount'))
     return
   }
-  if (!confirm(`Delete ${user.name}?`)) return
+  const { isConfirmed: confirmed } = await showDeleteConfirm({
+    title: t('common.confirmDelete'),
+    text: `${t('common.deleteConfirmMessage')} ${user.name}?`
+  })
+  if (!confirmed) return
   try {
     await axios.delete(`${API_URL}/admin/users/${user.id}`, { headers: { Authorization: `Bearer ${authStore.token}` } })
-    success.value = t('messages.success.userDeleted')
+    showSuccess(t('messages.success.userDeleted'))
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to delete'
+    showError(err.response?.data?.message || 'Failed to delete')
   }
 }
 
@@ -1131,12 +1140,12 @@ const saveAssignment = async () => {
     assignmentModal.value.isLoading = true
     error.value = null
     await axios.post(`${API_URL}/admin/assign-user-department`, assignmentModal.value.form, { headers: { Authorization: `Bearer ${authStore.token}` } })
-    success.value = t('messages.success.userAssigned')
+    showSuccess(t('messages.success.userAssigned'))
     closeAssignmentModal()
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to assign'
+    showError(err.response?.data?.message || 'Failed to assign')
   } finally {
     assignmentModal.value.isLoading = false
   }
@@ -1157,30 +1166,35 @@ const updateUserRole = async () => {
       department_id: editRoleModal.value.department.id,
       role: editRoleModal.value.newRole
     }, { headers: { Authorization: `Bearer ${authStore.token}` } })
-    success.value = t('messages.success.roleUpdated')
+    showSuccess(t('messages.success.roleUpdated'))
     closeEditRoleModal()
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to update'
+    showError(err.response?.data?.message || 'Failed to update')
   } finally {
     editRoleModal.value.isLoading = false
   }
 }
 
 const removeUserFromDept = async (user, dept) => {
-  if (!confirm(`Remove ${user.name} from ${dept.name}?`)) return
+  const { isConfirmed: removeConfirmed } = await showDeleteConfirm({
+    title: t('common.confirm'),
+    text: `Remove ${user.name} from ${dept.name}?`,
+    confirmText: t('common.yes')
+  })
+  if (!removeConfirmed) return
   try {
     error.value = null
     await axios.post(`${API_URL}/admin/remove-user-department`, {
       user_id: user.id,
       department_id: dept.id
     }, { headers: { Authorization: `Bearer ${authStore.token}` } })
-    success.value = t('messages.success.userRemoved')
+    showSuccess(t('messages.success.userRemoved'))
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to remove'
+    showError(err.response?.data?.message || 'Failed to remove')
   }
 }
 
@@ -1222,26 +1236,30 @@ const saveQuestion = async () => {
       await axios.put(`${API_URL}/admin/evaluation-questions/${questionModal.value.editId}`, questionModal.value.form, {
         headers: { Authorization: `Bearer ${authStore.token}` }
       })
-      success.value = t('messages.success.questionUpdated')
+      showSuccess(t('messages.success.questionUpdated'))
     } else {
       await axios.post(`${API_URL}/admin/evaluation-questions`, questionModal.value.form, {
         headers: { Authorization: `Bearer ${authStore.token}` }
       })
-      success.value = t('messages.success.questionCreated')
+      showSuccess(t('messages.success.questionCreated'))
     }
 
     closeQuestionModal()
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to save question'
+    showError(err.response?.data?.message || 'Failed to save question')
   } finally {
     questionModal.value.isLoading = false
   }
 }
 
 const toggleQuestionStatus = async (question) => {
-  if (!confirm(`Are you sure you want to ${question.is_active ? 'deactivate' : 'activate'} this question?`)) return
+  const { isConfirmed: toggleConfirmed } = await showConfirm({
+    title: t('common.confirm'),
+    text: `Are you sure you want to ${question.is_active ? 'deactivate' : 'activate'} this question?`
+  })
+  if (!toggleConfirmed) return
 
   try {
     await axios.put(`${API_URL}/admin/evaluation-questions/${question.id}`, {
@@ -1249,26 +1267,30 @@ const toggleQuestionStatus = async (question) => {
     }, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
-    success.value = `Question ${question.is_active ? 'deactivated' : 'activated'}`
+    showSuccess(`Question ${question.is_active ? 'deactivated' : 'activated'}`)
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to update question'
+    showError(err.response?.data?.message || 'Failed to update question')
   }
 }
 
 const deleteQuestion = async (question) => {
-  if (!confirm(`Are you sure you want to delete this question? This cannot be undone.`)) return
+  const { isConfirmed: deleteQConfirmed } = await showDeleteConfirm({
+    title: t('common.confirmDelete'),
+    text: t('common.deleteWarning')
+  })
+  if (!deleteQConfirmed) return
 
   try {
     await axios.delete(`${API_URL}/admin/evaluation-questions/${question.id}`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
-    success.value = t('messages.success.questionDeleted')
+    showSuccess(t('messages.success.questionDeleted'))
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to delete question'
+    showError(err.response?.data?.message || 'Failed to delete question')
   }
 }
 
@@ -1309,19 +1331,19 @@ const saveRole = async () => {
       await axios.put(`${API_URL}/permissions/roles/${roleModal.value.editId}`, roleModal.value.form, {
         headers: { Authorization: `Bearer ${authStore.token}` }
       })
-      success.value = t('messages.success.roleUpdated')
+      showSuccess(t('messages.success.roleUpdated'))
     } else {
       await axios.post(`${API_URL}/permissions/roles`, roleModal.value.form, {
         headers: { Authorization: `Bearer ${authStore.token}` }
       })
-      success.value = t('messages.success.roleCreated')
+      showSuccess(t('messages.success.roleCreated'))
     }
 
     closeRoleModal()
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to save role'
+    showError(err.response?.data?.message || 'Failed to save role')
   } finally {
     roleModal.value.isLoading = false
   }
@@ -1329,22 +1351,26 @@ const saveRole = async () => {
 
 const deleteRole = async (role) => {
   if (['Super Admin', 'Admin'].includes(role.name)) {
-    error.value = t('messages.error.cannotDeleteSystemRoles')
+    showError(t('messages.error.cannotDeleteSystemRoles'))
     setTimeout(() => (error.value = null), 5000)
     return
   }
 
-  if (!confirm(`Delete role "${role.name}"? This cannot be undone.`)) return
+  const { isConfirmed: deleteRoleConfirmed } = await showDeleteConfirm({
+    title: t('common.confirmDelete'),
+    text: `Delete role "${role.name}"? This cannot be undone.`
+  })
+  if (!deleteRoleConfirmed) return
 
   try {
     await axios.delete(`${API_URL}/permissions/roles/${role.id}`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
-    success.value = t('messages.success.roleDeleted')
+    showSuccess(t('messages.success.roleDeleted'))
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to delete role'
+    showError(err.response?.data?.message || 'Failed to delete role')
   }
 }
 
@@ -1388,12 +1414,12 @@ const saveUserRole = async () => {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
 
-    success.value = t('messages.success.roleAssigned')
+    showSuccess(t('messages.success.roleAssigned'))
     closeUserRoleModal()
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to assign role'
+    showError(err.response?.data?.message || 'Failed to assign role')
   } finally {
     userRoleModal.value.isLoading = false
   }
@@ -1442,12 +1468,12 @@ const savePathQuestion = async () => {
     await axios[method](url, pathQuestionModal.value.form, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
-    success.value = `Path question ${pathQuestionModal.value.isEdit ? 'updated' : 'created'}`
+    showSuccess(`Path question ${pathQuestionModal.value.isEdit ? 'updated' : 'created'}`)
     closePathQuestionModal()
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to save path question'
+    showError(err.response?.data?.message || 'Failed to save path question')
   } finally {
     pathQuestionModal.value.isLoading = false
   }
@@ -1460,25 +1486,29 @@ const togglePathQuestionStatus = async (question) => {
       { is_active: !question.is_active },
       { headers: { Authorization: `Bearer ${authStore.token}` } }
     )
-    success.value = `Question ${!question.is_active ? 'activated' : 'deactivated'}`
+    showSuccess(`Question ${!question.is_active ? 'activated' : 'deactivated'}`)
     await loadData()
     setTimeout(() => (success.value = null), 3000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to toggle status'
+    showError(err.response?.data?.message || 'Failed to toggle status')
   }
 }
 
 const deletePathQuestion = async (question) => {
-  if (!confirm(`Delete this path evaluation question?`)) return
+  const { isConfirmed: deletePathQConfirmed } = await showDeleteConfirm({
+    title: t('common.confirmDelete'),
+    text: 'Delete this path evaluation question?'
+  })
+  if (!deletePathQConfirmed) return
   try {
     await axios.delete(`${API_URL}/admin/path-evaluation-questions/${question.id}`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
-    success.value = t('messages.success.pathQuestionDeleted')
+    showSuccess(t('messages.success.pathQuestionDeleted'))
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to delete'
+    showError(err.response?.data?.message || 'Failed to delete')
   }
 }
 
@@ -1546,51 +1576,59 @@ const saveIdeaType = async () => {
       await axios.put(`${API_URL}/admin/idea-types/${ideaTypeModal.value.editId}`, ideaTypeModal.value.form, {
         headers: { Authorization: `Bearer ${authStore.token}` }
       })
-      success.value = t('messages.success.ideaTypeUpdated')
+      showSuccess(t('messages.success.ideaTypeUpdated'))
     } else {
       await axios.post(`${API_URL}/admin/idea-types`, ideaTypeModal.value.form, {
         headers: { Authorization: `Bearer ${authStore.token}` }
       })
-      success.value = t('messages.success.ideaTypeCreated')
+      showSuccess(t('messages.success.ideaTypeCreated'))
     }
 
     closeIdeaTypeModal()
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to save idea type'
+    showError(err.response?.data?.message || 'Failed to save idea type')
   } finally {
     ideaTypeModal.value.isLoading = false
   }
 }
 
 const toggleIdeaTypeStatus = async (ideaType) => {
-  if (!confirm(`Are you sure you want to ${ideaType.is_active ? 'deactivate' : 'activate'} this idea type?`)) return
+  const { isConfirmed: toggleIdeaConfirmed } = await showConfirm({
+    title: t('common.confirm'),
+    text: `Are you sure you want to ${ideaType.is_active ? 'deactivate' : 'activate'} this idea type?`
+  })
+  if (!toggleIdeaConfirmed) return
 
   try {
     await axios.post(`${API_URL}/admin/idea-types/${ideaType.id}/toggle-status`, {}, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
-    success.value = `Idea type ${ideaType.is_active ? 'deactivated' : 'activated'}`
+    showSuccess(`Idea type ${ideaType.is_active ? 'deactivated' : 'activated'}`)
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to update idea type'
+    showError(err.response?.data?.message || 'Failed to update idea type')
   }
 }
 
 const deleteIdeaType = async (ideaType) => {
-  if (!confirm(`Are you sure you want to delete "${ideaType.name}"? This cannot be undone.`)) return
+  const { isConfirmed: deleteIdeaConfirmed } = await showDeleteConfirm({
+    title: t('common.confirmDelete'),
+    text: `Are you sure you want to delete "${ideaType.name}"? This cannot be undone.`
+  })
+  if (!deleteIdeaConfirmed) return
 
   try {
     await axios.delete(`${API_URL}/admin/idea-types/${ideaType.id}`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
-    success.value = t('messages.success.ideaTypeDeleted')
+    showSuccess(t('messages.success.ideaTypeDeleted'))
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to delete idea type'
+    showError(err.response?.data?.message || 'Failed to delete idea type')
   }
 }
 
@@ -1653,36 +1691,40 @@ const savePath = async () => {
       await axios.put(`${API_URL}/admin/workflow-paths/${pathModal.value.editId}`, pathModal.value.form, {
         headers: { Authorization: `Bearer ${authStore.token}` }
       })
-      success.value = t('messages.success.workflowPathUpdated')
+      showSuccess(t('messages.success.workflowPathUpdated'))
     } else {
       await axios.post(`${API_URL}/admin/workflow-paths`, pathModal.value.form, {
         headers: { Authorization: `Bearer ${authStore.token}` }
       })
-      success.value = t('messages.success.workflowPathCreated')
+      showSuccess(t('messages.success.workflowPathCreated'))
     }
 
     closePathModal()
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to save workflow path'
+    showError(err.response?.data?.message || 'Failed to save workflow path')
   } finally {
     pathModal.value.isLoading = false
   }
 }
 
 const deletePath = async (path) => {
-  if (!confirm(`Are you sure you want to delete "${path.name}"? This cannot be undone.`)) return
+  const { isConfirmed: deletePathConfirmed } = await showDeleteConfirm({
+    title: t('common.confirmDelete'),
+    text: `Are you sure you want to delete "${path.name}"? This cannot be undone.`
+  })
+  if (!deletePathConfirmed) return
 
   try {
     await axios.delete(`${API_URL}/admin/workflow-paths/${path.id}`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
-    success.value = t('messages.success.workflowPathDeleted')
+    showSuccess(t('messages.success.workflowPathDeleted'))
     await loadData()
     setTimeout(() => (success.value = null), 5000)
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to delete workflow path'
+    showError(err.response?.data?.message || 'Failed to delete workflow path')
   }
 }
 </script>

@@ -11,7 +11,9 @@
       :disabled="disabled"
       :required="required"
       class="form-select"
+      :class="{ 'has-error': error }"
       @change="$emit('update:modelValue', $event.target.value)"
+      @blur="$emit('blur', $event)"
     >
       <option v-if="placeholder" value="" disabled>{{ placeholder }}</option>
       <option
@@ -67,7 +69,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['update:modelValue'])
+defineEmits(['update:modelValue', 'blur'])
 
 const selectId = computed(() => {
   return `select-${Math.random().toString(36).substr(2, 9)}`

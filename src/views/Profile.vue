@@ -209,12 +209,14 @@
 import { API_URL, BASE_URL } from '../config/api'
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useAlert } from '../composables/useAlert'
 import axios from 'axios'
 import { useAuthStore } from '../stores/auth'
 import AppLayout from '../components/AppLayout.vue'
 import BaseBadge from '../components/BaseBadge.vue'
 
 const { t } = useI18n()
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
 const authStore = useAuthStore()
 
 const loading = ref(true)
@@ -265,7 +267,7 @@ const fetchProfile = async () => {
     }
   } catch (err) {
     console.error('Failed to fetch profile:', err)
-    error.value = t('profile.failedToLoad')
+    showError(t('profile.failedToLoad'))
   } finally {
     loading.value = false
   }
