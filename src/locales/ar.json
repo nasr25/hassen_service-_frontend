@@ -391,6 +391,7 @@
     "assignedTo": "معيّن إلى:",
     "statusChange": "تغيير الحالة:",
     "comments": "التعليقات:",
+    "department": "القسم:",
     "actions": {
       "assignPath": "تم تعيين المسار",
       "assign": "تم التعيين للموظف",

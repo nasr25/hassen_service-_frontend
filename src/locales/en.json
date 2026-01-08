@@ -391,6 +391,7 @@
     "assignedTo": "Assigned to:",
     "statusChange": "Status Change:",
     "comments": "Comments:",
+    "department": "Department:",
     "actions": {
       "assignPath": "Path Assigned",
       "assign": "Assigned to Employee",

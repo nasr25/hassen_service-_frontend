@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import axios from 'axios'
+import Swal from 'sweetalert2'
 import App from './App.vue'
 import router from './router'
 import i18n from './i18n'
@@ -14,6 +15,27 @@ app.use(pinia)
 
 // Import auth store after pinia is initialized
 import { useAuthStore } from './stores/auth'
+
+// Helper function to show session expired alert
+const showSessionExpiredAlert = () => {
+  const locale = localStorage.getItem('locale') || 'en'
+  const title = locale === 'ar' ? 'انتهت الجلسة' : 'Session Expired'
+  const text = locale === 'ar'
+    ? 'انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.'
+    : 'Your session has expired. Please log in again.'
+  const buttonText = locale === 'ar' ? 'تسجيل الدخول' : 'Login'
+
+  Swal.fire({
+    title: title,
+    text: text,
+    icon: 'warning',
+    confirmButtonText: buttonText,
+    allowOutsideClick: false,
+    allowEscapeKey: false
+  }).then(() => {
+    router.push('/login')
+  })
+}
 
 // Configure axios request interceptor
 axios.interceptors.request.use(
@@ -29,8 +51,8 @@ axios.interceptors.request.use(
       // Check if session has expired before making request
       if (authStore.checkSessionExpired()) {
         authStore.handleSessionExpired()
-        router.push('/login')
-        return Promise.reject({ message: 'Session expired' })
+        showSessionExpiredAlert()
+        return Promise.reject({ message: 'Session expired', isSessionExpired: true })
       }
 
       // Update activity time
@@ -50,6 +72,11 @@ axios.interceptors.response.use(
     return response
   },
   async (error) => {
+    // Skip if already handled as session expired
+    if (error.isSessionExpired) {
+      return Promise.reject(error)
+    }
+
     if (error.response && error.response.status === 401) {
       // Token expired or unauthorized
       const authStore = useAuthStore()
@@ -57,7 +84,7 @@ axios.interceptors.response.use(
 
       // Redirect to login if not already there
       if (router.currentRoute.value.path !== '/login') {
-        router.push('/login')
+        showSessionExpiredAlert()
       }
     }
     return Promise.reject(error)
