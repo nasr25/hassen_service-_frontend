@@ -54,7 +54,9 @@
     "to": "to",
     "files": "files",
     "next": "Next",
-    "previous": "Previous"
+    "previous": "Previous",
+    "page": "Page",
+    "of": "of"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -68,7 +70,31 @@
     "allRequests": "All Requests",
     "profile": "Profile",
     "settings": "Settings",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "ideasBank": "Ideas Bank"
+  },
+  "ideasBank": {
+    "title": "Ideas Bank",
+    "subtitle": "Explore innovative ideas from across the organization",
+    "searchPlaceholder": "Search ideas...",
+    "stats": {
+      "total": "Total Ideas",
+      "underReview": "Under Review",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    },
+    "status": {
+      "pending": "Pending",
+      "under_review": "Under Review",
+      "in_review": "In Review",
+      "in_progress": "In Progress",
+      "completed": "Completed"
+    },
+    "assignedTo": "Assigned to",
+    "noIdeas": "No Ideas Found",
+    "noIdeasDescription": "There are no ideas matching your criteria at this time.",
+    "showing": "Showing",
+    "results": "results"
   },
   "notifications": {
     "markAllRead": "Mark all as read",
@@ -114,6 +140,7 @@
     "welcome": "Welcome",
     "welcomeMessage": "Workflow Management System",
     "testAccounts": "Test Accounts",
+    "loggingIn": "Logging in...",
     "passwordNote": "Password for all accounts:",
     "passwordValue": "password",
     "feature1Title": "Request Management",
@@ -395,10 +422,12 @@
       "returnToDepartment": "Returned to Department",
       "submit": "Submitted",
       "employeeAccept": "Employee Accepted Request",
+      "employeeReject": "Employee Rejected Request",
       "progressUpdate": "Progress Updated",
       "acceptLater": "Accepted for Later Implementation",
       "employeeComplete": "Employee Completed Work"
     },
+    "department": "Department",
     "evaluationModal": {
       "title": "Request Evaluation",
       "subtitle": "Please evaluate this request before proceeding",

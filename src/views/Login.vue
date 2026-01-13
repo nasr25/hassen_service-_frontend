@@ -79,13 +79,19 @@
               v-for="account in testAccounts"
               :key="account.username"
               class="test-account"
+              :class="{
+                'logging-in': loggingInAs === account.username,
+                'disabled': loggingInAs && loggingInAs !== account.username
+              }"
               @click="fillLogin(account.username)"
             >
-              <span class="account-icon">{{ account.icon }}</span>
+              <span v-if="loggingInAs === account.username" class="account-spinner"></span>
+              <span v-else class="account-icon">{{ account.icon }}</span>
               <div class="account-info">
                 <strong>{{ account.name }}</strong>
                 <code>{{ account.username }}</code>
               </div>
+              <span v-if="loggingInAs === account.username" class="logging-text">{{ $t('auth.loggingIn') }}</span>
             </div>
           </div>
 
@@ -156,6 +162,7 @@ const error = ref(null)
 const isLoading = ref(false)
 const testAccounts = ref([])
 const isLoadingAccounts = ref(false)
+const loggingInAs = ref(null)
 
 const fetchDemoAccounts = async () => {
   try {
@@ -187,10 +194,23 @@ const handleLogin = async () => {
 }
 
 const fillLogin = async (username) => {
+  if (loggingInAs.value) return // Prevent multiple clicks
+
+  loggingInAs.value = username
   form.value.username = username
   form.value.password = 'password'
+
   // Auto-submit the form after filling
-  await handleLogin()
+  error.value = null
+
+  const result = await authStore.login(form.value.username, form.value.password)
+
+  if (result.success) {
+    router.push('/dashboard')
+  } else {
+    loggingInAs.value = null
+    showError(result.error || t('auth.loginFailed'))
+  }
 }
 </script>
 
@@ -380,6 +400,39 @@ html[dir="rtl"] .language-switcher-wrapper {
 
 html[dir="rtl"] .test-account:hover {
   transform: translateX(-4px);
+}
+
+.test-account.logging-in {
+  border-color: #02735E;
+  background: rgba(2, 115, 94, 0.1);
+  pointer-events: none;
+}
+
+.test-account.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.account-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(2, 115, 94, 0.3);
+  border-top-color: #02735E;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+.logging-text {
+  font-size: var(--font-size-xs);
+  color: #02735E;
+  font-weight: var(--font-weight-medium);
+  margin-left: auto;
+}
+
+html[dir="rtl"] .logging-text {
+  margin-left: 0;
+  margin-right: auto;
 }
 
 .account-icon {

@@ -55,18 +55,17 @@
           <button
             v-for="status in statuses"
             :key="status.value"
-            @click="filterStatus = status.value"
+            @click="onFilterChange(status.value)"
             :class="['filter-chip', { active: filterStatus === status.value }]"
           >
             {{ status.label }}
-            <span v-if="status.count > 0" class="count">{{ status.count }}</span>
           </button>
         </div>
 
         <!-- Requests Grid -->
         <div class="requests-grid">
           <RequestCard
-            v-for="request in filteredRequests"
+            v-for="request in requests"
             :key="request.id"
             :request="request"
             :clickable="true"
@@ -97,6 +96,12 @@
             </template>
           </RequestCard>
         </div>
+
+        <!-- Pagination -->
+        <Pagination
+          :pagination="pagination"
+          @change="goToPage"
+        />
       </div>
     </div>
   </AppLayout>
@@ -113,6 +118,7 @@ import BaseCard from '../components/BaseCard.vue'
 import BaseButton from '../components/BaseButton.vue'
 import BaseBadge from '../components/BaseBadge.vue'
 import RequestCard from '../components/RequestCard.vue'
+import Pagination from '../components/common/Pagination.vue'
 import { useAlert } from '../composables/useAlert'
 
 const router = useRouter()
@@ -125,30 +131,35 @@ const error = ref(null)
 const isLoading = ref(true)
 const filterStatus = ref('all')
 
+// Pagination state
+const pagination = ref({
+  total: 0,
+  per_page: 12,
+  current_page: 1,
+  last_page: 1,
+  from: 0,
+  to: 0,
+})
+
 import { API_URL, BASE_URL } from '../config/api'
 
-const getStatusCount = (status) => {
-  if (status === 'all') return requests.value.length
-  return requests.value.filter(r => r.status === status).length
-}
-
 const statuses = computed(() => [
-  { label: t('common.all'), value: 'all', count: getStatusCount('all') },
-  { label: t('status.draft'), value: 'draft', count: getStatusCount('draft') },
-  { label: t('status.pending'), value: 'pending', count: getStatusCount('pending') },
-  { label: t('status.in_review'), value: 'in_review', count: getStatusCount('in_review') },
-  { label: t('status.need_more_details'), value: 'need_more_details', count: getStatusCount('need_more_details') },
-  { label: t('status.approved'), value: 'approved', count: getStatusCount('approved') },
-  { label: t('status.rejected'), value: 'rejected', count: getStatusCount('rejected') },
-  { label: t('status.completed'), value: 'completed', count: getStatusCount('completed') }
+  { label: t('common.all'), value: 'all' },
+  { label: t('status.draft'), value: 'draft' },
+  { label: t('status.pending'), value: 'pending' },
+  { label: t('status.in_review'), value: 'in_review' },
+  { label: t('status.need_more_details'), value: 'need_more_details' },
+  { label: t('status.approved'), value: 'approved' },
+  { label: t('status.rejected'), value: 'rejected' },
+  { label: t('status.completed'), value: 'completed' }
 ])
 
-const filteredRequests = computed(() => {
-  if (filterStatus.value === 'all') {
-    return requests.value
-  }
-  return requests.value.filter(r => r.status === filterStatus.value)
-})
+// Watch for filter changes
+const onFilterChange = (status) => {
+  filterStatus.value = status
+  pagination.value.current_page = 1
+  loadRequests()
+}
 
 onMounted(async () => {
   await loadRequests()
@@ -157,23 +168,43 @@ onMounted(async () => {
 const loadRequests = async () => {
   try {
     isLoading.value = true
-    console.log('Loading requests with token:', authStore.token ? 'Token exists' : 'No token')
-    console.log('API URL:', `${API_URL}/requests`)
+
+    const params = {
+      page: pagination.value.current_page,
+      per_page: pagination.value.per_page
+    }
+
+    // Add status filter if not 'all'
+    if (filterStatus.value !== 'all') {
+      params.status = filterStatus.value
+    }
 
     const response = await axios.get(`${API_URL}/requests`, {
       headers: {
         Authorization: `Bearer ${authStore.token}`
-      }
+      },
+      params
     })
 
-    console.log('Requests response:', response.data)
     requests.value = response.data.requests
+
+    // Update pagination state
+    if (response.data.pagination) {
+      pagination.value = response.data.pagination
+    }
   } catch (err) {
     console.error('Failed to load requests:', err)
-    console.error('Error response:', err.response?.data)
     showError(err.response?.data?.message || err.message || 'Failed to load requests')
   } finally {
     isLoading.value = false
+  }
+}
+
+// Pagination methods
+const goToPage = (page) => {
+  if (page >= 1 && page <= pagination.value.last_page) {
+    pagination.value.current_page = page
+    loadRequests()
   }
 }
 

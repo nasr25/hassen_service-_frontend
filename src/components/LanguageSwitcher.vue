@@ -46,7 +46,7 @@ watch(locale, (newLocale) => {
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.1);
+  background: #03735e;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 25px;
   color: white;

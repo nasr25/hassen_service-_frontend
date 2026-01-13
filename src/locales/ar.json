@@ -52,13 +52,17 @@
     "scrollToSeeMore": "← مرر لرؤية المزيد",
     "optional": "اختياري",
     "to": "إلى",
-    "files": "ملفات"
+    "files": "ملفات",
+    "next": "التالي",
+    "previous": "السابق",
+    "page": "صفحة",
+    "of": "من"
   },
   "nav": {
     "dashboard": "لوحة التحكم",
     "myRequests": "طلباتي",
     "newRequest": "طلب جديد",
-    "viewRequest": "View Request",
+    "viewRequest": "عرض الطلب",
     "workflowReview": "مراجعة سير العمل",
     "departmentWorkflow": "سير عمل القسم",
     "admin": "الإدارة",
@@ -66,7 +70,31 @@
     "allRequests": "جميع الطلبات",
     "profile": "الملف الشخصي",
     "settings": "الإعدادات",
-    "notifications": "الإشعارات"
+    "notifications": "الإشعارات",
+    "ideasBank": "بنك الأفكار"
+  },
+  "ideasBank": {
+    "title": "بنك الأفكار",
+    "subtitle": "استكشف الأفكار المبتكرة من جميع أنحاء المؤسسة",
+    "searchPlaceholder": "البحث عن الأفكار...",
+    "stats": {
+      "total": "إجمالي الأفكار",
+      "underReview": "قيد المراجعة",
+      "inProgress": "قيد التنفيذ",
+      "completed": "مكتملة"
+    },
+    "status": {
+      "pending": "معلق",
+      "under_review": "قيد المراجعة",
+      "in_review": "قيد المراجعة",
+      "in_progress": "قيد التنفيذ",
+      "completed": "مكتمل"
+    },
+    "assignedTo": "مسند إلى",
+    "noIdeas": "لا توجد أفكار",
+    "noIdeasDescription": "لا توجد أفكار تطابق معاييرك في الوقت الحالي.",
+    "showing": "عرض",
+    "results": "نتيجة"
   },
   "notifications": {
     "markAllRead": "تعليم الكل كمقروء",
@@ -112,6 +140,7 @@
     "welcome": "مرحباً",
     "welcomeMessage": "نظام إدارة سير العمل",
     "testAccounts": "حسابات تجريبية",
+    "loggingIn": "جاري تسجيل الدخول...",
     "passwordNote": "كلمة المرور لجميع الحسابات:",
     "passwordValue": "password",
     "feature1Title": "إدارة الطلبات",
@@ -392,10 +421,12 @@
       "returnToDepartment": "تم الإرجاع إلى القسم",
       "submit": "تم التقديم",
       "employeeAccept": "قبول الموظف للطلب",
+      "employeeReject": "رفض الموظف للطلب",
       "progressUpdate": "تحديث التقدم",
       "acceptLater": "تم القبول للتنفيذ لاحقاً",
       "employeeComplete": "إكمال الموظف للعمل"
     },
+    "department": "القسم",
     "evaluationModal": {
       "title": "تقييم الطلب",
       "subtitle": "يرجى تقييم هذا الطلب قبل المتابعة",

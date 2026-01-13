@@ -169,7 +169,7 @@
         class="tab-content"
       >
         <div class="section-header">
-          <h2>{{ $t('admin.users') }} ({{ users.length }})</h2>
+          <h2>{{ $t('admin.users') }} ({{ usersPagination.total }})</h2>
           <button
             @click="openUserModal()"
             class="btn-primary"
@@ -236,6 +236,12 @@
             </tbody>
           </table>
         </div>
+
+        <!-- Pagination -->
+        <Pagination
+          :pagination="usersPagination"
+          @change="goToUsersPage"
+        />
       </div>
 
       <div
@@ -1470,6 +1476,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 import { useI18n } from "vue-i18n";
 import AppLayout from "../components/AppLayout.vue";
+import Pagination from "../components/common/Pagination.vue";
 import axios from "axios";
 
 const router = useRouter();
@@ -1480,6 +1487,14 @@ const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert();
 const activeTab = ref("departments");
 const departments = ref([]);
 const users = ref([]);
+const usersPagination = ref({
+  total: 0,
+  per_page: 10,
+  current_page: 1,
+  last_page: 1,
+  from: 0,
+  to: 0,
+});
 const evaluationQuestions = ref([]);
 const pathEvaluationQuestions = ref([]);
 const workflowPaths = ref([]);
@@ -1700,8 +1715,11 @@ const loadData = async () => {
         break;
 
       case "users":
-        const usersRes = await httpRequest(`/admin/users`);
+        const usersRes = await httpRequest(`/admin/users?page=${usersPagination.value.current_page}&per_page=${usersPagination.value.per_page}`);
         users.value = usersRes.data.users;
+        if (usersRes.data.pagination) {
+          usersPagination.value = usersRes.data.pagination;
+        }
         break;
       case "assignments":
         const questionsRes = await httpRequest(`/admin/evaluation-questions`);
@@ -1747,6 +1765,13 @@ const loadData = async () => {
 const refresh = async () => {
   await loadData();
   showSuccess(t("messages.success.refreshed"));
+};
+
+const goToUsersPage = async (page) => {
+  if (page >= 1 && page <= usersPagination.value.last_page) {
+    usersPagination.value.current_page = page;
+    await loadData("users");
+  }
 };
 
 const goBack = () => router.push("/dashboard");

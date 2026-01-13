@@ -101,8 +101,12 @@ const routes = [
     component: () => import('../views/RequestHistory.vue'),
     meta: { requiresAuth: true }
   },
-
-
+  {
+    path: '/ideas-bank',
+    name: 'IdeasBank',
+    component: () => import('../views/IdeasBank.vue'),
+    meta: { requiresAuth: true }
+  }
 ]
 
 const router = createRouter({

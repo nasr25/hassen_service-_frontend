@@ -302,7 +302,10 @@ onMounted(() => {
 .profile-page {
   max-width: 1200px;
   margin: 0 auto;
-  direction: inherit;
+}
+
+html[dir="rtl"] .profile-page {
+  text-align: right;
 }
 
 /* Welcome Section */
@@ -447,6 +450,7 @@ html[dir="rtl"] .profile-avatar-section {
 
 html[dir="rtl"] .profile-main-info {
   align-items: flex-end;
+  text-align: right;
 }
 
 .profile-main-info h3 {
@@ -467,6 +471,11 @@ html[dir="rtl"] .profile-main-info {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-2);
+}
+
+html[dir="rtl"] .info-item {
+  align-items: flex-end;
+  text-align: right;
 }
 
 .info-label {
@@ -536,6 +545,7 @@ html[dir="rtl"] .department-item {
 
 html[dir="rtl"] .department-details {
   align-items: flex-end;
+  text-align: right;
 }
 
 .department-name {
@@ -619,6 +629,7 @@ html[dir="rtl"] .stat-item {
 
 html[dir="rtl"] .stat-details {
   align-items: flex-end;
+  text-align: right;
 }
 
 .stat-label {

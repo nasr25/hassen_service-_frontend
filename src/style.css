@@ -1298,7 +1298,7 @@ a:hover {
 }
 
 .btn-secondary {
-  width: 100%;
+  width: auto;
   padding: 10px 20px;
   background: #f3f4f6;
   color: var(--color-text-primary, #1a1a1a);

@@ -754,25 +754,11 @@ const loadRequests = async () => {
     console.log('WorkflowReview: Response received:', response.data)
     requests.value = response.data.requests
 
-    // Load evaluation status for each request
-    const evaluationStatusPromises = requests.value.map(async (request) => {
-      try {
-        const evalResponse = await axios.get(
-          `${API_URL}/workflow/requests/${request.id}/evaluation-questions`,
-          {
-            headers: {
-              Authorization: `Bearer ${authStore.token}`
-            }
-          }
-        )
-        requestEvaluationStatus.value[request.id] = evalResponse.data.has_evaluated
-      } catch (err) {
-        console.error(`Failed to load evaluation status for request ${request.id}:`, err)
-        requestEvaluationStatus.value[request.id] = false
-      }
+    // Use evaluation status from response (included in each request object)
+    requests.value.forEach((request) => {
+      requestEvaluationStatus.value[request.id] = request.has_evaluated || false
     })
 
-    await Promise.all(evaluationStatusPromises)
     console.log('WorkflowReview: All data loaded successfully')
   } catch (err) {
     console.error('WorkflowReview: Failed to load requests:', err)

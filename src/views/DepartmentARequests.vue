@@ -36,9 +36,10 @@
         </div>
       </BaseCard>
 
-      <!-- Requests Grid -->
-      <div v-else class="requests-grid">
-        <RequestCard
+      <!-- Requests List -->
+      <div v-else>
+        <div class="requests-grid">
+          <RequestCard
           v-for="request in requests"
           :key="request.id"
           :request="request"
@@ -63,6 +64,13 @@
             </BaseButton>
           </template>
         </RequestCard>
+        </div>
+
+        <!-- Pagination -->
+        <Pagination
+          :pagination="pagination"
+          @change="goToPage"
+        />
       </div>
     </div>
   </AppLayout>
@@ -80,6 +88,7 @@ import BaseCard from '../components/BaseCard.vue'
 import BaseButton from '../components/BaseButton.vue'
 import BaseBadge from '../components/BaseBadge.vue'
 import RequestCard from '../components/RequestCard.vue'
+import Pagination from '../components/common/Pagination.vue'
 import { API_URL, BASE_URL } from '../config/api'
 
 const { t } = useI18n()
@@ -91,6 +100,16 @@ const requests = ref([])
 const error = ref(null)
 const isLoading = ref(true)
 
+// Pagination state
+const pagination = ref({
+  total: 0,
+  per_page: 12,
+  current_page: 1,
+  last_page: 1,
+  from: 0,
+  to: 0,
+})
+
 onMounted(async () => {
   await loadRequests()
 })
@@ -100,17 +119,36 @@ const loadRequests = async () => {
     isLoading.value = true
     error.value = null
 
+    const params = {
+      page: pagination.value.current_page,
+      per_page: pagination.value.per_page
+    }
+
     const response = await axios.get(`${API_URL}/workflow/all-requests`, {
       headers: {
         Authorization: `Bearer ${authStore.token}`
-      }
+      },
+      params
     })
 
     requests.value = response.data.requests
+
+    // Update pagination state
+    if (response.data.pagination) {
+      pagination.value = response.data.pagination
+    }
   } catch (err) {
     showError(err.response?.data?.message || t('messages.error.failedToLoadRequests'))
   } finally {
     isLoading.value = false
+  }
+}
+
+// Pagination methods
+const goToPage = (page) => {
+  if (page >= 1 && page <= pagination.value.last_page) {
+    pagination.value.current_page = page
+    loadRequests()
   }
 }
 
