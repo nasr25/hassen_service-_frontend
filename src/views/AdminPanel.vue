@@ -175,6 +175,24 @@
             class="btn-primary"
           >➕ {{ $t('admin.addUser') }}</button>
         </div>
+
+        <!-- Search -->
+        <div class="search-box">
+          <input
+            v-model="userSearch"
+            type="text"
+            :placeholder="$t('common.search')"
+            @keyup.enter="searchUsers"
+            class="search-input"
+          />
+          <button @click="searchUsers" class="btn-search">
+            {{ $t('common.search') }}
+          </button>
+          <button v-if="userSearch" @click="clearUserSearch" class="btn-clear">
+            {{ $t('common.clear') }}
+          </button>
+        </div>
+
         <div
           v-if="isLoading"
           class="loading"
@@ -1495,6 +1513,7 @@ const usersPagination = ref({
   from: 0,
   to: 0,
 });
+const userSearch = ref('');
 const evaluationQuestions = ref([]);
 const pathEvaluationQuestions = ref([]);
 const workflowPaths = ref([]);
@@ -1715,7 +1734,7 @@ const loadData = async () => {
         break;
 
       case "users":
-        const usersRes = await httpRequest(`/admin/users?page=${usersPagination.value.current_page}&per_page=${usersPagination.value.per_page}`);
+        const usersRes = await httpRequest(`/admin/users?page=${usersPagination.value.current_page}&per_page=${usersPagination.value.per_page}&search=${encodeURIComponent(userSearch.value)}`);
         users.value = usersRes.data.users;
         if (usersRes.data.pagination) {
           usersPagination.value = usersRes.data.pagination;
@@ -1772,6 +1791,17 @@ const goToUsersPage = async (page) => {
     usersPagination.value.current_page = page;
     await loadData("users");
   }
+};
+
+const searchUsers = async () => {
+  usersPagination.value.current_page = 1;
+  await loadData("users");
+};
+
+const clearUserSearch = async () => {
+  userSearch.value = '';
+  usersPagination.value.current_page = 1;
+  await loadData("users");
 };
 
 const goBack = () => router.push("/dashboard");
@@ -2899,6 +2929,67 @@ html[dir="ltr"] .welcome-subtitle {
   font-size: 20px;
   margin: 0;
 }
+
+/* Search Box */
+.search-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  max-width: 400px;
+  padding: 10px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #02735e;
+  box-shadow: 0 0 0 3px rgba(2, 115, 94, 0.1);
+}
+
+.btn-search {
+  padding: 10px 20px;
+  background: #02735e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-search:hover {
+  background: #015a4a;
+}
+
+.btn-clear {
+  padding: 10px 20px;
+  background: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-clear:hover {
+  background: #4b5563;
+}
+
+html[dir="rtl"] .search-box {
+  direction: rtl;
+}
+
 .btn-primary {
   padding: 10px 20px;
   background: #02735e;
