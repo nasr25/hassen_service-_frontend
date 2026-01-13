@@ -369,7 +369,8 @@ import { useAuthStore } from "../../stores/auth";
 import AppLayout from "../../components/AppLayout.vue";
 import { API_URL } from "../../config/api";
 import { useAlert } from "../../composables/useAlert";
-
+import { objectToQueryString } from "../../services/handle";
+import { httpRequest } from "../../services/api";
 const { t } = useI18n();
 const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert();
 const authStore = useAuthStore();
@@ -432,9 +433,7 @@ const fetchTemplates = async () => {
   error.value = "";
 
   try {
-    const response = await axios.get(`${API_URL}/email-templates`, {
-      headers: { Authorization: `Bearer ${authStore.token}` },
-    });
+    const response = await httpRequest(`/email-templates`);
     templates.value = response.data.templates || [];
   } catch (err) {
     showError(err.response?.data?.message || t("messages.error.failedToFetch"));
@@ -480,15 +479,12 @@ const closeEditModal = () => {
 const saveTemplate = async () => {
   error.value = "";
   success.value = "";
-
+  const data = editForm.value;
   try {
-    await axios.put(
-      `${API_URL}/email-templates/${editForm.value.id}`,
-      editForm.value,
-      {
-        headers: { Authorization: `Bearer ${authStore.token}` },
-      }
-    );
+    await httpRequest(`/email-templates/${editForm.value.id}`, {
+      method: "PUT",
+      data,
+    });
     showSuccess(t("messages.success.templateUpdated"));
     closeEditModal();
     fetchTemplates();
@@ -501,16 +497,14 @@ const saveTemplate = async () => {
 
 const toggleTemplateStatus = async (template) => {
   try {
-    await axios.put(
-      `${API_URL}/email-templates/${template.id}`,
-      {
-        ...template,
-        is_active: !template.is_active,
-      },
-      {
-        headers: { Authorization: `Bearer ${authStore.token}` },
-      }
-    );
+    const data = {
+      ...template,
+      is_active: !template.is_active,
+    };
+    await httpRequest(`/email-templates/${template.id}`, {
+      method: "PUT",
+      data,
+    });
     showSuccess(t("messages.success.statusUpdated"));
     fetchTemplates();
   } catch (err) {
@@ -541,13 +535,14 @@ const sendTestEmail = async () => {
   success.value = "";
 
   try {
-    await axios.post(
-      `${API_URL}/email-templates/${testEmail.value.template.id}/send-test`,
+    const data = {
+      recipient_email: testEmail.value.email,
+    };
+    await httpRequest(
+      `/email-templates/${testEmail.value.template.id}/send-test`,
       {
-        recipient_email: testEmail.value.email,
-      },
-      {
-        headers: { Authorization: `Bearer ${authStore.token}` },
+        method: "POST",
+        data,
       }
     );
     showSuccess(t("messages.success.testEmailSent"));

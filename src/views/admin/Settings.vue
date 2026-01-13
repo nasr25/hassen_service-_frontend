@@ -581,6 +581,7 @@ import axios from "axios";
 import { useAuthStore } from "../../stores/auth";
 import AppLayout from "../../components/AppLayout.vue";
 import { API_URL, BASE_URL } from "../../config/api";
+import { httpRequest } from "../../services/api";
 
 const { t, locale } = useI18n();
 const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert();
@@ -632,12 +633,7 @@ const fetchSettings = async () => {
   try {
     loading.value = true;
     error.value = null;
-
-    const response = await axios.get(`${API_URL}/settings`, {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`,
-      },
-    });
+    const response = await httpRequest(`/settings`);
 
     if (response.data.settings) {
       // Flatten the grouped settings

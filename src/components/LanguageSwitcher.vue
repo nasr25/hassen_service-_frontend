@@ -12,28 +12,36 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 
-const { locale } = useI18n()
-
-const currentLocale = computed(() => locale.value)
-
+const { locale } = useI18n();
+const currentLocale = computed(() => locale.value);
 const toggleLanguage = () => {
-  const newLocale = locale.value === 'en' ? 'ar' : 'en'
-  locale.value = newLocale
-  localStorage.setItem('locale', newLocale)
+  const newLocale = locale.value === "en" ? "ar" : "en";
+  locale.value = newLocale;
+  localStorage.setItem("locale", newLocale);
 
   // Update HTML dir and lang attributes
-  document.documentElement.setAttribute('dir', newLocale === 'ar' ? 'rtl' : 'ltr')
-  document.documentElement.setAttribute('lang', newLocale)
-}
+  document.documentElement.setAttribute(
+    "dir",
+    newLocale === "ar" ? "rtl" : "ltr"
+  );
+  document.documentElement.setAttribute("lang", newLocale);
+};
 
 // Set initial direction on mount
-watch(locale, (newLocale) => {
-  document.documentElement.setAttribute('dir', newLocale === 'ar' ? 'rtl' : 'ltr')
-  document.documentElement.setAttribute('lang', newLocale)
-}, { immediate: true })
+watch(
+  locale,
+  (newLocale) => {
+    document.documentElement.setAttribute(
+      "dir",
+      newLocale === "ar" ? "rtl" : "ltr"
+    );
+    document.documentElement.setAttribute("lang", newLocale);
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>
@@ -46,7 +54,7 @@ watch(locale, (newLocale) => {
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background: #03735e;
+  background: rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 25px;
   color: white;
@@ -71,5 +79,6 @@ watch(locale, (newLocale) => {
 
 .lang-text {
   line-height: 1;
+  color: rgba(var(--v-theme-primary_900), 1) !important;
 }
 </style>
