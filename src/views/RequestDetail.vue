@@ -3,21 +3,24 @@
     <div class="request-detail">
       <!-- Page Header -->
       <div class="page-header">
-        <BaseButton variant="secondary" @click="goBack">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
-          </svg>
-          {{ $t('common.back') }}
-        </BaseButton>
-        <h1>{{ $t('request.requestDetails') }}</h1>
+        <TableHeader
+          :title="$t('request.requestDetails')"
+          :breadcrumbs="pageBreadcrumbs"
+        />
+
         <div class="header-actions">
           <BaseButton
             v-if="request && (request.status === 'draft' || request.status === 'need_more_details')"
             variant="primary"
             @click="editRequest"
           >
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+            <svg
+              width="20"
+              height="20"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
             </svg>
             {{ $t('common.edit') }}
           </BaseButton>
@@ -26,14 +29,35 @@
             variant="primary"
             @click="showResubmitModal = true"
           >
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+            <svg
+              width="20"
+              height="20"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                clip-rule="evenodd"
+              />
             </svg>
             {{ $t('request.resubmit') }}
           </BaseButton>
-          <BaseButton variant="secondary" @click="loadRequest">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+          <BaseButton
+            variant="secondary"
+            @click="loadRequest"
+          >
+            <svg
+              width="20"
+              height="20"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                clip-rule="evenodd"
+              />
             </svg>
             {{ $t('common.refresh') }}
           </BaseButton>
@@ -41,13 +65,29 @@
       </div>
 
       <!-- Resubmit Modal -->
-      <div v-if="showResubmitModal" class="modal-overlay" @click.self="showResubmitModal = false">
+      <div
+        v-if="showResubmitModal"
+        class="modal-overlay"
+        @click.self="showResubmitModal = false"
+      >
         <div class="modal-content">
           <div class="modal-header">
             <h3>{{ $t('request.resubmitRequest') }}</h3>
-            <button class="modal-close" @click="showResubmitModal = false">
-              <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            <button
+              class="modal-close"
+              @click="showResubmitModal = false"
+            >
+              <svg
+                width="20"
+                height="20"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
               </svg>
             </button>
           </div>
@@ -65,10 +105,17 @@
             </div>
           </div>
           <div class="modal-footer">
-            <BaseButton variant="secondary" @click="showResubmitModal = false">
+            <BaseButton
+              variant="secondary"
+              @click="showResubmitModal = false"
+            >
               {{ $t('common.cancel') }}
             </BaseButton>
-            <BaseButton variant="primary" @click="resubmitRequest" :disabled="isSubmitting">
+            <BaseButton
+              variant="primary"
+              @click="resubmitRequest"
+              :disabled="isSubmitting"
+            >
               <span v-if="isSubmitting">{{ $t('common.submitting') }}...</span>
               <span v-else>{{ $t('request.resubmit') }}</span>
             </BaseButton>
@@ -77,15 +124,30 @@
       </div>
 
       <!-- Error Alert -->
-      <div v-if="error" class="alert alert-error">
+      <div
+        v-if="error"
+        class="alert alert-error"
+      >
         {{ error }}
       </div>
 
       <!-- Need More Details Warning -->
-      <div v-if="request && request.status === 'need_more_details'" class="alert alert-warning">
+      <div
+        v-if="request && request.status === 'need_more_details'"
+        class="alert alert-warning"
+      >
         <div class="alert-content">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          <svg
+            width="20"
+            height="20"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+              clip-rule="evenodd"
+            />
           </svg>
           <div>
             <strong>{{ $t('request.moreDetailsRequired') }}</strong>
@@ -95,10 +157,22 @@
       </div>
 
       <!-- Rejection Alert -->
-      <div v-if="request && request.status === 'rejected'" class="alert alert-error">
+      <div
+        v-if="request && request.status === 'rejected'"
+        class="alert alert-error"
+      >
         <div class="alert-content">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          <svg
+            width="20"
+            height="20"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clip-rule="evenodd"
+            />
           </svg>
           <div>
             <strong>{{ $t('request.requestRejected') }}</strong>
@@ -108,13 +182,19 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="loading-state">
+      <div
+        v-if="isLoading"
+        class="loading-state"
+      >
         <div class="spinner"></div>
         <p>{{ $t('request.loadingRequestDetails') }}</p>
       </div>
 
       <!-- Request Details -->
-      <div v-else-if="request" class="request-details">
+      <div
+        v-else-if="request"
+        class="request-details"
+      >
         <!-- Request Overview -->
         <BaseCard class="section-card">
           <h2 class="section-title">{{ $t('request.requestOverview') }}</h2>
@@ -153,23 +233,38 @@
               <strong>{{ $t('request.submittedAt') }}</strong>
               <span>{{ formatDate(request.submitted_at || request.created_at) }}</span>
             </div>
-            <div v-if="request.expected_execution_date" class="info-item">
+            <div
+              v-if="request.expected_execution_date"
+              class="info-item"
+            >
               <strong>{{ $t('request.expectedExecutionDate') }}</strong>
               <span>{{ formatDate(request.expected_execution_date) }}</span>
             </div>
-            <div v-if="request.completed_at" class="info-item">
+            <div
+              v-if="request.completed_at"
+              class="info-item"
+            >
               <strong>{{ $t('request.completedAt') }}</strong>
               <span>{{ formatDate(request.completed_at) }}</span>
             </div>
-            <div v-if="request.idea_ownership" class="info-item">
+            <div
+              v-if="request.idea_ownership"
+              class="info-item"
+            >
               <strong>{{ $t('request.ideaOwnership') }}</strong>
               <span :class="['ownership-badge', request.idea_ownership === 'shared' ? 'shared' : 'individual']">
                 {{ request.idea_ownership === 'shared' ? $t('request.sharedIdea') : $t('request.individualIdea') }}
               </span>
             </div>
-            <div v-if="request.ideaType" class="info-item">
+            <div
+              v-if="request.ideaType"
+              class="info-item"
+            >
               <strong>{{ $t('request.ideaType') }}</strong>
-              <span class="idea-type-badge" :style="{ backgroundColor: request.ideaType.color + '20', color: request.ideaType.color, borderColor: request.ideaType.color }">
+              <span
+                class="idea-type-badge"
+                :style="{ backgroundColor: request.ideaType.color + '20', color: request.ideaType.color, borderColor: request.ideaType.color }"
+              >
                 {{ $i18n.locale === 'ar' ? request.ideaType.name_ar : request.ideaType.name }}
               </span>
             </div>
@@ -177,11 +272,17 @@
               <strong>{{ $t('request.description') }}</strong>
               <p class="description">{{ request.description }}</p>
             </div>
-            <div v-if="request.benefits" class="info-item info-full">
+            <div
+              v-if="request.benefits"
+              class="info-item info-full"
+            >
               <strong>{{ $t('request.benefits') }}</strong>
               <p class="description">{{ request.benefits }}</p>
             </div>
-            <div v-if="request.additional_details" class="info-item info-full">
+            <div
+              v-if="request.additional_details"
+              class="info-item info-full"
+            >
               <strong>{{ $t('request.additionalDetails') }}</strong>
               <p class="description">{{ request.additional_details }}</p>
             </div>
@@ -189,20 +290,52 @@
         </BaseCard>
 
         <!-- Attachments -->
-        <BaseCard v-if="request.attachments && request.attachments.length > 0" class="section-card">
+        <BaseCard
+          v-if="request.attachments && request.attachments.length > 0"
+          class="section-card"
+        >
           <h2 class="section-title">{{ $t('request.attachments') }} ({{ request.attachments.length }})</h2>
           <div class="attachments-list">
-            <div v-for="attachment in request.attachments" :key="attachment.id" class="attachment-item">
+            <div
+              v-for="attachment in request.attachments"
+              :key="attachment.id"
+              class="attachment-item"
+            >
               <div class="attachment-info">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
                 <span class="attachment-name">{{ attachment.file_name }}</span>
-                <span v-if="attachment.file_size" class="attachment-size">{{ formatFileSize(attachment.file_size) }}</span>
+                <span
+                  v-if="attachment.file_size"
+                  class="attachment-size"
+                >{{ formatFileSize(attachment.file_size) }}</span>
               </div>
-              <a :href="`${BASE_URL}/storage/${attachment.file_path}`" target="_blank" class="download-link">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              <a
+                :href="`${BASE_URL}/storage/${attachment.file_path}`"
+                target="_blank"
+                class="download-link"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
                 {{ $t('common.download') }}
               </a>
@@ -211,34 +344,82 @@
         </BaseCard>
 
         <!-- Collaborating Employees -->
-        <BaseCard v-if="request.employees && request.employees.length > 0" class="section-card">
+        <BaseCard
+          v-if="request.employees && request.employees.length > 0"
+          class="section-card"
+        >
           <h2 class="section-title">{{ $t('request.collaboratingEmployees') }} ({{ request.employees.length }})</h2>
           <div class="employees-list">
-            <div v-for="employee in request.employees" :key="employee.id" class="employee-item">
+            <div
+              v-for="employee in request.employees"
+              :key="employee.id"
+              class="employee-item"
+            >
               <div class="employee-avatar">
-                <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                <svg
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               </div>
               <div class="employee-info">
                 <div class="employee-name">{{ employee.employee_name }}</div>
-                <div v-if="employee.employee_email" class="employee-detail">
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                <div
+                  v-if="employee.employee_email"
+                  class="employee-detail"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                   </svg>
                   {{ employee.employee_email }}
                 </div>
-                <div v-if="employee.employee_department" class="employee-detail">
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+                <div
+                  v-if="employee.employee_department"
+                  class="employee-detail"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                   {{ employee.employee_department }}
                 </div>
-                <div v-if="employee.employee_title" class="employee-detail">
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
-                    <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
+                <div
+                  v-if="employee.employee_title"
+                  class="employee-detail"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z"
+                      clip-rule="evenodd"
+                    />
+                    <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
                   </svg>
                   {{ employee.employee_title }}
                 </div>
@@ -248,10 +429,17 @@
         </BaseCard>
 
         <!-- Department A Evaluations -->
-        <BaseCard v-if="request.evaluations && request.evaluations.length > 0" class="section-card">
+        <BaseCard
+          v-if="request.evaluations && request.evaluations.length > 0"
+          class="section-card"
+        >
           <h2 class="section-title">{{ $t('request.departmentAEvaluations') }}</h2>
           <div class="evaluations-list">
-            <div v-for="evaluation in request.evaluations" :key="evaluation.id" class="evaluation-item">
+            <div
+              v-for="evaluation in request.evaluations"
+              :key="evaluation.id"
+              class="evaluation-item"
+            >
               <div class="evaluation-question">
                 <strong>{{ evaluation.question?.question }}</strong>
               </div>
@@ -260,7 +448,10 @@
                   {{ evaluation.is_applied ? $t('evaluations.applied') : $t('evaluations.notApplied') }}
                 </BaseBadge>
               </div>
-              <div v-if="evaluation.notes" class="evaluation-notes">
+              <div
+                v-if="evaluation.notes"
+                class="evaluation-notes"
+              >
                 <strong>{{ $t('evaluations.notes') }}:</strong> {{ evaluation.notes }}
               </div>
               <div class="evaluation-meta">
@@ -271,10 +462,17 @@
         </BaseCard>
 
         <!-- Path Evaluations -->
-        <BaseCard v-if="request.path_evaluations && request.path_evaluations.length > 0" class="section-card">
+        <BaseCard
+          v-if="request.path_evaluations && request.path_evaluations.length > 0"
+          class="section-card"
+        >
           <h2 class="section-title">{{ $t('request.pathEvaluations') }}</h2>
           <div class="evaluations-list">
-            <div v-for="pathEval in request.path_evaluations" :key="pathEval.id" class="evaluation-item">
+            <div
+              v-for="pathEval in request.path_evaluations"
+              :key="pathEval.id"
+              class="evaluation-item"
+            >
               <div class="evaluation-question">
                 <strong>{{ pathEval.question?.question }}</strong>
               </div>
@@ -283,7 +481,10 @@
                   {{ pathEval.is_applied ? $t('evaluations.applied') : $t('evaluations.notApplied') }}
                 </BaseBadge>
               </div>
-              <div v-if="pathEval.notes" class="evaluation-notes">
+              <div
+                v-if="pathEval.notes"
+                class="evaluation-notes"
+              >
                 <strong>{{ $t('evaluations.notes') }}:</strong> {{ pathEval.notes }}
               </div>
               <div class="evaluation-meta">
@@ -298,16 +499,37 @@
           <h2 class="section-title">{{ $t('request.workflowHistory') }}</h2>
 
           <!-- Empty State -->
-          <div v-if="!request.transitions || request.transitions.length === 0" class="empty-state">
-            <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          <div
+            v-if="!request.transitions || request.transitions.length === 0"
+            class="empty-state"
+          >
+            <svg
+              width="64"
+              height="64"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
             <p>{{ $t('request.noWorkflowHistory') }}</p>
           </div>
 
           <!-- Timeline -->
-          <div v-else class="timeline">
-            <div v-for="(transition, index) in request.transitions" :key="transition.id" class="timeline-item">
+          <div
+            v-else
+            class="timeline"
+          >
+            <div
+              v-for="(transition, index) in request.transitions"
+              :key="transition.id"
+              class="timeline-item"
+            >
               <div class="timeline-marker">{{ request.transitions.length - index }}</div>
               <div class="timeline-content">
                 <div class="timeline-header">
@@ -317,10 +539,16 @@
                   <span class="timeline-date">{{ formatDate(transition.created_at) }}</span>
                 </div>
                 <div class="timeline-body">
-                  <div v-if="transition.actioned_by" class="timeline-info">
+                  <div
+                    v-if="transition.actioned_by"
+                    class="timeline-info"
+                  >
                     <strong>{{ $t('workflow.by') }}:</strong> {{ transition.actioned_by?.name }}
                   </div>
-                  <div v-if="transition.from_status || transition.to_status" class="timeline-info">
+                  <div
+                    v-if="transition.from_status || transition.to_status"
+                    class="timeline-info"
+                  >
                     <strong>{{ $t('workflow.statusChange') }}:</strong>
                     <span class="status-change">
                       <span v-if="transition.from_status">{{ $t('status.' + transition.from_status) }}</span>
@@ -328,7 +556,10 @@
                       <span v-if="transition.to_status">{{ $t('status.' + transition.to_status) }}</span>
                     </span>
                   </div>
-                  <div v-if="transition.from_department || transition.to_department" class="timeline-info">
+                  <div
+                    v-if="transition.from_department || transition.to_department"
+                    class="timeline-info"
+                  >
                     <strong>{{ $t('workflow.department') }}:</strong>
                     <span class="status-change">
                       <span v-if="transition.from_department">{{ transition.from_department.name }}</span>
@@ -336,10 +567,16 @@
                       <span v-if="transition.to_department">{{ transition.to_department.name }}</span>
                     </span>
                   </div>
-                  <div v-if="transition.to_user" class="timeline-info">
+                  <div
+                    v-if="transition.to_user"
+                    class="timeline-info"
+                  >
                     <strong>{{ $t('request.assignedTo') }}:</strong> {{ transition.to_user.name }}
                   </div>
-                  <div v-if="transition.comments" class="timeline-comments">
+                  <div
+                    v-if="transition.comments"
+                    class="timeline-comments"
+                  >
                     <strong>{{ $t('workflow.comments') }}:</strong> {{ transition.comments }}
                   </div>
                 </div>
@@ -353,148 +590,147 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
-import { useI18n } from 'vue-i18n'
-import axios from 'axios'
-import AppLayout from '../components/AppLayout.vue'
-import BaseCard from '../components/BaseCard.vue'
-import BaseButton from '../components/BaseButton.vue'
-import BaseBadge from '../components/BaseBadge.vue'
-import { API_URL, BASE_URL } from '../config/api'
-import { useAlert } from '../composables/useAlert'
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useAuthStore } from "../stores/auth";
+import { useI18n } from "vue-i18n";
+import axios from "axios";
+import AppLayout from "../components/AppLayout.vue";
+import BaseCard from "../components/BaseCard.vue";
+import BaseButton from "../components/BaseButton.vue";
+import BaseBadge from "../components/BaseBadge.vue";
+import { API_URL, BASE_URL } from "../config/api";
+import { useAlert } from "../composables/useAlert";
+import TableHeader from "../components/common/TableHeader.vue";
+import { objectToQueryString } from "../services/handle";
+import { httpRequest } from "../services/api";
+const router = useRouter();
+const route = useRoute();
+const authStore = useAuthStore();
+const { t } = useI18n();
+const { showSuccess, showError } = useAlert();
 
-const router = useRouter()
-const route = useRoute()
-const authStore = useAuthStore()
-const { t } = useI18n()
-const { showSuccess, showError } = useAlert()
+const request = ref(null);
+const error = ref(null);
+const isLoading = ref(true);
+const showResubmitModal = ref(false);
+const resubmissionReason = ref("");
+const isSubmitting = ref(false);
+const pageBreadcrumbs = [
+  { name: t("nav.dashboard"), link: "/" },
 
-const request = ref(null)
-const error = ref(null)
-const isLoading = ref(true)
-const showResubmitModal = ref(false)
-const resubmissionReason = ref('')
-const isSubmitting = ref(false)
-
+  { name: t("nav.myRequests"), link: "/requests" },
+  { name: t("request.requestDetails"), link: "" },
+];
 onMounted(async () => {
-  await loadRequest()
-})
+  await loadRequest();
+});
 
 const loadRequest = async () => {
   try {
-    isLoading.value = true
-    error.value = null
+    isLoading.value = true;
+    error.value = null;
 
-    const requestId = route.params.id
+    const requestId = route.params.id;
 
     // Try the detailed endpoint first (includes evaluations), fall back to basic endpoint
     try {
-      const response = await axios.get(`${API_URL}/workflow/requests/${requestId}/detail`, {
-        headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
-      })
-      request.value = response.data.request
+      const response = await httpRequest(
+        `/workflow/requests/${requestId}/detail`
+      );
+      request.value = response.data.request;
     } catch (detailErr) {
       // If detailed endpoint fails (e.g., user doesn't have permission), try basic endpoint
-      const response = await axios.get(`${API_URL}/requests/${requestId}`, {
-        headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
-      })
-      request.value = response.data.request
+      const response = await httpRequest(`/requests/${requestId}`);
+
+      request.value = response.data.request;
     }
   } catch (err) {
-    showError(err.response?.data?.message || t('request.loadFailed'))
+    showError(err.response?.data?.message || t("request.loadFailed"));
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 const goBack = () => {
   if (window.history.length > 1) {
-    router.back()
+    router.back();
   } else {
-    router.push('/requests')
+    router.push("/requests");
   }
-}
+};
 
 const editRequest = () => {
-  router.push(`/requests/${route.params.id}/edit`)
-}
+  router.push(`/requests/${route.params.id}/edit`);
+};
 
 const resubmitRequest = async () => {
   try {
-    isSubmitting.value = true
-    error.value = null
-
-    const requestId = route.params.id
-    await axios.post(`${API_URL}/requests/${requestId}/submit`, {
-      resubmission_reason: resubmissionReason.value
-    }, {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
-    })
-
-    showResubmitModal.value = false
-    resubmissionReason.value = ''
-    showSuccess(t('request.resubmitSuccess'))
-    await loadRequest()
+    isSubmitting.value = true;
+    error.value = null;
+    const requestId = route.params.id;
+    await httpRequest(`/requests/${requestId}/submit`, {
+      method: "POST",
+      resubmission_reason: resubmissionReason.value,
+    });
+    showResubmitModal.value = false;
+    resubmissionReason.value = "";
+    showSuccess(t("request.resubmitSuccess"));
+    await loadRequest();
   } catch (err) {
-    showError(err.response?.data?.message || t('request.resubmitFailed'))
+    showError(err.response?.data?.message || t("request.resubmitFailed"));
   } finally {
-    isSubmitting.value = false
+    isSubmitting.value = false;
   }
-}
+};
 
 const getStatusVariant = (status) => {
   const variants = {
-    draft: 'gray',
-    pending: 'warning',
-    in_review: 'info',
-    in_progress: 'primary',
-    need_more_details: 'warning',
-    missing_requirement: 'warning',
-    approved: 'success',
-    rejected: 'error',
-    completed: 'success'
-  }
-  return variants[status] || 'gray'
-}
+    draft: "gray",
+    pending: "warning",
+    in_review: "info",
+    in_progress: "primary",
+    need_more_details: "warning",
+    missing_requirement: "warning",
+    approved: "success",
+    rejected: "error",
+    completed: "success",
+  };
+  return variants[status] || "gray";
+};
 
 const formatAction = (action) => {
-  if (!action) return t('common.notAvailable')
-  const camelCaseAction = action.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
-  return t(`workflow.actions.${camelCaseAction}`)
-}
+  if (!action) return t("common.notAvailable");
+  const camelCaseAction = action.replace(/_([a-z])/g, (_, letter) =>
+    letter.toUpperCase()
+  );
+  return t(`workflow.actions.${camelCaseAction}`);
+};
 
 const formatDate = (dateString) => {
-  if (!dateString) return t('common.notAvailable')
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+  if (!dateString) return t("common.notAvailable");
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 
 const formatFileSize = (bytes) => {
-  if (!bytes) return ''
-  const k = 1024
-  const sizes = ['Bytes', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
-}
+  if (!bytes) return "";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
+};
 </script>
 
 <style scoped>
 .request-detail {
-  max-width: 1600px;
+  max-width: 1440px;
   margin: 0 auto;
 }
 
@@ -588,7 +824,9 @@ const formatFileSize = (bytes) => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Section Card */
@@ -776,7 +1014,11 @@ const formatFileSize = (bytes) => {
   width: 48px;
   height: 48px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500),
+    var(--color-primary-600)
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -877,7 +1119,7 @@ const formatFileSize = (bytes) => {
 }
 
 .timeline::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 20px;
   top: 0;

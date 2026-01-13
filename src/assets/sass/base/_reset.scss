@@ -1,0 +1,59 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+  font-weight: 400;
+  letter-spacing: unset !important;
+}
+
+body,
+.v-application {
+  background-color: rgba(var(--v-theme-dark_25), 1) !important;
+}
+
+.v-table,
+.v-card {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+textarea {
+  mask-image: unset !important;
+}
+
+.v-dialog .content {
+  max-height: 80vh;
+  overflow: auto;
+}
+
+.v-dialog > .v-overlay__content > .v-card {
+  border-radius: 24px !important;
+}
+
+.no-data {
+  h3 {
+    font-size: 1.25rem;
+    color: rgba(var(--v-theme-text_600), 1);
+  }
+  p {
+    font-size: 0.85rem;
+    color: rgba(var(--v-theme-dark_400), 1);
+  }
+}
+
+.v-card-text {
+  padding: 1.25rem 0 !important;
+}
+
+.v-field .v-field__field {
+  align-items: center;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px rgba(var(--v-theme-dark_white), 1) inset !important;
+}

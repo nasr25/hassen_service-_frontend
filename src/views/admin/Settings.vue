@@ -7,758 +7,940 @@
           <h1>⚙️ {{ $t('settings.title') }}</h1>
           <p class="welcome-subtitle">{{ $t('settings.subtitle') }}</p>
         </div>
-        <button @click="saveAllSettings" class="btn-save" :disabled="isSaving">
-          <svg v-if="!isSaving" width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"/>
+        <button
+          @click="saveAllSettings"
+          class="btn-save"
+          :disabled="isSaving"
+        >
+          <svg
+            v-if="!isSaving"
+            width="20"
+            height="20"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z" />
           </svg>
           {{ isSaving ? $t('settings.saving') : $t('settings.saveAll') }}
         </button>
       </div>
 
-    <div v-if="loading" class="loading">
-      <div class="spinner"></div>
-      <p>{{ $t('settings.loading') }}</p>
-    </div>
+      <div
+        v-if="loading"
+        class="loading"
+      >
+        <div class="spinner"></div>
+        <p>{{ $t('settings.loading') }}</p>
+      </div>
 
-    <div v-else-if="error" class="alert alert-error">
-      {{ error }}
-    </div>
+      <div
+        v-else-if="error"
+        class="alert alert-error"
+      >
+        {{ error }}
+      </div>
 
-    <div v-else class="settings-groups">
-      <!-- General Settings -->
-      <div class="settings-group">
-        <h2 class="group-title">🌐 {{ $t('settings.generalSettings') }}</h2>
-        <div class="settings-list">
-          <div v-for="setting in getGroupSettings('general')" :key="setting.key" class="setting-item">
-            <div class="setting-header">
-              <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
-              <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
-            </div>
-            <input
-              v-if="setting.type === 'text' || setting.type === 'number'"
-              :id="setting.key"
-              v-model="settingsData[setting.key]"
-              :type="setting.type === 'number' ? 'number' : 'text'"
-              class="form-input"
-            />
-            <div v-else-if="setting.type === 'boolean'" class="toggle-wrapper">
+      <div
+        v-else
+        class="settings-groups"
+      >
+        <!-- General Settings -->
+        <div class="settings-group">
+          <h2 class="group-title">🌐 {{ $t('settings.generalSettings') }}</h2>
+          <div class="settings-list">
+            <div
+              v-for="setting in getGroupSettings('general')"
+              :key="setting.key"
+              class="setting-item"
+            >
+              <div class="setting-header">
+                <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
+                <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
+              </div>
               <input
+                v-if="setting.type === 'text' || setting.type === 'number'"
                 :id="setting.key"
                 v-model="settingsData[setting.key]"
-                type="checkbox"
-                class="toggle-input"
-              />
-              <label :for="setting.key" class="toggle-label"></label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Appearance Settings -->
-      <div class="settings-group">
-        <h2 class="group-title">🎨 {{ $t('settings.appearanceSettings') }}</h2>
-        <div class="settings-list">
-          <!-- Logo Upload -->
-          <div class="setting-item">
-            <div class="setting-header">
-              <label>{{ $t('settings.websiteLogo') }}</label>
-              <span class="setting-description">{{ $t('settings.logoDescription') }}</span>
-            </div>
-            <div class="image-upload-wrapper">
-              <div v-if="logoPreview" class="image-preview">
-                <img :src="logoPreview" :alt="$t('settings.logoPreview')" />
-                <button @click="removeLogo" class="btn-remove">{{ $t('settings.remove') }}</button>
-              </div>
-              <input
-                type="file"
-                ref="logoInput"
-                @change="handleLogoUpload"
-                accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
-                class="file-input"
-              />
-              <button @click="$refs.logoInput.click()" class="btn-secondary">
-                {{ $t('settings.chooseLogo') }}
-              </button>
-            </div>
-          </div>
-
-          <!-- Favicon Upload -->
-          <div class="setting-item">
-            <div class="setting-header">
-              <label>{{ $t('settings.websiteFavicon') }}</label>
-              <span class="setting-description">{{ $t('settings.faviconDescription') }}</span>
-            </div>
-            <div class="image-upload-wrapper">
-              <div v-if="faviconPreview" class="image-preview">
-                <img :src="faviconPreview" :alt="$t('settings.faviconPreview')" />
-                <button @click="removeFavicon" class="btn-remove">{{ $t('settings.remove') }}</button>
-              </div>
-              <input
-                type="file"
-                ref="faviconInput"
-                @change="handleFaviconUpload"
-                accept="image/png,image/x-icon,image/svg+xml,image/webp"
-                class="file-input"
-              />
-              <button @click="$refs.faviconInput.click()" class="btn-secondary">
-                {{ $t('settings.chooseFavicon') }}
-              </button>
-            </div>
-          </div>
-
-          <!-- Color Pickers -->
-          <div v-for="setting in getGroupSettings('appearance').filter(s => s.type === 'text' && s.key.includes('color'))"
-               :key="setting.key"
-               class="setting-item">
-            <div class="setting-header">
-              <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
-              <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
-            </div>
-            <div class="color-input-wrapper">
-              <input
-                :id="setting.key"
-                v-model="settingsData[setting.key]"
-                type="color"
-                class="color-input"
-              />
-              <input
-                v-model="settingsData[setting.key]"
-                type="text"
-                class="form-input color-text"
-                placeholder="#005028"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- System Settings -->
-      <div class="settings-group">
-        <h2 class="group-title">⚡ {{ $t('settings.systemSettings') }}</h2>
-        <div class="settings-list">
-          <div v-for="setting in getGroupSettings('system')" :key="setting.key" class="setting-item">
-            <div class="setting-header">
-              <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
-              <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
-            </div>
-            <input
-              v-if="setting.type === 'text' || setting.type === 'number'"
-              :id="setting.key"
-              v-model="settingsData[setting.key]"
-              :type="setting.type === 'number' ? 'number' : 'text'"
-              class="form-input"
-            />
-            <div v-else-if="setting.type === 'boolean'" class="toggle-wrapper">
-              <input
-                :id="setting.key"
-                v-model="settingsData[setting.key]"
-                type="checkbox"
-                class="toggle-input"
-              />
-              <label :for="setting.key" class="toggle-label"></label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Features Settings -->
-      <div class="settings-group">
-        <h2 class="group-title">✨ {{ $t('settings.featuresSettings') }}</h2>
-        <div class="settings-list">
-          <div v-for="setting in getGroupSettings('features')" :key="setting.key" class="setting-item">
-            <div class="setting-header">
-              <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
-              <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
-            </div>
-            <div class="toggle-wrapper">
-              <input
-                :id="setting.key"
-                v-model="settingsData[setting.key]"
-                type="checkbox"
-                class="toggle-input"
-              />
-              <label :for="setting.key" class="toggle-label"></label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer Settings -->
-      <div class="settings-group">
-        <h2 class="group-title">📄 {{ $t('settings.footerSettings') }}</h2>
-        <div class="settings-list">
-          <div v-for="setting in getGroupSettings('footer')" :key="setting.key" class="setting-item">
-            <div class="setting-header">
-              <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
-              <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
-            </div>
-            <textarea
-              v-if="setting.type === 'text'"
-              :id="setting.key"
-              v-model="settingsData[setting.key]"
-              class="form-textarea"
-              rows="2"
-            ></textarea>
-            <div v-else-if="setting.type === 'boolean'" class="toggle-wrapper">
-              <input
-                :id="setting.key"
-                v-model="settingsData[setting.key]"
-                type="checkbox"
-                class="toggle-input"
-              />
-              <label :for="setting.key" class="toggle-label"></label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Email Templates Settings -->
-      <div class="settings-group">
-        <h2 class="group-title">📧 {{ $t('settings.emailTemplates') }}</h2>
-        <div v-if="emailConfig && !emailConfig.configured" class="alert alert-warning">
-          ⚠️ {{ $t('settings.emailNotConfigured') }}
-        </div>
-        <div v-if="emailTemplatesError" class="alert alert-error">
-          {{ emailTemplatesError }}
-        </div>
-        <div v-if="loadingTemplates" class="loading">
-          <div class="spinner"></div>
-          <p>{{ $t('settings.loadingTemplates') }}</p>
-        </div>
-        <div v-else-if="emailTemplates.length === 0" class="alert alert-warning">
-          {{ $t('settings.noTemplatesFound') }}
-        </div>
-        <div v-else class="email-templates-list">
-          <div v-for="template in emailTemplates" :key="template.id" class="template-card">
-            <div class="template-header">
-              <div class="template-info">
-                <h3 class="template-title">{{ formatEventType(template.event_type) }}</h3>
-                <p class="template-description">{{ template.description }}</p>
-              </div>
-              <div class="template-actions">
-                <button
-                  @click="toggleTemplateStatus(template)"
-                  :class="['btn-toggle', template.is_active ? 'active' : 'inactive']"
-                  :title="template.is_active ? $t('common.deactivate') : $t('common.activate')"
-                >
-                  {{ template.is_active ? `✓ ${$t('settings.active')}` : `✗ ${$t('settings.inactive')}` }}
-                </button>
-                <button @click="openTemplateEditor(template)" class="btn-icon-action" :title="$t('common.edit')">
-                  ✏️ {{ $t('common.edit') }}
-                </button>
-                <button @click="openTestEmailModal(template)" class="btn-icon-action" :title="$t('settings.test')">
-                  📧 {{ $t('settings.test') }}
-                </button>
-              </div>
-            </div>
-            <div class="template-preview">
-              <div class="template-lang">
-                <strong>{{ $t('settings.englishShort') }}:</strong> {{ template.subject_en }}
-              </div>
-              <div class="template-lang">
-                <strong>{{ $t('settings.arabicShort') }}:</strong> {{ template.subject_ar }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Email Template Editor Modal -->
-    <div v-if="templateEditorModal.show" class="modal-overlay" @click="closeTemplateEditor">
-      <div class="modal-content modal-large" @click.stop>
-        <h2>✏️ {{ $t('settings.editEmailTemplate') }}</h2>
-        <p class="template-event-type">{{ formatEventType(templateEditorModal.template?.event_type) }}</p>
-
-        <div class="template-editor">
-          <!-- English Version -->
-          <div class="template-section">
-            <h3>{{ $t('settings.english') }}</h3>
-            <div class="form-group">
-              <label>{{ $t('settings.subject') }} ({{ $t('settings.english') }})</label>
-              <input
-                v-model="templateEditorModal.form.subject_en"
-                type="text"
+                :type="setting.type === 'number' ? 'number' : 'text'"
                 class="form-input"
-                placeholder="Email subject..."
               />
-            </div>
-            <div class="form-group">
-              <label>{{ $t('settings.body') }} ({{ $t('settings.english') }})</label>
-              <textarea
-                v-model="templateEditorModal.form.body_en"
-                rows="12"
-                class="form-textarea"
-                placeholder="Email body..."
-              ></textarea>
-            </div>
-          </div>
-
-          <!-- Arabic Version -->
-          <div class="template-section">
-            <h3>{{ $t('settings.arabic') }}</h3>
-            <div class="form-group">
-              <label>{{ $t('settings.subject') }} ({{ $t('settings.arabic') }})</label>
-              <input
-                v-model="templateEditorModal.form.subject_ar"
-                type="text"
-                class="form-input"
-                placeholder="موضوع البريد..."
-                dir="rtl"
-              />
-            </div>
-            <div class="form-group">
-              <label>{{ $t('settings.body') }} ({{ $t('settings.arabic') }})</label>
-              <textarea
-                v-model="templateEditorModal.form.body_ar"
-                rows="12"
-                class="form-textarea"
-                placeholder="نص البريد..."
-                dir="rtl"
-              ></textarea>
-            </div>
-          </div>
-
-          <!-- Available Placeholders -->
-          <div class="placeholders-info">
-            <h4>📝 {{ $t('settings.availablePlaceholders') }}:</h4>
-            <div class="placeholders-list">
-              <span
-                v-for="(desc, placeholder) in templateEditorModal.template?.available_placeholders"
-                :key="placeholder"
-                class="placeholder-tag"
-                :title="desc"
+              <div
+                v-else-if="setting.type === 'boolean'"
+                class="toggle-wrapper"
               >
-                {{ placeholder }}
-              </span>
+                <input
+                  :id="setting.key"
+                  v-model="settingsData[setting.key]"
+                  type="checkbox"
+                  class="toggle-input"
+                />
+                <label
+                  :for="setting.key"
+                  class="toggle-label"
+                ></label>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="modal-actions">
-          <button @click="closeTemplateEditor" class="btn-secondary">{{ $t('common.cancel') }}</button>
-          <button @click="saveTemplate" :disabled="templateEditorModal.isSaving" class="btn-primary">
-            {{ templateEditorModal.isSaving ? $t('common.saving') : $t('settings.saveTemplate') }}
+        <!-- Appearance Settings -->
+        <div class="settings-group">
+          <h2 class="group-title">🎨 {{ $t('settings.appearanceSettings') }}</h2>
+          <div class="settings-list">
+            <!-- Logo Upload -->
+            <div class="setting-item">
+              <div class="setting-header">
+                <label>{{ $t('settings.websiteLogo') }}</label>
+                <span class="setting-description">{{ $t('settings.logoDescription') }}</span>
+              </div>
+              <div class="image-upload-wrapper">
+                <div
+                  v-if="logoPreview"
+                  class="image-preview"
+                >
+                  <img
+                    :src="logoPreview"
+                    :alt="$t('settings.logoPreview')"
+                  />
+                  <button
+                    @click="removeLogo"
+                    class="btn-remove"
+                  >{{ $t('settings.remove') }}</button>
+                </div>
+                <input
+                  type="file"
+                  ref="logoInput"
+                  @change="handleLogoUpload"
+                  accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/webp"
+                  class="file-input"
+                />
+                <button
+                  @click="$refs.logoInput.click()"
+                  class="btn-secondary"
+                >
+                  {{ $t('settings.chooseLogo') }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Favicon Upload -->
+            <div class="setting-item">
+              <div class="setting-header">
+                <label>{{ $t('settings.websiteFavicon') }}</label>
+                <span class="setting-description">{{ $t('settings.faviconDescription') }}</span>
+              </div>
+              <div class="image-upload-wrapper">
+                <div
+                  v-if="faviconPreview"
+                  class="image-preview"
+                >
+                  <img
+                    :src="faviconPreview"
+                    :alt="$t('settings.faviconPreview')"
+                  />
+                  <button
+                    @click="removeFavicon"
+                    class="btn-remove"
+                  >{{ $t('settings.remove') }}</button>
+                </div>
+                <input
+                  type="file"
+                  ref="faviconInput"
+                  @change="handleFaviconUpload"
+                  accept="image/png,image/x-icon,image/svg+xml,image/webp"
+                  class="file-input"
+                />
+                <button
+                  @click="$refs.faviconInput.click()"
+                  class="btn-secondary"
+                >
+                  {{ $t('settings.chooseFavicon') }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Color Pickers -->
+            <div
+              v-for="setting in getGroupSettings('appearance').filter(s => s.type === 'text' && s.key.includes('color'))"
+              :key="setting.key"
+              class="setting-item"
+            >
+              <div class="setting-header">
+                <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
+                <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
+              </div>
+              <div class="color-input-wrapper">
+                <input
+                  :id="setting.key"
+                  v-model="settingsData[setting.key]"
+                  type="color"
+                  class="color-input"
+                />
+                <input
+                  v-model="settingsData[setting.key]"
+                  type="text"
+                  class="form-input color-text"
+                  placeholder="#005028"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Settings -->
+        <div class="settings-group">
+          <h2 class="group-title">⚡ {{ $t('settings.systemSettings') }}</h2>
+          <div class="settings-list">
+            <div
+              v-for="setting in getGroupSettings('system')"
+              :key="setting.key"
+              class="setting-item"
+            >
+              <div class="setting-header">
+                <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
+                <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
+              </div>
+              <input
+                v-if="setting.type === 'text' || setting.type === 'number'"
+                :id="setting.key"
+                v-model="settingsData[setting.key]"
+                :type="setting.type === 'number' ? 'number' : 'text'"
+                class="form-input"
+              />
+              <div
+                v-else-if="setting.type === 'boolean'"
+                class="toggle-wrapper"
+              >
+                <input
+                  :id="setting.key"
+                  v-model="settingsData[setting.key]"
+                  type="checkbox"
+                  class="toggle-input"
+                />
+                <label
+                  :for="setting.key"
+                  class="toggle-label"
+                ></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Features Settings -->
+        <div class="settings-group">
+          <h2 class="group-title">✨ {{ $t('settings.featuresSettings') }}</h2>
+          <div class="settings-list">
+            <div
+              v-for="setting in getGroupSettings('features')"
+              :key="setting.key"
+              class="setting-item"
+            >
+              <div class="setting-header">
+                <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
+                <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
+              </div>
+              <div class="toggle-wrapper">
+                <input
+                  :id="setting.key"
+                  v-model="settingsData[setting.key]"
+                  type="checkbox"
+                  class="toggle-input"
+                />
+                <label
+                  :for="setting.key"
+                  class="toggle-label"
+                ></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Settings -->
+        <div class="settings-group">
+          <h2 class="group-title">📄 {{ $t('settings.footerSettings') }}</h2>
+          <div class="settings-list">
+            <div
+              v-for="setting in getGroupSettings('footer')"
+              :key="setting.key"
+              class="setting-item"
+            >
+              <div class="setting-header">
+                <label :for="setting.key">{{ formatLabel(setting.key) }}</label>
+                <span class="setting-description">{{ getLocalizedDescription(setting) }}</span>
+              </div>
+              <textarea
+                v-if="setting.type === 'text'"
+                :id="setting.key"
+                v-model="settingsData[setting.key]"
+                class="form-textarea"
+                rows="2"
+              ></textarea>
+              <div
+                v-else-if="setting.type === 'boolean'"
+                class="toggle-wrapper"
+              >
+                <input
+                  :id="setting.key"
+                  v-model="settingsData[setting.key]"
+                  type="checkbox"
+                  class="toggle-input"
+                />
+                <label
+                  :for="setting.key"
+                  class="toggle-label"
+                ></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email Templates Settings -->
+        <div class="settings-group">
+          <h2 class="group-title">📧 {{ $t('settings.emailTemplates') }}</h2>
+          <div
+            v-if="emailConfig && !emailConfig.configured"
+            class="alert alert-warning"
+          >
+            ⚠️ {{ $t('settings.emailNotConfigured') }}
+          </div>
+          <div
+            v-if="emailTemplatesError"
+            class="alert alert-error"
+          >
+            {{ emailTemplatesError }}
+          </div>
+          <div
+            v-if="loadingTemplates"
+            class="loading"
+          >
+            <div class="spinner"></div>
+            <p>{{ $t('settings.loadingTemplates') }}</p>
+          </div>
+          <div
+            v-else-if="emailTemplates.length === 0"
+            class="alert alert-warning"
+          >
+            {{ $t('settings.noTemplatesFound') }}
+          </div>
+          <div
+            v-else
+            class="email-templates-list"
+          >
+            <div
+              v-for="template in emailTemplates"
+              :key="template.id"
+              class="template-card"
+            >
+              <div class="template-header">
+                <div class="template-info">
+                  <h3 class="template-title">{{ formatEventType(template.event_type) }}</h3>
+                  <p class="template-description">{{ template.description }}</p>
+                </div>
+                <div class="template-actions">
+                  <button
+                    @click="toggleTemplateStatus(template)"
+                    :class="['btn-toggle', template.is_active ? 'active' : 'inactive']"
+                    :title="template.is_active ? $t('common.deactivate') : $t('common.activate')"
+                  >
+                    {{ template.is_active ? `✓ ${$t('settings.active')}` : `✗ ${$t('settings.inactive')}` }}
+                  </button>
+                  <button
+                    @click="openTemplateEditor(template)"
+                    class="btn-icon-action"
+                    :title="$t('common.edit')"
+                  >
+                    ✏️ {{ $t('common.edit') }}
+                  </button>
+                  <button
+                    @click="openTestEmailModal(template)"
+                    class="btn-icon-action"
+                    :title="$t('settings.test')"
+                  >
+                    📧 {{ $t('settings.test') }}
+                  </button>
+                </div>
+              </div>
+              <div class="template-preview">
+                <div class="template-lang">
+                  <strong>{{ $t('settings.englishShort') }}:</strong> {{ template.subject_en }}
+                </div>
+                <div class="template-lang">
+                  <strong>{{ $t('settings.arabicShort') }}:</strong> {{ template.subject_ar }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email Template Editor Modal -->
+      <div
+        v-if="templateEditorModal.show"
+        class="modal-overlay"
+        @click="closeTemplateEditor"
+      >
+        <div
+          class="modal-content modal-large"
+          @click.stop
+        >
+          <h2>✏️ {{ $t('settings.editEmailTemplate') }}</h2>
+          <p class="template-event-type">{{ formatEventType(templateEditorModal.template?.event_type) }}</p>
+
+          <div class="template-editor">
+            <!-- English Version -->
+            <div class="template-section">
+              <h3>{{ $t('settings.english') }}</h3>
+              <div class="form-group">
+                <label>{{ $t('settings.subject') }} ({{ $t('settings.english') }})</label>
+                <input
+                  v-model="templateEditorModal.form.subject_en"
+                  type="text"
+                  class="form-input"
+                  placeholder="Email subject..."
+                />
+              </div>
+              <div class="form-group">
+                <label>{{ $t('settings.body') }} ({{ $t('settings.english') }})</label>
+                <textarea
+                  v-model="templateEditorModal.form.body_en"
+                  rows="12"
+                  class="form-textarea"
+                  placeholder="Email body..."
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Arabic Version -->
+            <div class="template-section">
+              <h3>{{ $t('settings.arabic') }}</h3>
+              <div class="form-group">
+                <label>{{ $t('settings.subject') }} ({{ $t('settings.arabic') }})</label>
+                <input
+                  v-model="templateEditorModal.form.subject_ar"
+                  type="text"
+                  class="form-input"
+                  placeholder="موضوع البريد..."
+                  dir="rtl"
+                />
+              </div>
+              <div class="form-group">
+                <label>{{ $t('settings.body') }} ({{ $t('settings.arabic') }})</label>
+                <textarea
+                  v-model="templateEditorModal.form.body_ar"
+                  rows="12"
+                  class="form-textarea"
+                  placeholder="نص البريد..."
+                  dir="rtl"
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Available Placeholders -->
+            <div class="placeholders-info">
+              <h4>📝 {{ $t('settings.availablePlaceholders') }}:</h4>
+              <div class="placeholders-list">
+                <span
+                  v-for="(desc, placeholder) in templateEditorModal.template?.available_placeholders"
+                  :key="placeholder"
+                  class="placeholder-tag"
+                  :title="desc"
+                >
+                  {{ placeholder }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button
+              @click="closeTemplateEditor"
+              class="btn-secondary"
+            >{{ $t('common.cancel') }}</button>
+            <button
+              @click="saveTemplate"
+              :disabled="templateEditorModal.isSaving"
+              class="btn-primary"
+            >
+              {{ templateEditorModal.isSaving ? $t('common.saving') : $t('settings.saveTemplate') }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Test Email Modal -->
+      <div
+        v-if="testEmailModal.show"
+        class="modal-overlay"
+        @click="closeTestEmailModal"
+      >
+        <div
+          class="modal-content"
+          @click.stop
+        >
+          <h2>📧 {{ $t('settings.sendTestEmail') }}</h2>
+          <p class="template-event-type">{{ formatEventType(testEmailModal.template?.event_type) }}</p>
+
+          <div class="form-group">
+            <label>{{ $t('settings.recipientEmail') }}</label>
+            <input
+              v-model="testEmailModal.email"
+              type="email"
+              class="form-input"
+              placeholder="test@example.com"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>{{ $t('settings.language') }}</label>
+            <select
+              v-model="testEmailModal.language"
+              class="form-input"
+            >
+              <option value="en">{{ $t('settings.english') }}</option>
+              <option value="ar">{{ $t('settings.arabic') }}</option>
+            </select>
+          </div>
+
+          <div
+            v-if="testEmailModal.success"
+            class="alert alert-success"
+          >
+            ✓ {{ $t('settings.testEmailSuccess') }}
+          </div>
+          <div
+            v-if="testEmailModal.error"
+            class="alert alert-error"
+          >
+            ✗ {{ testEmailModal.error }}
+          </div>
+
+          <div class="modal-actions">
+            <button
+              @click="closeTestEmailModal"
+              class="btn-secondary"
+            >{{ $t('common.cancel') }}</button>
+            <button
+              @click="sendTestEmail"
+              :disabled="testEmailModal.isSending"
+              class="btn-primary"
+            >
+              {{ testEmailModal.isSending ? $t('common.submitting') : $t('settings.sendTestEmail') }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Message -->
+      <div
+        v-if="successMessage"
+        class="alert alert-success"
+      >
+        {{ successMessage }}
+      </div>
+
+      <!-- Bottom Save Button (Sticky) -->
+      <div class="bottom-save-bar">
+        <div class="bottom-save-content">
+          <div class="bottom-save-info">
+            <span
+              class="changes-indicator"
+              v-if="!isSaving"
+            >💾 {{ $t('settings.makeChangesHint') }}</span>
+            <span
+              class="changes-indicator"
+              v-else
+            >⏳ {{ $t('settings.savingChanges') }}</span>
+          </div>
+          <button
+            @click="saveAllSettings"
+            class="btn-primary btn-large"
+            :disabled="isSaving"
+          >
+            <svg
+              v-if="!isSaving"
+              width="20"
+              height="20"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z" />
+            </svg>
+            {{ isSaving ? $t('settings.savingChanges') : $t('settings.saveAllChanges') }}
           </button>
         </div>
       </div>
     </div>
-
-    <!-- Test Email Modal -->
-    <div v-if="testEmailModal.show" class="modal-overlay" @click="closeTestEmailModal">
-      <div class="modal-content" @click.stop>
-        <h2>📧 {{ $t('settings.sendTestEmail') }}</h2>
-        <p class="template-event-type">{{ formatEventType(testEmailModal.template?.event_type) }}</p>
-
-        <div class="form-group">
-          <label>{{ $t('settings.recipientEmail') }}</label>
-          <input
-            v-model="testEmailModal.email"
-            type="email"
-            class="form-input"
-            placeholder="test@example.com"
-          />
-        </div>
-
-        <div class="form-group">
-          <label>{{ $t('settings.language') }}</label>
-          <select v-model="testEmailModal.language" class="form-input">
-            <option value="en">{{ $t('settings.english') }}</option>
-            <option value="ar">{{ $t('settings.arabic') }}</option>
-          </select>
-        </div>
-
-        <div v-if="testEmailModal.success" class="alert alert-success">
-          ✓ {{ $t('settings.testEmailSuccess') }}
-        </div>
-        <div v-if="testEmailModal.error" class="alert alert-error">
-          ✗ {{ testEmailModal.error }}
-        </div>
-
-        <div class="modal-actions">
-          <button @click="closeTestEmailModal" class="btn-secondary">{{ $t('common.cancel') }}</button>
-          <button @click="sendTestEmail" :disabled="testEmailModal.isSending" class="btn-primary">
-            {{ testEmailModal.isSending ? $t('common.submitting') : $t('settings.sendTestEmail') }}
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Success Message -->
-    <div v-if="successMessage" class="alert alert-success">
-      {{ successMessage }}
-    </div>
-
-    <!-- Bottom Save Button (Sticky) -->
-    <div class="bottom-save-bar">
-      <div class="bottom-save-content">
-        <div class="bottom-save-info">
-          <span class="changes-indicator" v-if="!isSaving">💾 {{ $t('settings.makeChangesHint') }}</span>
-          <span class="changes-indicator" v-else>⏳ {{ $t('settings.savingChanges') }}</span>
-        </div>
-        <button @click="saveAllSettings" class="btn-primary btn-large" :disabled="isSaving">
-          <svg v-if="!isSaving" width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"/>
-          </svg>
-          {{ isSaving ? $t('settings.savingChanges') : $t('settings.saveAllChanges') }}
-        </button>
-      </div>
-    </div>
-  </div>
-</AppLayout>
+  </AppLayout>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useAlert } from '../composables/useAlert'
-import axios from 'axios'
-import { useAuthStore } from '../../stores/auth'
-import AppLayout from '../../components/AppLayout.vue'
-import { API_URL, BASE_URL } from '../../config/api'
+import { ref, onMounted, computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { useAlert } from "../../composables/useAlert";
+import axios from "axios";
+import { useAuthStore } from "../../stores/auth";
+import AppLayout from "../../components/AppLayout.vue";
+import { API_URL, BASE_URL } from "../../config/api";
 
-const { t, locale } = useI18n()
-const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
-const authStore = useAuthStore()
+const { t, locale } = useI18n();
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert();
+const authStore = useAuthStore();
 
-const loading = ref(true)
-const isSaving = ref(false)
-const error = ref(null)
-const successMessage = ref(null)
+const loading = ref(true);
+const isSaving = ref(false);
+const error = ref(null);
+const successMessage = ref(null);
 
-const allSettings = ref([])
-const settingsData = ref({})
+const allSettings = ref([]);
+const settingsData = ref({});
 
-const logoInput = ref(null)
-const faviconInput = ref(null)
-const logoPreview = ref(null)
-const faviconPreview = ref(null)
-const logoFile = ref(null)
-const faviconFile = ref(null)
+const logoInput = ref(null);
+const faviconInput = ref(null);
+const logoPreview = ref(null);
+const faviconPreview = ref(null);
+const logoFile = ref(null);
+const faviconFile = ref(null);
 
 // Email Templates
-const emailTemplates = ref([])
-const loadingTemplates = ref(false)
-const emailConfig = ref(null)
-const emailTemplatesError = ref(null)
+const emailTemplates = ref([]);
+const loadingTemplates = ref(false);
+const emailConfig = ref(null);
+const emailTemplatesError = ref(null);
 const templateEditorModal = ref({
   show: false,
   isSaving: false,
   template: null,
   form: {
-    subject_en: '',
-    subject_ar: '',
-    body_en: '',
-    body_ar: ''
-  }
-})
+    subject_en: "",
+    subject_ar: "",
+    body_en: "",
+    body_ar: "",
+  },
+});
 const testEmailModal = ref({
   show: false,
   isSending: false,
   template: null,
-  email: '',
-  language: 'ar',
+  email: "",
+  language: "ar",
   success: false,
-  error: null
-})
+  error: null,
+});
 
 // Fetch all settings
 const fetchSettings = async () => {
   try {
-    loading.value = true
-    error.value = null
+    loading.value = true;
+    error.value = null;
 
     const response = await axios.get(`${API_URL}/settings`, {
       headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
-    })
+        Authorization: `Bearer ${authStore.token}`,
+      },
+    });
 
     if (response.data.settings) {
       // Flatten the grouped settings
-      allSettings.value = []
-      Object.keys(response.data.settings).forEach(group => {
-        allSettings.value.push(...response.data.settings[group])
-      })
+      allSettings.value = [];
+      Object.keys(response.data.settings).forEach((group) => {
+        allSettings.value.push(...response.data.settings[group]);
+      });
 
       // Populate settingsData
-      allSettings.value.forEach(setting => {
-        settingsData.value[setting.key] = castValue(setting.value, setting.type)
-      })
+      allSettings.value.forEach((setting) => {
+        settingsData.value[setting.key] = castValue(
+          setting.value,
+          setting.type
+        );
+      });
 
       // Set image previews
       if (settingsData.value.logo) {
-        logoPreview.value = `${BASE_URL}/storage/${settingsData.value.logo}`
+        logoPreview.value = `${BASE_URL}/storage/${settingsData.value.logo}`;
       }
       if (settingsData.value.favicon) {
-        faviconPreview.value = `${BASE_URL}/storage/${settingsData.value.favicon}`
+        faviconPreview.value = `${BASE_URL}/storage/${settingsData.value.favicon}`;
       }
     }
   } catch (err) {
-    console.error('Failed to fetch settings:', err)
-    showError(t('settings.failedToLoad'))
+    console.error("Failed to fetch settings:", err);
+    showError(t("settings.failedToLoad"));
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 // Cast value based on type
 const castValue = (value, type) => {
   switch (type) {
-    case 'boolean':
-      return value === true || value === 'true' || value === '1'
-    case 'number':
-      return parseFloat(value) || 0
-    case 'json':
-      return typeof value === 'string' ? JSON.parse(value) : value
+    case "boolean":
+      return value === true || value === "true" || value === "1";
+    case "number":
+      return parseFloat(value) || 0;
+    case "json":
+      return typeof value === "string" ? JSON.parse(value) : value;
     default:
-      return value
+      return value;
   }
-}
+};
 
 // Get settings by group
 const getGroupSettings = (group) => {
-  return allSettings.value.filter(s => s.group === group)
-}
+  return allSettings.value.filter((s) => s.group === group);
+};
 
 // Format setting key to readable label using translations
 const formatLabel = (key) => {
   // Try to get translation first, fallback to formatted key if not found
-  const translationKey = `settings.fields.${key}`
-  const translated = t(translationKey)
+  const translationKey = `settings.fields.${key}`;
+  const translated = t(translationKey);
 
   // If translation doesn't exist, it returns the key itself, so we check for that
   if (translated === translationKey) {
     // Fallback to formatted label
     return key
-      .replace(/_/g, ' ')
-      .replace(/\b\w/g, char => char.toUpperCase())
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
-  return translated
-}
+  return translated;
+};
 
 // Get localized description based on current locale
 const getLocalizedDescription = (setting) => {
-  if (locale.value === 'ar' && setting.description_ar) {
-    return setting.description_ar
+  if (locale.value === "ar" && setting.description_ar) {
+    return setting.description_ar;
   }
-  return setting.description || ''
-}
+  return setting.description || "";
+};
 
 // Handle logo upload
 const handleLogoUpload = (event) => {
-  const file = event.target.files[0]
+  const file = event.target.files[0];
   if (file) {
-    logoFile.value = file
-    const reader = new FileReader()
+    logoFile.value = file;
+    const reader = new FileReader();
     reader.onload = (e) => {
-      logoPreview.value = e.target.result
-    }
-    reader.readAsDataURL(file)
+      logoPreview.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
   }
-}
+};
 
 // Handle favicon upload
 const handleFaviconUpload = (event) => {
-  const file = event.target.files[0]
+  const file = event.target.files[0];
   if (file) {
-    faviconFile.value = file
-    const reader = new FileReader()
+    faviconFile.value = file;
+    const reader = new FileReader();
     reader.onload = (e) => {
-      faviconPreview.value = e.target.result
-    }
-    reader.readAsDataURL(file)
+      faviconPreview.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
   }
-}
+};
 
 // Remove logo
 const removeLogo = async () => {
   try {
-    logoPreview.value = null
-    logoFile.value = null
-    settingsData.value.logo = null
+    logoPreview.value = null;
+    logoFile.value = null;
+    settingsData.value.logo = null;
 
     // Delete the logo from backend
     await axios.delete(`${API_URL}/settings/logo`, {
       headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
-    })
+        Authorization: `Bearer ${authStore.token}`,
+      },
+    });
   } catch (err) {
-    console.error('Failed to delete logo:', err)
+    console.error("Failed to delete logo:", err);
   }
-}
+};
 
 // Remove favicon
 const removeFavicon = async () => {
   try {
-    faviconPreview.value = null
-    faviconFile.value = null
-    settingsData.value.favicon = null
+    faviconPreview.value = null;
+    faviconFile.value = null;
+    settingsData.value.favicon = null;
 
     // Delete the favicon from backend
     await axios.delete(`${API_URL}/settings/favicon`, {
       headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
-    })
+        Authorization: `Bearer ${authStore.token}`,
+      },
+    });
   } catch (err) {
-    console.error('Failed to delete favicon:', err)
+    console.error("Failed to delete favicon:", err);
   }
-}
+};
 
 // Save all settings
 const saveAllSettings = async () => {
   try {
-    isSaving.value = true
-    successMessage.value = null
-    error.value = null
+    isSaving.value = true;
+    successMessage.value = null;
+    error.value = null;
 
     // Upload logo if changed
     if (logoFile.value) {
-      const formData = new FormData()
-      formData.append('key', 'logo')
-      formData.append('image', logoFile.value)
+      const formData = new FormData();
+      formData.append("key", "logo");
+      formData.append("image", logoFile.value);
 
-      const response = await axios.post(`${API_URL}/settings/upload-image`, formData, {
-        headers: {
-          Authorization: `Bearer ${authStore.token}`,
-          'Content-Type': 'multipart/form-data'
+      const response = await axios.post(
+        `${API_URL}/settings/upload-image`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${authStore.token}`,
+            "Content-Type": "multipart/form-data",
+          },
         }
-      })
+      );
 
       // Update preview immediately with uploaded image URL
       if (response.data.url) {
-        logoPreview.value = `${BASE_URL}${response.data.url}`
-        settingsData.value.logo = response.data.setting.value
+        logoPreview.value = `${BASE_URL}${response.data.url}`;
+        settingsData.value.logo = response.data.setting.value;
       }
     }
 
     // Upload favicon if changed
     if (faviconFile.value) {
-      const formData = new FormData()
-      formData.append('key', 'favicon')
-      formData.append('image', faviconFile.value)
+      const formData = new FormData();
+      formData.append("key", "favicon");
+      formData.append("image", faviconFile.value);
 
-      const response = await axios.post(`${API_URL}/settings/upload-image`, formData, {
-        headers: {
-          Authorization: `Bearer ${authStore.token}`,
-          'Content-Type': 'multipart/form-data'
+      const response = await axios.post(
+        `${API_URL}/settings/upload-image`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${authStore.token}`,
+            "Content-Type": "multipart/form-data",
+          },
         }
-      })
+      );
 
       // Update preview immediately with uploaded image URL
       if (response.data.url) {
-        faviconPreview.value = `${BASE_URL}${response.data.url}`
-        settingsData.value.favicon = response.data.setting.value
+        faviconPreview.value = `${BASE_URL}${response.data.url}`;
+        settingsData.value.favicon = response.data.setting.value;
       }
     }
 
     // Update text settings
-    const settingsToUpdate = []
-    Object.keys(settingsData.value).forEach(key => {
+    const settingsToUpdate = [];
+    Object.keys(settingsData.value).forEach((key) => {
       // Skip image settings as they're handled separately
-      if (key !== 'logo' && key !== 'favicon') {
+      if (key !== "logo" && key !== "favicon") {
         settingsToUpdate.push({
           key: key,
-          value: settingsData.value[key]
-        })
+          value: settingsData.value[key],
+        });
       }
-    })
+    });
 
-    await axios.put(`${API_URL}/settings/bulk`, {
-      settings: settingsToUpdate
-    }, {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
+    await axios.put(
+      `${API_URL}/settings/bulk`,
+      {
+        settings: settingsToUpdate,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    })
+    );
 
-    successMessage.value = t('settings.savedSuccessfully')
+    successMessage.value = t("settings.savedSuccessfully");
 
     // Clear file references
-    logoFile.value = null
-    faviconFile.value = null
+    logoFile.value = null;
+    faviconFile.value = null;
 
     // Refresh settings
-    await fetchSettings()
+    await fetchSettings();
 
     // Clear success message after 3 seconds
     setTimeout(() => {
-      successMessage.value = null
-    }, 3000)
+      successMessage.value = null;
+    }, 3000);
   } catch (err) {
-    console.error('Failed to save settings:', err)
-    showError(t('settings.failedToSave'))
+    console.error("Failed to save settings:", err);
+    showError(t("settings.failedToSave"));
   } finally {
-    isSaving.value = false
+    isSaving.value = false;
   }
-}
+};
 
 // Email Templates Functions
 const fetchEmailTemplates = async () => {
   try {
-    loadingTemplates.value = true
-    emailTemplatesError.value = null
+    loadingTemplates.value = true;
+    emailTemplatesError.value = null;
 
-    console.log('Fetching email templates...')
-    console.log('Auth token:', authStore.token ? 'Present' : 'Missing')
+    console.log("Fetching email templates...");
+    console.log("Auth token:", authStore.token ? "Present" : "Missing");
 
     const [templatesRes, configRes] = await Promise.all([
       axios.get(`${API_URL}/email-templates`, {
-        headers: { Authorization: `Bearer ${authStore.token}` }
+        headers: { Authorization: `Bearer ${authStore.token}` },
       }),
       axios.get(`${API_URL}/email-templates/config`, {
-        headers: { Authorization: `Bearer ${authStore.token}` }
-      })
-    ])
+        headers: { Authorization: `Bearer ${authStore.token}` },
+      }),
+    ]);
 
-    console.log('Templates response:', templatesRes.data)
-    console.log('Config response:', configRes.data)
+    console.log("Templates response:", templatesRes.data);
+    console.log("Config response:", configRes.data);
 
-    emailTemplates.value = templatesRes.data.templates || []
-    emailConfig.value = configRes.data
+    emailTemplates.value = templatesRes.data.templates || [];
+    emailConfig.value = configRes.data;
   } catch (err) {
-    console.error('Failed to fetch email templates:', err)
-    console.error('Error response:', err.response)
+    console.error("Failed to fetch email templates:", err);
+    console.error("Error response:", err.response);
 
     if (err.response?.status === 401) {
-      emailTemplatesError.value = t('settings.authRequired')
+      emailTemplatesError.value = t("settings.authRequired");
     } else if (err.response?.status === 403) {
-      emailTemplatesError.value = t('settings.accessDenied')
+      emailTemplatesError.value = t("settings.accessDenied");
     } else {
-      emailTemplatesError.value = `${t('settings.failedToLoadTemplates')}: ${err.message}`
+      emailTemplatesError.value = `${t("settings.failedToLoadTemplates")}: ${
+        err.message
+      }`;
     }
   } finally {
-    loadingTemplates.value = false
+    loadingTemplates.value = false;
   }
-}
+};
 
 const formatEventType = (eventType) => {
-  if (!eventType) return ''
+  if (!eventType) return "";
 
   // Convert event type to translation key format
   // e.g., 'request.created' -> 'emailEvents.requestCreated'
   // e.g., 'admin.request_assigned' -> 'emailEvents.adminRequestAssigned'
   const eventKey = eventType
-    .replace(/\./g, '_')  // Replace dots with underscores
-    .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())  // Convert to camelCase
+    .replace(/\./g, "_") // Replace dots with underscores
+    .replace(/_([a-z])/g, (_, letter) => letter.toUpperCase()); // Convert to camelCase
 
-  const translationKey = `emailEvents.${eventKey}`
-  const translated = t(translationKey)
+  const translationKey = `emailEvents.${eventKey}`;
+  const translated = t(translationKey);
 
   // If translation exists, use it; otherwise, fallback to formatted text
   if (translated !== translationKey) {
-    return translated
+    return translated;
   }
 
   // Fallback: format the event type nicely
   return eventType
-    .replace(/^(request|admin|manager)\./, '')
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, char => char.toUpperCase())
-}
+    .replace(/^(request|admin|manager)\./, "")
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+};
 
 const openTemplateEditor = (template) => {
   templateEditorModal.value = {
@@ -769,41 +951,41 @@ const openTemplateEditor = (template) => {
       subject_en: template.subject_en,
       subject_ar: template.subject_ar,
       body_en: template.body_en,
-      body_ar: template.body_ar
-    }
-  }
-}
+      body_ar: template.body_ar,
+    },
+  };
+};
 
 const closeTemplateEditor = () => {
-  templateEditorModal.value.show = false
-}
+  templateEditorModal.value.show = false;
+};
 
 const saveTemplate = async () => {
   try {
-    templateEditorModal.value.isSaving = true
+    templateEditorModal.value.isSaving = true;
 
     await axios.put(
       `${API_URL}/email-templates/${templateEditorModal.value.template.id}`,
       templateEditorModal.value.form,
       {
-        headers: { Authorization: `Bearer ${authStore.token}` }
+        headers: { Authorization: `Bearer ${authStore.token}` },
       }
-    )
+    );
 
-    successMessage.value = t('settings.templateUpdatedSuccess')
-    closeTemplateEditor()
-    await fetchEmailTemplates()
+    successMessage.value = t("settings.templateUpdatedSuccess");
+    closeTemplateEditor();
+    await fetchEmailTemplates();
 
     setTimeout(() => {
-      successMessage.value = null
-    }, 3000)
+      successMessage.value = null;
+    }, 3000);
   } catch (err) {
-    console.error('Failed to save template:', err)
-    showError(t('settings.failedToSaveTemplate'))
+    console.error("Failed to save template:", err);
+    showError(t("settings.failedToSaveTemplate"));
   } finally {
-    templateEditorModal.value.isSaving = false
+    templateEditorModal.value.isSaving = false;
   }
-}
+};
 
 const toggleTemplateStatus = async (template) => {
   try {
@@ -811,72 +993,75 @@ const toggleTemplateStatus = async (template) => {
       `${API_URL}/email-templates/${template.id}/toggle-status`,
       {},
       {
-        headers: { Authorization: `Bearer ${authStore.token}` }
+        headers: { Authorization: `Bearer ${authStore.token}` },
       }
-    )
+    );
 
-    successMessage.value = template.is_active ? t('settings.templateDisabled') : t('settings.templateEnabled')
-    await fetchEmailTemplates()
+    successMessage.value = template.is_active
+      ? t("settings.templateDisabled")
+      : t("settings.templateEnabled");
+    await fetchEmailTemplates();
 
     setTimeout(() => {
-      successMessage.value = null
-    }, 3000)
+      successMessage.value = null;
+    }, 3000);
   } catch (err) {
-    console.error('Failed to toggle template status:', err)
-    showError(t('settings.failedToToggleStatus'))
+    console.error("Failed to toggle template status:", err);
+    showError(t("settings.failedToToggleStatus"));
   }
-}
+};
 
 const openTestEmailModal = (template) => {
   testEmailModal.value = {
     show: true,
     isSending: false,
     template: template,
-    email: authStore.user?.email || '',
-    language: 'ar',
+    email: authStore.user?.email || "",
+    language: "ar",
     success: false,
-    error: null
-  }
-}
+    error: null,
+  };
+};
 
 const closeTestEmailModal = () => {
-  testEmailModal.value.show = false
-}
+  testEmailModal.value.show = false;
+};
 
 const sendTestEmail = async () => {
   try {
-    testEmailModal.value.isSending = true
-    testEmailModal.value.success = false
-    testEmailModal.value.error = null
+    testEmailModal.value.isSending = true;
+    testEmailModal.value.success = false;
+    testEmailModal.value.error = null;
 
     await axios.post(
       `${API_URL}/email-templates/${testEmailModal.value.template.id}/send-test`,
       {
         recipient_email: testEmailModal.value.email,
-        language: testEmailModal.value.language
+        language: testEmailModal.value.language,
       },
       {
-        headers: { Authorization: `Bearer ${authStore.token}` }
+        headers: { Authorization: `Bearer ${authStore.token}` },
       }
-    )
+    );
 
-    testEmailModal.value.success = true
+    testEmailModal.value.success = true;
 
     setTimeout(() => {
-      closeTestEmailModal()
-    }, 2000)
+      closeTestEmailModal();
+    }, 2000);
   } catch (err) {
-    console.error('Failed to send test email:', err)
-    testEmailModal.value.error = err.response?.data?.message || 'Failed to send test email'
+    console.error("Failed to send test email:", err);
+    testEmailModal.value.error =
+      err.response?.data?.message || "Failed to send test email";
   } finally {
-    testEmailModal.value.isSending = false
+    testEmailModal.value.isSending = false;
   }
-}
+};
 
 onMounted(() => {
-  fetchSettings()
-  fetchEmailTemplates()
-})
+  fetchSettings();
+  fetchEmailTemplates();
+});
 </script>
 
 <style scoped>
@@ -893,7 +1078,7 @@ onMounted(() => {
   justify-content: space-between;
   margin-bottom: var(--spacing-8);
   padding: var(--spacing-6);
-  background: linear-gradient(135deg, #02735E 0%, #02735E 100%);
+  background: linear-gradient(135deg, #02735e 0%, #02735e 100%);
   border-radius: var(--radius-2xl);
   color: white;
 }
@@ -960,14 +1145,16 @@ html[dir="rtl"] .btn-save {
   width: 40px;
   height: 40px;
   border: 3px solid var(--color-border);
-  border-top-color: #02735E;
+  border-top-color: #02735e;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: var(--spacing-4);
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .alert {
@@ -1080,7 +1267,7 @@ html[dir="rtl"] .setting-item {
 .form-input:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: #02735E;
+  border-color: #02735e;
   box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
 }
 
@@ -1129,7 +1316,7 @@ html[dir="rtl"] .color-input-wrapper {
 }
 
 .toggle-label::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 2px;
   left: 2px;
@@ -1141,7 +1328,7 @@ html[dir="rtl"] .color-input-wrapper {
 }
 
 .toggle-input:checked + .toggle-label {
-  background: #02735E;
+  background: #02735e;
 }
 
 .toggle-input:checked + .toggle-label::after {
@@ -1202,7 +1389,7 @@ html[dir="rtl"] .image-preview {
 }
 
 .btn-primary {
-  background: #02735E;
+  background: #02735e;
   color: white;
 }
 
@@ -1318,7 +1505,7 @@ html[dir="rtl"] .btn-large {
 }
 
 .template-card:hover {
-  border-color: #02735E;
+  border-color: #02735e;
   box-shadow: var(--shadow-md);
 }
 
@@ -1383,9 +1570,9 @@ html[dir="rtl"] .btn-large {
 }
 
 .btn-icon-action:hover {
-  background: #02735E;
+  background: #02735e;
   color: white;
-  border-color: #02735E;
+  border-color: #02735e;
 }
 
 .template-preview {
@@ -1449,11 +1636,11 @@ html[dir="rtl"] .btn-large {
 
 .placeholder-tag {
   padding: var(--spacing-1) var(--spacing-3);
-  background: #02735E;
+  background: #02735e;
   color: white;
   border-radius: var(--radius-md);
   font-size: var(--font-size-xs);
-  font-family: 'Courier New', monospace;
+  font-family: "Courier New", monospace;
   cursor: help;
 }
 

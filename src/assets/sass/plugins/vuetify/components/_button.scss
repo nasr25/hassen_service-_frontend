@@ -1,0 +1,9 @@
+.btn-primary {
+  border-radius: 6px !important;
+  height: 56px !important;
+  background-color: rgba(var(--v-theme-primary), 1);
+  &:disabled {
+    background-color: rgba(var(--v-theme-btn-disabled), 1) !important;
+    color: rgba(var(--v-theme-btn-disabled-text), 1) !important;
+  }
+}

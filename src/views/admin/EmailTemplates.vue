@@ -7,16 +7,34 @@
           <h1>📧 {{ $t('admin.emailTemplates') }}</h1>
           <p class="page-subtitle">{{ $t('admin.emailTemplatesSubtitle') }}</p>
         </div>
-        <button @click="refresh" class="btn-refresh">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+        <button
+          @click="refresh"
+          class="btn-refresh"
+        >
+          <svg
+            width="20"
+            height="20"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+              clip-rule="evenodd"
+            />
           </svg>
           {{ $t('common.refresh') }}
         </button>
       </div>
 
-      <div v-if="error" class="alert alert-error">{{ error }}</div>
-      <div v-if="success" class="alert alert-success">{{ success }}</div>
+      <div
+        v-if="error"
+        class="alert alert-error"
+      >{{ error }}</div>
+      <div
+        v-if="success"
+        class="alert alert-success"
+      >{{ success }}</div>
 
       <!-- Tabs -->
       <div class="tabs">
@@ -44,10 +62,16 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="loading">{{ $t('common.loading') }}</div>
+      <div
+        v-if="isLoading"
+        class="loading"
+      >{{ $t('common.loading') }}</div>
 
       <!-- Templates List -->
-      <div v-else class="templates-container">
+      <div
+        v-else
+        class="templates-container"
+      >
         <div class="templates-grid">
           <div
             v-for="template in filteredTemplates"
@@ -109,17 +133,30 @@
           </div>
         </div>
 
-        <div v-if="filteredTemplates.length === 0" class="empty-state">
+        <div
+          v-if="filteredTemplates.length === 0"
+          class="empty-state"
+        >
           <p>{{ $t('admin.noTemplatesFound') }}</p>
         </div>
       </div>
 
       <!-- Edit Template Modal -->
-      <div v-if="showEditModal" class="modal-overlay" @click="closeEditModal">
-        <div class="modal-content modal-large" @click.stop>
+      <div
+        v-if="showEditModal"
+        class="modal-overlay"
+        @click="closeEditModal"
+      >
+        <div
+          class="modal-content modal-large"
+          @click.stop
+        >
           <div class="modal-header">
             <h2>{{ $t('admin.editTemplate') }}</h2>
-            <button @click="closeEditModal" class="btn-close">×</button>
+            <button
+              @click="closeEditModal"
+              class="btn-close"
+            >×</button>
           </div>
 
           <div class="modal-body">
@@ -135,7 +172,11 @@
 
             <div class="form-group">
               <label class="form-label">{{ $t('admin.recipientType') }}</label>
-              <select v-model="editForm.recipient_type" class="form-input" disabled>
+              <select
+                v-model="editForm.recipient_type"
+                class="form-input"
+                disabled
+              >
                 <option value="user">{{ $t('admin.user') }}</option>
                 <option value="admin">{{ $t('admin.admin') }}</option>
                 <option value="manager">{{ $t('admin.manager') }}</option>
@@ -179,7 +220,10 @@
             <div class="form-group">
               <label class="form-label">
                 {{ $t('admin.bodyEnglish') }}
-                <button @click="copyPlaceholders" class="btn-link">
+                <button
+                  @click="copyPlaceholders"
+                  class="btn-link"
+                >
                   📋 {{ $t('admin.copyPlaceholders') }}
                 </button>
               </label>
@@ -225,17 +269,26 @@
                 id="is_active"
                 class="form-checkbox"
               />
-              <label for="is_active" class="checkbox-label">
+              <label
+                for="is_active"
+                class="checkbox-label"
+              >
                 {{ $t('admin.templateActive') }}
               </label>
             </div>
           </div>
 
           <div class="modal-footer">
-            <button @click="closeEditModal" class="btn-secondary">
+            <button
+              @click="closeEditModal"
+              class="btn-secondary"
+            >
               {{ $t('common.cancel') }}
             </button>
-            <button @click="saveTemplate" class="btn-primary">
+            <button
+              @click="saveTemplate"
+              class="btn-primary"
+            >
               {{ $t('common.save') }}
             </button>
           </div>
@@ -243,11 +296,21 @@
       </div>
 
       <!-- Test Email Modal -->
-      <div v-if="showTestEmailModal" class="modal-overlay" @click="closeTestEmailModal">
-        <div class="modal-content" @click.stop>
+      <div
+        v-if="showTestEmailModal"
+        class="modal-overlay"
+        @click="closeTestEmailModal"
+      >
+        <div
+          class="modal-content"
+          @click.stop
+        >
           <div class="modal-header">
             <h2>{{ $t('admin.sendTestEmail') }}</h2>
-            <button @click="closeTestEmailModal" class="btn-close">×</button>
+            <button
+              @click="closeTestEmailModal"
+              class="btn-close"
+            >×</button>
           </div>
 
           <div class="modal-body">
@@ -278,10 +341,17 @@
           </div>
 
           <div class="modal-footer">
-            <button @click="closeTestEmailModal" class="btn-secondary">
+            <button
+              @click="closeTestEmailModal"
+              class="btn-secondary"
+            >
               {{ $t('common.cancel') }}
             </button>
-            <button @click="sendTestEmail" class="btn-primary" :disabled="!testEmail.email">
+            <button
+              @click="sendTestEmail"
+              class="btn-primary"
+              :disabled="!testEmail.email"
+            >
               {{ $t('admin.send') }}
             </button>
           </div>
@@ -292,90 +362,90 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import axios from 'axios'
-import { useAuthStore } from '../../stores/auth'
-import AppLayout from '../../components/AppLayout.vue'
-import { API_URL } from '../../config/api'
-import { useAlert } from '../composables/useAlert'
+import { ref, computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import axios from "axios";
+import { useAuthStore } from "../../stores/auth";
+import AppLayout from "../../components/AppLayout.vue";
+import { API_URL } from "../../config/api";
+import { useAlert } from "../../composables/useAlert";
 
-const { t } = useI18n()
-const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
-const authStore = useAuthStore()
+const { t } = useI18n();
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert();
+const authStore = useAuthStore();
 
-const activeTab = ref('user')
-const templates = ref([])
-const isLoading = ref(false)
-const error = ref('')
-const success = ref('')
+const activeTab = ref("user");
+const templates = ref([]);
+const isLoading = ref(false);
+const error = ref("");
+const success = ref("");
 
-const showEditModal = ref(false)
-const showTestEmailModal = ref(false)
+const showEditModal = ref(false);
+const showTestEmailModal = ref(false);
 
 const editForm = ref({
   id: null,
-  event_type: '',
-  recipient_type: 'user',
-  subject_en: '',
-  subject_ar: '',
-  body_en: '',
-  body_ar: '',
-  description: '',
-  is_active: true
-})
+  event_type: "",
+  recipient_type: "user",
+  subject_en: "",
+  subject_ar: "",
+  body_en: "",
+  body_ar: "",
+  description: "",
+  is_active: true,
+});
 
 const testEmail = ref({
   template: null,
-  email: ''
-})
+  email: "",
+});
 
 // Computed properties
 const userTemplates = computed(() =>
-  templates.value.filter(t => t.recipient_type === 'user')
-)
+  templates.value.filter((t) => t.recipient_type === "user")
+);
 
 const adminTemplates = computed(() =>
-  templates.value.filter(t => t.recipient_type === 'admin')
-)
+  templates.value.filter((t) => t.recipient_type === "admin")
+);
 
 const managerTemplates = computed(() =>
-  templates.value.filter(t => t.recipient_type === 'manager')
-)
+  templates.value.filter((t) => t.recipient_type === "manager")
+);
 
 const filteredTemplates = computed(() => {
   switch (activeTab.value) {
-    case 'user':
-      return userTemplates.value
-    case 'admin':
-      return adminTemplates.value
-    case 'manager':
-      return managerTemplates.value
+    case "user":
+      return userTemplates.value;
+    case "admin":
+      return adminTemplates.value;
+    case "manager":
+      return managerTemplates.value;
     default:
-      return []
+      return [];
   }
-})
+});
 
 // Methods
 const fetchTemplates = async () => {
-  isLoading.value = true
-  error.value = ''
+  isLoading.value = true;
+  error.value = "";
 
   try {
     const response = await axios.get(`${API_URL}/email-templates`, {
-      headers: { Authorization: `Bearer ${authStore.token}` }
-    })
-    templates.value = response.data.templates || []
+      headers: { Authorization: `Bearer ${authStore.token}` },
+    });
+    templates.value = response.data.templates || [];
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToFetch'))
+    showError(err.response?.data?.message || t("messages.error.failedToFetch"));
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 const refresh = () => {
-  fetchTemplates()
-}
+  fetchTemplates();
+};
 
 const openEditModal = (template) => {
   editForm.value = {
@@ -387,102 +457,119 @@ const openEditModal = (template) => {
     body_en: template.body_en,
     body_ar: template.body_ar,
     description: template.description,
-    is_active: template.is_active
-  }
-  showEditModal.value = true
-}
+    is_active: template.is_active,
+  };
+  showEditModal.value = true;
+};
 
 const closeEditModal = () => {
-  showEditModal.value = false
+  showEditModal.value = false;
   editForm.value = {
     id: null,
-    event_type: '',
-    recipient_type: 'user',
-    subject_en: '',
-    subject_ar: '',
-    body_en: '',
-    body_ar: '',
-    description: '',
-    is_active: true
-  }
-}
+    event_type: "",
+    recipient_type: "user",
+    subject_en: "",
+    subject_ar: "",
+    body_en: "",
+    body_ar: "",
+    description: "",
+    is_active: true,
+  };
+};
 
 const saveTemplate = async () => {
-  error.value = ''
-  success.value = ''
+  error.value = "";
+  success.value = "";
 
   try {
-    await axios.put(`${API_URL}/email-templates/${editForm.value.id}`, editForm.value, {
-      headers: { Authorization: `Bearer ${authStore.token}` }
-    })
-    showSuccess(t('messages.success.templateUpdated'))
-    closeEditModal()
-    fetchTemplates()
+    await axios.put(
+      `${API_URL}/email-templates/${editForm.value.id}`,
+      editForm.value,
+      {
+        headers: { Authorization: `Bearer ${authStore.token}` },
+      }
+    );
+    showSuccess(t("messages.success.templateUpdated"));
+    closeEditModal();
+    fetchTemplates();
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToUpdate'))
+    showError(
+      err.response?.data?.message || t("messages.error.failedToUpdate")
+    );
   }
-}
+};
 
 const toggleTemplateStatus = async (template) => {
   try {
-    await axios.put(`${API_URL}/email-templates/${template.id}`, {
-      ...template,
-      is_active: !template.is_active
-    }, {
-      headers: { Authorization: `Bearer ${authStore.token}` }
-    })
-    showSuccess(t('messages.success.statusUpdated'))
-    fetchTemplates()
+    await axios.put(
+      `${API_URL}/email-templates/${template.id}`,
+      {
+        ...template,
+        is_active: !template.is_active,
+      },
+      {
+        headers: { Authorization: `Bearer ${authStore.token}` },
+      }
+    );
+    showSuccess(t("messages.success.statusUpdated"));
+    fetchTemplates();
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToUpdate'))
+    showError(
+      err.response?.data?.message || t("messages.error.failedToUpdate")
+    );
   }
-}
+};
 
 const openTestEmailModal = (template) => {
   testEmail.value = {
     template: template,
-    email: ''
-  }
-  showTestEmailModal.value = true
-}
+    email: "",
+  };
+  showTestEmailModal.value = true;
+};
 
 const closeTestEmailModal = () => {
-  showTestEmailModal.value = false
+  showTestEmailModal.value = false;
   testEmail.value = {
     template: null,
-    email: ''
-  }
-}
+    email: "",
+  };
+};
 
 const sendTestEmail = async () => {
-  error.value = ''
-  success.value = ''
+  error.value = "";
+  success.value = "";
 
   try {
-    await axios.post(`${API_URL}/email-templates/${testEmail.value.template.id}/send-test`, {
-      recipient_email: testEmail.value.email
-    }, {
-      headers: { Authorization: `Bearer ${authStore.token}` }
-    })
-    showSuccess(t('messages.success.testEmailSent'))
-    closeTestEmailModal()
+    await axios.post(
+      `${API_URL}/email-templates/${testEmail.value.template.id}/send-test`,
+      {
+        recipient_email: testEmail.value.email,
+      },
+      {
+        headers: { Authorization: `Bearer ${authStore.token}` },
+      }
+    );
+    showSuccess(t("messages.success.testEmailSent"));
+    closeTestEmailModal();
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToSend'))
+    showError(err.response?.data?.message || t("messages.error.failedToSend"));
   }
-}
+};
 
 const copyPlaceholders = () => {
-  const placeholders = '{user_name}, {request_id}, {request_title}, {status}, {department}, {created_at}, {employee_name}, {assigned_by}'
-  navigator.clipboard.writeText(placeholders)
-  showSuccess(t('messages.success.copiedToClipboard'))
+  const placeholders =
+    "{user_name}, {request_id}, {request_title}, {status}, {department}, {created_at}, {employee_name}, {assigned_by}";
+  navigator.clipboard.writeText(placeholders);
+  showSuccess(t("messages.success.copiedToClipboard"));
   setTimeout(() => {
-    success.value = ''
-  }, 2000)
-}
+    success.value = "";
+  }, 2000);
+};
 
 onMounted(() => {
-  fetchTemplates()
-})
+  fetchTemplates();
+});
 </script>
 
 <style scoped>
@@ -518,7 +605,7 @@ onMounted(() => {
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: var(--color-primary, #02735E);
+  background: var(--color-primary, #02735e);
   color: white;
   border: none;
   border-radius: 8px;
@@ -577,17 +664,17 @@ onMounted(() => {
 }
 
 .tab:hover {
-  color: var(--color-primary, #02735E);
+  color: var(--color-primary, #02735e);
   background: rgba(16, 185, 129, 0.05);
 }
 
 .tab.active {
-  color: var(--color-primary, #02735E);
-  border-bottom-color: var(--color-primary, #02735E);
+  color: var(--color-primary, #02735e);
+  border-bottom-color: var(--color-primary, #02735e);
 }
 
 .tab-badge {
-  background: #02735E;
+  background: #02735e;
   color: white;
   padding: 2px 8px;
   border-radius: 12px;
@@ -653,7 +740,7 @@ onMounted(() => {
 }
 
 .recipient-badge.badge-user {
-  background: #02735E;
+  background: #02735e;
   color: white;
 }
 
@@ -720,7 +807,7 @@ onMounted(() => {
   border-radius: 6px;
   font-size: 13px;
   color: #1f2937;
-  font-family: 'Monaco', 'Courier New', monospace;
+  font-family: "Monaco", "Courier New", monospace;
 }
 
 .template-description {
@@ -855,7 +942,7 @@ onMounted(() => {
 .btn-link {
   background: none;
   border: none;
-  color: var(--color-primary, #02735E);
+  color: var(--color-primary, #02735e);
   font-size: 13px;
   cursor: pointer;
   padding: 4px 8px;
@@ -881,7 +968,7 @@ onMounted(() => {
 .form-input:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--color-primary, #02735E);
+  border-color: var(--color-primary, #02735e);
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
@@ -893,7 +980,7 @@ onMounted(() => {
 
 .form-textarea {
   resize: vertical;
-  font-family: 'Monaco', 'Courier New', monospace;
+  font-family: "Monaco", "Courier New", monospace;
   line-height: 1.6;
 }
 
@@ -944,7 +1031,7 @@ onMounted(() => {
   font-size: 12px;
   color: #1f2937;
   border: 1px solid #e5e7eb;
-  font-family: 'Monaco', 'Courier New', monospace;
+  font-family: "Monaco", "Courier New", monospace;
 }
 
 .template-preview {
@@ -980,7 +1067,7 @@ onMounted(() => {
   color: var(--color-text-secondary, #666);
   font-size: 13px;
   white-space: pre-wrap;
-  font-family: 'Monaco', 'Courier New', monospace;
+  font-family: "Monaco", "Courier New", monospace;
   line-height: 1.6;
 }
 
@@ -1013,7 +1100,7 @@ onMounted(() => {
 }
 
 .btn-primary {
-  background: var(--color-primary, #02735E);
+  background: var(--color-primary, #02735e);
   color: white;
 }
 

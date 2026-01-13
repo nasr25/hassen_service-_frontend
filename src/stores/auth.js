@@ -11,7 +11,7 @@ export const useAuthStore = defineStore('auth', {
     isLoading: false,
     error: null,
     lastActivity: localStorage.getItem('lastActivity') || null,
-    sessionTimeout: 30 * 60 * 1000 // 30 minutes in milliseconds
+    sessionTimeout: 30 * 60 * 100000 // 30 minutes in milliseconds
   }),
 
   getters: {
@@ -91,6 +91,19 @@ export const useAuthStore = defineStore('auth', {
         delete axios.defaults.headers.common['Authorization']
       }
     },
+    async flush() {
+      this.token = null
+      this.user = null
+      this.permissions = []
+      this.roles = []
+      this.lastActivity = null
+      localStorage.removeItem('token')
+      localStorage.removeItem('permissions')
+      localStorage.removeItem('roles')
+      localStorage.removeItem('lastActivity')
+      delete axios.defaults.headers.common['Authorization']
+      router.push('/login')
+    },
 
     async fetchUser() {
       if (!this.token) return
@@ -157,7 +170,7 @@ export const useAuthStore = defineStore('auth', {
 
     async handleSessionExpired() {
       console.log('Session expired - logging out')
-      await this.logout()
+      //  await this.logout()
       return true
     }
   }

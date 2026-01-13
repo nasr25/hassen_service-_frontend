@@ -100,7 +100,9 @@ const routes = [
     name: 'RequestHistory',
     component: () => import('../views/RequestHistory.vue'),
     meta: { requiresAuth: true }
-  }
+  },
+
+
 ]
 
 const router = createRouter({

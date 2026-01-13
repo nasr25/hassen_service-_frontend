@@ -1,0 +1,96 @@
+.field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  .field-label {
+    @extend .label;
+  }
+  &.required-field {
+    :deep(.field-label) {
+      position: relative;
+      &::after {
+        content: '*';
+        color: rgba(var(--v-theme-error), 1);
+        position: absolute;
+        margin-inline-start: 4px;
+        font-weight: 500;
+        font-size: 1rem;
+        width: 1px;
+      }
+    }
+  }
+
+  // viewMode
+  &.viewMode {
+    position: relative;
+    padding-inline-start: calc(12px + 4px);
+    gap: 10px;
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      width: 4px;
+      height: 100%;
+      border-radius: 8px;
+      background-color: rgba(var(--v-theme-dark_100), 1);
+    }
+    // Checkbox {
+    .v-checkbox-btn {
+      opacity: 1;
+      .v-label {
+        color: rgba(var(--v-theme-dark_400), 1) !important;
+      }
+      .v-selection-control__wrapper {
+        display: none;
+      }
+    }
+  }
+}
+
+.v-selection-control {
+  min-height: unset;
+  display: flex;
+  gap: 4px;
+  &__wrapper {
+    width: 18px;
+    height: 18px;
+  }
+  &__input {
+    width: 18px;
+    height: 18px;
+    i {
+      border: 2px solid rgba(var(--v-theme-dark_300), 1) !important;
+      border-radius: 5px !important;
+      font-size: 18px;
+      transition: 0.4s;
+      &::before {
+        content: unset !important;
+      }
+      &.mdi-checkbox-marked,
+      &.mdi-radiobox-marked {
+        background-color: rgba(var(--v-theme-primary), 1);
+        border: none !important;
+        &::after {
+          content: '';
+          display: block;
+          box-sizing: border-box;
+          position: absolute;
+          top: 0px;
+          left: 4px;
+          width: 5px;
+          height: 10px;
+          border-width: 0 2px 2px 0;
+          border-style: solid;
+          transform-origin: bottom left;
+          transform: rotate(45deg);
+          color: #fff;
+        }
+      }
+    }
+  }
+  .v-label {
+    @extend .label;
+    color: #1d1f1f;
+    opacity: 1;
+  }
+}

@@ -7,7 +7,7 @@ import router from './router'
 import i18n from './i18n'
 import './assets/fonts.css'
 import './style.css'
-
+import './assets/sass/tailwind.css'
 const app = createApp(App)
 const pinia = createPinia()
 

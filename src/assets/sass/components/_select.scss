@@ -1,0 +1,41 @@
+.v-select {
+  .v-field__input {
+    flex-wrap: nowrap;
+    overflow: auto;
+    padding-inline-start: 0;
+    inset-inline-start: 10px;
+
+    input {
+      inset-inline: 0;
+    }
+  }
+}
+.viewMode {
+  .v-field__input {
+    flex-wrap: wrap;
+  }
+}
+
+// select menu
+.v-select__content {
+  box-shadow: 0px 16px 80px 0px #00000026 !important;
+  border-radius: 24px !important;
+
+  .v-virtual-scroll__spacer:empty {
+    display: none;
+  }
+
+  .v-list {
+    background-color: rgba(var(--v-theme-dark_25), 1) !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    .v-list-item {
+      width: 100%;
+      &--active {
+        color: rgba(var(--v-theme-primary), 1) !important;
+      }
+    }
+  }
+}
