@@ -636,7 +636,7 @@ const fetchSettings = async () => {
     const response = await httpRequest(`/settings`);
 
     if (response.data.settings) {
-      // Flatten the grouped settings
+      // Flatten the grouped settingsss
       allSettings.value = [];
       Object.keys(response.data.settings).forEach((group) => {
         allSettings.value.push(...response.data.settings[group]);
