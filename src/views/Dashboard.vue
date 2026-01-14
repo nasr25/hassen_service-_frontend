@@ -161,7 +161,7 @@
 
       <!-- Stats Grid -->
       <div class="stats-grid">
-        <BaseCard class="stat-card">
+        <div class="stat-card">
           <div class="stat-icon stat-icon-primary">
             <svg
               width="24"
@@ -178,12 +178,12 @@
             </svg>
           </div>
           <div class="stat-content">
-            <div class="stat-value">{{ stats.totalRequests }}</div>
-            <div class="stat-label">{{ $t('dashboard.stats.totalRequests') }}</div>
+            <span class="stat-value">{{ stats.totalRequests }}</span>
+            <span class="stat-label">{{ $t('dashboard.stats.totalRequests') }}</span>
           </div>
-        </BaseCard>
+        </div>
 
-        <BaseCard class="stat-card">
+        <div class="stat-card">
           <div class="stat-icon stat-icon-info">
             <svg
               width="24"
@@ -203,9 +203,9 @@
             <div class="stat-value">{{ stats.draftRequests }}</div>
             <div class="stat-label">{{ $t('dashboard.stats.draft') }}</div>
           </div>
-        </BaseCard>
+        </div>
 
-        <BaseCard class="stat-card">
+        <div class="stat-card">
           <div class="stat-icon stat-icon-warning">
             <svg
               width="24"
@@ -224,9 +224,9 @@
             <div class="stat-value">{{ stats.pendingRequests }}</div>
             <div class="stat-label">{{ $t('dashboard.stats.pendingRequests') }}</div>
           </div>
-        </BaseCard>
+        </div>
 
-        <BaseCard class="stat-card">
+        <div class="stat-card">
           <div class="stat-icon stat-icon-primary">
             <svg
               width="24"
@@ -245,9 +245,9 @@
             <div class="stat-value">{{ stats.inProgressRequests }}</div>
             <div class="stat-label">{{ $t('dashboard.stats.inProgress') }}</div>
           </div>
-        </BaseCard>
+        </div>
 
-        <BaseCard class="stat-card">
+        <div class="stat-card">
           <div class="stat-icon stat-icon-success">
             <svg
               width="24"
@@ -266,9 +266,9 @@
             <div class="stat-value">{{ stats.approvedRequests }}</div>
             <div class="stat-label">{{ $t('dashboard.stats.approved') }}</div>
           </div>
-        </BaseCard>
+        </div>
 
-        <BaseCard class="stat-card">
+        <div class="stat-card">
           <div class="stat-icon stat-icon-purple">
             <svg
               width="24"
@@ -287,9 +287,9 @@
             <div class="stat-value">{{ stats.completedRequests }}</div>
             <div class="stat-label">{{ $t('dashboard.stats.completed') }}</div>
           </div>
-        </BaseCard>
+        </div>
 
-        <BaseCard class="stat-card">
+        <div class="stat-card">
           <div class="stat-icon stat-icon-error">
             <svg
               width="24"
@@ -308,7 +308,7 @@
             <div class="stat-value">{{ stats.rejectedRequests }}</div>
             <div class="stat-label">{{ $t('dashboard.stats.rejected') }}</div>
           </div>
-        </BaseCard>
+        </div>
       </div>
 
       <!-- Charts Section -->
@@ -753,7 +753,7 @@ html[dir="rtl"] .action-card {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: var(--spacing-6);
-  margin-bottom: var(--spacing-10);
+  margin-bottom: var(--spacing-);
 }
 
 .stat-card {
@@ -762,16 +762,33 @@ html[dir="rtl"] .action-card {
   gap: var(--spacing-4);
   padding: var(--spacing-6);
   cursor: default;
+
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  direction: ltr;
 }
 
 /* RTL Support for stat cards */
 html[dir="rtl"] .stat-card {
   flex-direction: row-reverse;
-  text-align: right;
+  direction: rtl;
 }
 
 .stat-card:hover {
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card.active {
+  border-color: #02735e;
+  background: #f0fdf4;
 }
 
 .stat-icon {
@@ -815,9 +832,13 @@ html[dir="rtl"] .stat-card {
 }
 
 .stat-content {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
 }
-
+[dir="rtl"] .stat-content {
+  text-align: left;
+}
 .stat-value {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);

@@ -2,17 +2,26 @@
   <AppLayout>
     <div class="ideas-bank">
       <!-- Header -->
-      <div class="page-header">
-        <h1>{{ $t('ideasBank.title') }}</h1>
-        <p class="subtitle">{{ $t('ideasBank.subtitle') }}</p>
-      </div>
 
+      <TableHeader
+        :title=" $t('ideasBank.title') "
+        :breadcrumbs="pageBreadcrumbs"
+      />
       <!-- Stats Cards -->
       <div class="stats-grid">
-        <div class="stat-card" :class="{ active: filter === 'all' }" @click="setFilter('all')">
+        <div
+          class="stat-card"
+          :class="{ active: filter === 'all' }"
+          @click="setFilter('all')"
+        >
           <div class="stat-icon total">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z"/>
+            <svg
+              width="24"
+              height="24"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
             </svg>
           </div>
           <div class="stat-content">
@@ -21,10 +30,23 @@
           </div>
         </div>
 
-        <div class="stat-card" :class="{ active: filter === 'under_review' }" @click="setFilter('under_review')">
+        <div
+          class="stat-card"
+          :class="{ active: filter === 'under_review' }"
+          @click="setFilter('under_review')"
+        >
           <div class="stat-icon under-review">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+            <svg
+              width="24"
+              height="24"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                clip-rule="evenodd"
+              />
             </svg>
           </div>
           <div class="stat-content">
@@ -33,10 +55,23 @@
           </div>
         </div>
 
-        <div class="stat-card" :class="{ active: filter === 'in_progress' }" @click="setFilter('in_progress')">
+        <div
+          class="stat-card"
+          :class="{ active: filter === 'in_progress' }"
+          @click="setFilter('in_progress')"
+        >
           <div class="stat-icon in-progress">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+            <svg
+              width="24"
+              height="24"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                clip-rule="evenodd"
+              />
             </svg>
           </div>
           <div class="stat-content">
@@ -45,10 +80,23 @@
           </div>
         </div>
 
-        <div class="stat-card" :class="{ active: filter === 'completed' }" @click="setFilter('completed')">
+        <div
+          class="stat-card"
+          :class="{ active: filter === 'completed' }"
+          @click="setFilter('completed')"
+        >
           <div class="stat-icon completed">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            <svg
+              width="24"
+              height="24"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                clip-rule="evenodd"
+              />
             </svg>
           </div>
           <div class="stat-content">
@@ -61,8 +109,19 @@
       <!-- Search Bar -->
       <div class="search-section">
         <div class="search-box">
-          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          <svg
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
           <input
             type="text"
@@ -74,14 +133,24 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="loading-state">
+      <div
+        v-if="isLoading"
+        class="loading-state"
+      >
         <div class="spinner"></div>
         <p>{{ $t('common.loading') }}</p>
       </div>
 
       <!-- Ideas Grid -->
-      <div v-else-if="ideas.length > 0" class="ideas-grid">
-        <div v-for="idea in ideas" :key="idea.id" class="idea-card">
+      <div
+        v-else-if="ideas.length > 0"
+        class="ideas-grid"
+      >
+        <div
+          v-for="idea in ideas"
+          :key="idea.id"
+          class="idea-card"
+        >
           <div class="idea-header">
             <span
               class="idea-type-badge"
@@ -89,7 +158,10 @@
             >
               {{ getIdeaTypeName(idea.idea_type) }}
             </span>
-            <span class="idea-status" :class="getStatusClass(idea.status)">
+            <span
+              class="idea-status"
+              :class="getStatusClass(idea.status)"
+            >
               {{ $t(`ideasBank.status.${idea.status}`) }}
             </span>
           </div>
@@ -99,23 +171,52 @@
 
           <div class="idea-meta">
             <div class="meta-item">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+              <svg
+                width="16"
+                height="16"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                  clip-rule="evenodd"
+                />
               </svg>
               <span>{{ idea.user?.username || $t('common.unknown') }}</span>
             </div>
-            <div class="meta-item" v-if="idea.department">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+            <div
+              class="meta-item"
+              v-if="idea.department"
+            >
+              <svg
+                width="16"
+                height="16"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
+                  clip-rule="evenodd"
+                />
               </svg>
               <span>{{ idea.department?.name }}</span>
             </div>
           </div>
 
-          <div class="idea-footer" v-if="idea.current_assignee">
+          <div
+            class="idea-footer"
+            v-if="idea.current_assignee"
+          >
             <div class="assignee">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+              <svg
+                width="16"
+                height="16"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
               </svg>
               <span>{{ $t('ideasBank.assignedTo') }}: {{ idea.current_assignee?.username }}</span>
             </div>
@@ -124,16 +225,33 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="empty-state">
-        <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+      <div
+        v-else
+        class="empty-state"
+      >
+        <svg
+          width="64"
+          height="64"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+          />
         </svg>
         <h3>{{ $t('ideasBank.noIdeas') }}</h3>
         <p>{{ $t('ideasBank.noIdeasDescription') }}</p>
       </div>
 
       <!-- Pagination -->
-      <div v-if="ideas.length > 0" class="pagination">
+      <div
+        v-if="ideas.length > 0"
+        class="pagination"
+      >
         <div class="pagination-info-left">
           {{ $t('ideasBank.showing') }}
           <strong>{{ ((pagination.current_page - 1) * pagination.per_page) + 1 }}</strong>
@@ -149,8 +267,19 @@
             :disabled="pagination.current_page === 1"
             @click="goToPage(pagination.current_page - 1)"
           >
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             {{ $t('common.previous') }}
           </button>
@@ -163,8 +292,19 @@
             @click="goToPage(pagination.current_page + 1)"
           >
             {{ $t('common.next') }}
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
         </div>
@@ -174,109 +314,112 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import axios from 'axios'
-import { useAuthStore } from '../stores/auth'
-import { API_URL } from '../config/api'
-import AppLayout from '../components/AppLayout.vue'
+import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import axios from "axios";
+import { useAuthStore } from "../stores/auth";
+import { API_URL } from "../config/api";
+import AppLayout from "../components/AppLayout.vue";
+import TableHeader from "../components/common/TableHeader.vue";
+import { httpRequest } from "../services/api";
+import { objectToQueryString } from "../services/handle";
+const { locale } = useI18n();
+const authStore = useAuthStore();
+const { t } = useI18n();
+const ideas = ref([]);
+const isLoading = ref(false);
+const search = ref("");
+const filter = ref("all");
+const pageBreadcrumbs = [
+  { name: t("nav.dashboard"), link: "/" },
 
-const { locale } = useI18n()
-const authStore = useAuthStore()
-
-const ideas = ref([])
-const isLoading = ref(false)
-const search = ref('')
-const filter = ref('all')
+  { name: t("ideasBank.title"), link: "/ideas-bank" },
+];
 const pagination = ref({
   current_page: 1,
   last_page: 1,
   per_page: 12,
-  total: 0
-})
+  total: 0,
+});
+
 const stats = ref({
   total: 0,
   under_review: 0,
   in_progress: 0,
-  completed: 0
-})
+  completed: 0,
+});
 
-let searchTimeout = null
+let searchTimeout = null;
 
 const fetchIdeas = async (page = 1) => {
-  isLoading.value = true
+  isLoading.value = true;
   try {
     const params = {
       page,
       per_page: pagination.value.per_page,
       search: search.value,
-      filter: filter.value
-    }
+      filter: filter.value,
+    };
+    let queryString = objectToQueryString(params);
+    const response = await httpRequest(`/ideas-bank?${queryString}`);
 
-    const response = await axios.get(`${API_URL}/ideas-bank`, {
-      params,
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
-    })
-
-    ideas.value = response.data.ideas
-    pagination.value = response.data.pagination
-    stats.value = response.data.stats
+    ideas.value = response.data.ideas;
+    pagination.value = response.data.pagination;
+    stats.value = response.data.stats;
   } catch (error) {
-    console.error('Failed to fetch ideas:', error)
+    console.error("Failed to fetch ideas:", error);
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 const debouncedSearch = () => {
-  clearTimeout(searchTimeout)
+  clearTimeout(searchTimeout);
   searchTimeout = setTimeout(() => {
-    fetchIdeas(1)
-  }, 500)
-}
+    fetchIdeas(1);
+  }, 500);
+};
 
 const setFilter = (newFilter) => {
-  filter.value = newFilter
-  fetchIdeas(1)
-}
+  filter.value = newFilter;
+  fetchIdeas(1);
+};
 
 const goToPage = (page) => {
   if (page >= 1 && page <= pagination.value.last_page) {
-    fetchIdeas(page)
+    fetchIdeas(page);
   }
-}
+};
 
 const getIdeaTypeName = (ideaType) => {
-  if (!ideaType) return ''
-  return locale.value === 'ar' ? ideaType.name_ar : ideaType.name
-}
+  if (!ideaType) return "";
+  return locale.value === "ar" ? ideaType.name_ar : ideaType.name;
+};
 
 const getStatusClass = (status) => {
   const classes = {
-    'pending': 'status-pending',
-    'under_review': 'status-under-review',
-    'in_progress': 'status-in-progress',
-    'completed': 'status-completed'
-  }
-  return classes[status] || 'status-pending'
-}
+    pending: "status-pending",
+    under_review: "status-under-review",
+    in_progress: "status-in-progress",
+    completed: "status-completed",
+  };
+  return classes[status] || "status-pending";
+};
 
 const truncateText = (text, maxLength) => {
-  if (!text) return ''
-  if (text.length <= maxLength) return text
-  return text.substring(0, maxLength) + '...'
-}
+  if (!text) return "";
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + "...";
+};
 
 onMounted(() => {
-  fetchIdeas()
-})
+  fetchIdeas();
+});
 </script>
 
 <style scoped>
 .ideas-bank {
-  max-width: 1400px;
+  max-width: 1440px;
   margin: 0 auto;
 }
 
@@ -316,6 +459,7 @@ onMounted(() => {
   transition: all 0.2s ease;
   border: 2px solid transparent;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  direction: ltr;
 }
 
 .stat-card:hover {
@@ -324,7 +468,7 @@ onMounted(() => {
 }
 
 .stat-card.active {
-  border-color: #02735E;
+  border-color: #02735e;
   background: #f0fdf4;
 }
 
@@ -339,7 +483,7 @@ onMounted(() => {
 }
 
 .stat-icon.total {
-  background: linear-gradient(135deg, #02735E, #015a4a);
+  background: linear-gradient(135deg, #02735e, #015a4a);
 }
 
 .stat-icon.under-review {
@@ -357,6 +501,7 @@ onMounted(() => {
 .stat-content {
   display: flex;
   flex-direction: column;
+  text-align: right;
 }
 
 .stat-value {
@@ -422,14 +567,16 @@ onMounted(() => {
   width: 40px;
   height: 40px;
   border: 3px solid #e5e7eb;
-  border-top-color: #02735E;
+  border-top-color: #02735e;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: 16px;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Ideas Grid */
@@ -544,12 +691,12 @@ onMounted(() => {
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  color: #02735E;
+  color: #02735e;
   font-weight: 500;
 }
 
 .assignee svg {
-  color: #02735E;
+  color: #02735e;
 }
 
 /* Empty State */
@@ -615,7 +762,7 @@ onMounted(() => {
   align-items: center;
   gap: 6px;
   padding: 10px 16px;
-  background: #02735E;
+  background: #02735e;
   color: white;
   border: none;
   border-radius: 8px;
@@ -679,7 +826,7 @@ onMounted(() => {
 }
 
 [dir="rtl"] .stat-content {
-  text-align: right;
+  text-align: left;
 }
 
 [dir="rtl"] .pagination {

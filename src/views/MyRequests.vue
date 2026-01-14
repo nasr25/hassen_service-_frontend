@@ -3,20 +3,45 @@
     <div class="my-requests">
       <!-- Header Actions -->
       <div class="page-header">
-        <div>
-          <h1>{{ $t('nav.myRequests') }}</h1>
-          <p>{{ $t('dashboard.myRequests.description') }}</p>
-        </div>
+        <TableHeader
+          :title="$t('nav.myRequests')  "
+          :breadcrumbs="pageBreadcrumbs"
+        />
+
         <div class="header-actions">
-          <BaseButton variant="secondary" @click="loadRequests">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+          <BaseButton
+            variant="secondary"
+            @click="loadRequests"
+          >
+            <svg
+              width="20"
+              height="20"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                clip-rule="evenodd"
+              />
             </svg>
             {{ $t('common.refresh') }}
           </BaseButton>
-          <BaseButton variant="primary" @click="createNew">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
+          <BaseButton
+            variant="primary"
+            @click="createNew"
+          >
+            <svg
+              width="20"
+              height="20"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                clip-rule="evenodd"
+              />
             </svg>
             {{ $t('request.newRequest') }}
           </BaseButton>
@@ -24,25 +49,49 @@
       </div>
 
       <!-- Error Alert -->
-      <div v-if="error" class="alert alert-error">
+      <div
+        v-if="error"
+        class="alert alert-error"
+      >
         {{ error }}
       </div>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="loading-state">
+      <div
+        v-if="isLoading"
+        class="loading-state"
+      >
         <div class="spinner"></div>
         <p>{{ $t('common.loading') }}</p>
       </div>
 
       <!-- Empty State -->
-      <BaseCard v-else-if="requests.length === 0" class="empty-state-card">
+      <BaseCard
+        v-else-if="requests.length === 0"
+        class="empty-state-card"
+      >
         <div class="empty-state">
-          <svg width="96" height="96" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          <svg
+            width="96"
+            height="96"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
           </svg>
           <h2>{{ $t('request.noRequests') }}</h2>
           <p>{{ $t('request.noRequestsMessage') }}</p>
-          <BaseButton variant="primary" size="lg" @click="createNew">
+          <BaseButton
+            variant="primary"
+            size="lg"
+            @click="createNew"
+          >
             {{ $t('request.newRequest') }}
           </BaseButton>
         </div>
@@ -81,16 +130,37 @@
             @click="viewDetails(request.id)"
           >
             <template #actions>
-              <button v-if="request.status === 'draft' || request.status === 'need_more_details' || request.status === 'rejected'" class="edit-btn" @click.stop="editRequest(request.id)">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+              <button
+                v-if="request.status === 'draft' || request.status === 'need_more_details' || request.status === 'rejected'"
+                class="edit-btn"
+                @click.stop="editRequest(request.id)"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                 </svg>
                 {{ $t('common.edit') }}
               </button>
-              <button class="view-btn" @click.stop="viewDetails(request.id)">
+              <button
+                class="view-btn"
+                @click.stop="viewDetails(request.id)"
+              >
                 {{ $t('request.viewDetails') }}
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               </button>
             </template>
@@ -108,29 +178,35 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
-import { useI18n } from 'vue-i18n'
-import axios from 'axios'
-import AppLayout from '../components/AppLayout.vue'
-import BaseCard from '../components/BaseCard.vue'
-import BaseButton from '../components/BaseButton.vue'
-import BaseBadge from '../components/BaseBadge.vue'
-import RequestCard from '../components/RequestCard.vue'
-import Pagination from '../components/common/Pagination.vue'
-import { useAlert } from '../composables/useAlert'
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../stores/auth";
+import { useI18n } from "vue-i18n";
+import axios from "axios";
+import AppLayout from "../components/AppLayout.vue";
+import BaseCard from "../components/BaseCard.vue";
+import BaseButton from "../components/BaseButton.vue";
+import BaseBadge from "../components/BaseBadge.vue";
+import RequestCard from "../components/RequestCard.vue";
+import Pagination from "../components/common/Pagination.vue";
+import { useAlert } from "../composables/useAlert";
+import TableHeader from "../components/common/TableHeader.vue";
+import { httpRequest } from "../services/api";
+import { objectToQueryString } from "../services/handle";
+const router = useRouter();
+const authStore = useAuthStore();
+const { t } = useI18n();
+const { showSuccess, showError } = useAlert();
 
-const router = useRouter()
-const authStore = useAuthStore()
-const { t } = useI18n()
-const { showSuccess, showError } = useAlert()
+const requests = ref([]);
+const error = ref(null);
+const isLoading = ref(true);
+const filterStatus = ref("all");
+const pageBreadcrumbs = [
+  { name: t("nav.dashboard"), link: "/" },
 
-const requests = ref([])
-const error = ref(null)
-const isLoading = ref(true)
-const filterStatus = ref('all')
-
+  { name: t("nav.myRequests"), link: "/requests" },
+];
 // Pagination state
 const pagination = ref({
   total: 0,
@@ -139,128 +215,125 @@ const pagination = ref({
   last_page: 1,
   from: 0,
   to: 0,
-})
+});
 
-import { API_URL, BASE_URL } from '../config/api'
+import { API_URL, BASE_URL } from "../config/api";
 
 const statuses = computed(() => [
-  { label: t('common.all'), value: 'all' },
-  { label: t('status.draft'), value: 'draft' },
-  { label: t('status.pending'), value: 'pending' },
-  { label: t('status.in_review'), value: 'in_review' },
-  { label: t('status.need_more_details'), value: 'need_more_details' },
-  { label: t('status.approved'), value: 'approved' },
-  { label: t('status.rejected'), value: 'rejected' },
-  { label: t('status.completed'), value: 'completed' }
-])
+  { label: t("common.all"), value: "all" },
+  { label: t("status.draft"), value: "draft" },
+  { label: t("status.pending"), value: "pending" },
+  { label: t("status.in_review"), value: "in_review" },
+  { label: t("status.need_more_details"), value: "need_more_details" },
+  { label: t("status.approved"), value: "approved" },
+  { label: t("status.rejected"), value: "rejected" },
+  { label: t("status.completed"), value: "completed" },
+]);
 
 // Watch for filter changes
 const onFilterChange = (status) => {
-  filterStatus.value = status
-  pagination.value.current_page = 1
-  loadRequests()
-}
+  filterStatus.value = status;
+  pagination.value.current_page = 1;
+  loadRequests();
+};
 
 onMounted(async () => {
-  await loadRequests()
-})
+  await loadRequests();
+});
 
 const loadRequests = async () => {
   try {
-    isLoading.value = true
+    isLoading.value = true;
 
     const params = {
       page: pagination.value.current_page,
-      per_page: pagination.value.per_page
-    }
+      per_page: pagination.value.per_page,
+    };
 
     // Add status filter if not 'all'
-    if (filterStatus.value !== 'all') {
-      params.status = filterStatus.value
+    if (filterStatus.value !== "all") {
+      params.status = filterStatus.value;
     }
 
-    const response = await axios.get(`${API_URL}/requests`, {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
-      },
-      params
-    })
+    let queryString = objectToQueryString(params);
+    const response = await httpRequest(`/requests?${queryString}`);
 
-    requests.value = response.data.requests
+    requests.value = response.data.requests;
 
     // Update pagination state
     if (response.data.pagination) {
-      pagination.value = response.data.pagination
+      pagination.value = response.data.pagination;
     }
   } catch (err) {
-    console.error('Failed to load requests:', err)
-    showError(err.response?.data?.message || err.message || 'Failed to load requests')
+    console.error("Failed to load requests:", err);
+    showError(
+      err.response?.data?.message || err.message || "Failed to load requests"
+    );
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 // Pagination methods
 const goToPage = (page) => {
   if (page >= 1 && page <= pagination.value.last_page) {
-    pagination.value.current_page = page
-    loadRequests()
+    pagination.value.current_page = page;
+    loadRequests();
   }
-}
+};
 
 const createNew = () => {
-  router.push('/requests/new')
-}
+  router.push("/requests/new");
+};
 
 const editRequest = (id) => {
-  router.push(`/requests/${id}/edit`)
-}
+  router.push(`/requests/${id}/edit`);
+};
 
 const viewDetails = (id) => {
-  router.push(`/requests/${id}`)
-}
+  router.push(`/requests/${id}`);
+};
 
 const getStatusVariant = (status) => {
   const variants = {
-    draft: 'gray',
-    pending: 'warning',
-    in_review: 'info',
-    in_progress: 'primary',
-    need_more_details: 'warning',
-    missing_requirement: 'warning',
-    approved: 'success',
-    rejected: 'error',
-    completed: 'success'
-  }
-  return variants[status] || 'gray'
-}
+    draft: "gray",
+    pending: "warning",
+    in_review: "info",
+    in_progress: "primary",
+    need_more_details: "warning",
+    missing_requirement: "warning",
+    approved: "success",
+    rejected: "error",
+    completed: "success",
+  };
+  return variants[status] || "gray";
+};
 
 const formatStatus = (status) => {
-  return t(`status.${status}`)
-}
+  return t(`status.${status}`);
+};
 
 const formatDate = (dateString) => {
-  if (!dateString) return t('common.notAvailable')
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
-}
+  if (!dateString) return t("common.notAvailable");
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
 
 const truncate = (text, length) => {
-  if (!text) return ''
-  return text.length > length ? text.substring(0, length) + '...' : text
-}
+  if (!text) return "";
+  return text.length > length ? text.substring(0, length) + "..." : text;
+};
 </script>
 
 <style scoped>
 .my-requests {
-  max-width: 1400px;
+  max-width: 1440px;
   margin: 0 auto;
 }
-
 /* Page Header */
 .page-header {
   display: flex;

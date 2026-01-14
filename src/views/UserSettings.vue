@@ -7,22 +7,38 @@
           <h1>⚙️ {{ $t('userSettings.title') }}</h1>
           <p class="welcome-subtitle">{{ $t('userSettings.subtitle') }}</p>
         </div>
-        <button @click="saveSettings" class="btn-save" :disabled="isSaving">
-          <svg v-if="!isSaving" width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"/>
+        <button
+          @click="saveSettings"
+          class="btn-save"
+          :disabled="isSaving"
+        >
+          <svg
+            v-if="!isSaving"
+            width="20"
+            height="20"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z" />
           </svg>
           {{ isSaving ? $t('common.saving') : $t('userSettings.saveSettings') }}
         </button>
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="loading">
+      <div
+        v-if="loading"
+        class="loading"
+      >
         <div class="spinner"></div>
         <p>{{ $t('common.loading') }}</p>
       </div>
 
       <!-- Settings Content -->
-      <div v-else class="settings-content">
+      <div
+        v-else
+        class="settings-content"
+      >
         <!-- Email Notifications Settings - Hidden (Always Enabled) -->
         <!-- Email notifications are always enabled and cannot be disabled by users -->
 
@@ -30,8 +46,13 @@
         <div class="settings-card">
           <div class="card-header">
             <div class="header-left">
-              <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+              <svg
+                width="24"
+                height="24"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
               </svg>
               <div>
                 <h2>{{ $t('userSettings.inAppNotifications') }}</h2>
@@ -53,7 +74,10 @@
                     type="checkbox"
                     class="toggle-input"
                   />
-                  <label for="notification-request-created" class="toggle-label"></label>
+                  <label
+                    for="notification-request-created"
+                    class="toggle-label"
+                  ></label>
                 </div>
               </div>
 
@@ -69,7 +93,10 @@
                     type="checkbox"
                     class="toggle-input"
                   />
-                  <label for="notification-status-change" class="toggle-label"></label>
+                  <label
+                    for="notification-status-change"
+                    class="toggle-label"
+                  ></label>
                 </div>
               </div>
 
@@ -85,7 +112,10 @@
                     type="checkbox"
                     class="toggle-input"
                   />
-                  <label for="notification-request-assigned" class="toggle-label"></label>
+                  <label
+                    for="notification-request-assigned"
+                    class="toggle-label"
+                  ></label>
                 </div>
               </div>
 
@@ -101,7 +131,10 @@
                     type="checkbox"
                     class="toggle-input"
                   />
-                  <label for="notification-request-approved" class="toggle-label"></label>
+                  <label
+                    for="notification-request-approved"
+                    class="toggle-label"
+                  ></label>
                 </div>
               </div>
 
@@ -117,7 +150,10 @@
                     type="checkbox"
                     class="toggle-input"
                   />
-                  <label for="notification-request-rejected" class="toggle-label"></label>
+                  <label
+                    for="notification-request-rejected"
+                    class="toggle-label"
+                  ></label>
                 </div>
               </div>
 
@@ -133,7 +169,10 @@
                     type="checkbox"
                     class="toggle-input"
                   />
-                  <label for="notification-request-completed" class="toggle-label"></label>
+                  <label
+                    for="notification-request-completed"
+                    class="toggle-label"
+                  ></label>
                 </div>
               </div>
             </div>
@@ -143,9 +182,21 @@
 
       <!-- Success Message -->
       <Transition name="slide-fade">
-        <div v-if="successMessage" class="alert alert-success">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        <div
+          v-if="successMessage"
+          class="alert alert-success"
+        >
+          <svg
+            width="20"
+            height="20"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"
+            />
           </svg>
           {{ successMessage }}
         </div>
@@ -153,9 +204,21 @@
 
       <!-- Error Message -->
       <Transition name="slide-fade">
-        <div v-if="error && !loading" class="alert alert-error-fixed">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+        <div
+          v-if="error && !loading"
+          class="alert alert-error-fixed"
+        >
+          <svg
+            width="20"
+            height="20"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clip-rule="evenodd"
+            />
           </svg>
           {{ error }}
         </div>
@@ -165,22 +228,23 @@
 </template>
 
 <script setup>
-import { API_URL, BASE_URL } from '../config/api'
-import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useAlert } from '../composables/useAlert'
-import axios from 'axios'
-import { useAuthStore } from '../stores/auth'
-import AppLayout from '../components/AppLayout.vue'
+import { API_URL, BASE_URL } from "../config/api";
+import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { useAlert } from "../composables/useAlert";
+import axios from "axios";
+import { useAuthStore } from "../stores/auth";
+import AppLayout from "../components/AppLayout.vue";
+import { objectToQueryString } from "../services/handle";
+import { httpRequest } from "../services/api";
+const { t } = useI18n();
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert();
+const authStore = useAuthStore();
 
-const { t } = useI18n()
-const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
-const authStore = useAuthStore()
-
-const loading = ref(true)
-const isSaving = ref(false)
-const error = ref(null)
-const successMessage = ref(null)
+const loading = ref(true);
+const isSaving = ref(false);
+const error = ref(null);
+const successMessage = ref(null);
 
 const settings = ref({
   email: {
@@ -189,7 +253,7 @@ const settings = ref({
     request_assigned: true,
     request_approved: true,
     request_rejected: true,
-    request_completed: true
+    request_completed: true,
   },
   notification: {
     request_created: true,
@@ -197,40 +261,36 @@ const settings = ref({
     request_assigned: true,
     request_approved: true,
     request_rejected: true,
-    request_completed: true
-  }
-})
+    request_completed: true,
+  },
+});
 
 const fetchSettings = async () => {
   try {
-    loading.value = true
-    error.value = null
+    loading.value = true;
+    error.value = null;
 
-    const response = await axios.get('${API_URL}/user/settings', {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
-    })
+    const response = await httpRequest("${API_URL}/user/settings");
 
     if (response.data.settings) {
-      settings.value = response.data.settings
+      settings.value = response.data.settings;
     }
   } catch (err) {
-    console.error('Failed to fetch settings:', err)
+    console.error("Failed to fetch settings:", err);
     // If 404, settings don't exist yet, use defaults
     if (err.response?.status !== 404) {
-      showError(t('userSettings.failedToLoad'))
+      showError(t("userSettings.failedToLoad"));
     }
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const saveSettings = async () => {
   try {
-    isSaving.value = true
-    successMessage.value = null
-    error.value = null
+    isSaving.value = true;
+    successMessage.value = null;
+    error.value = null;
 
     // Ensure email notifications are always enabled
     const settingsToSave = {
@@ -241,41 +301,45 @@ const saveSettings = async () => {
         request_assigned: true,
         request_approved: true,
         request_rejected: true,
-        request_completed: true
-      }
-    }
+        request_completed: true,
+      },
+    };
 
-    await axios.post('${API_URL}/user/settings', {
-      settings: settingsToSave
-    }, {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
+    await axios.post(
+      "${API_URL}/user/settings",
+      {
+        settings: settingsToSave,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    })
+    );
 
     // Show success message with icon
-    successMessage.value = t('userSettings.savedSuccessfully')
+    successMessage.value = t("userSettings.savedSuccessfully");
 
     // Auto-hide success message after 3 seconds
     setTimeout(() => {
-      successMessage.value = null
-    }, 3000)
+      successMessage.value = null;
+    }, 3000);
   } catch (err) {
-    console.error('Failed to save settings:', err)
-    showError(t('userSettings.failedToSave'))
+    console.error("Failed to save settings:", err);
+    showError(t("userSettings.failedToSave"));
 
     // Auto-hide error message after 5 seconds
     setTimeout(() => {
-      error.value = null
-    }, 5000)
+      error.value = null;
+    }, 5000);
   } finally {
-    isSaving.value = false
+    isSaving.value = false;
   }
-}
+};
 
 onMounted(() => {
-  fetchSettings()
-})
+  fetchSettings();
+});
 </script>
 
 <style scoped>
@@ -292,7 +356,7 @@ onMounted(() => {
   justify-content: space-between;
   margin-bottom: var(--spacing-8);
   padding: var(--spacing-6);
-  background: linear-gradient(135deg, #02735E 0%, #02735E 100%);
+  background: linear-gradient(135deg, #02735e 0%, #02735e 100%);
   border-radius: var(--radius-2xl);
   color: white;
 }
@@ -358,14 +422,16 @@ html[dir="rtl"] .btn-save {
   width: 40px;
   height: 40px;
   border: 3px solid var(--color-border);
-  border-top-color: #02735E;
+  border-top-color: #02735e;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: var(--spacing-4);
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .alert {
@@ -384,7 +450,7 @@ html[dir="rtl"] .btn-save {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  background: linear-gradient(135deg, #02735E, #015a4a);
+  background: linear-gradient(135deg, #02735e, #015a4a);
   color: white;
   border: none;
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
@@ -585,7 +651,7 @@ html[dir="rtl"] .setting-info {
 }
 
 .toggle-label::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 2px;
   left: 2px;
@@ -597,7 +663,7 @@ html[dir="rtl"] .setting-info {
 }
 
 .toggle-input:checked + .toggle-label {
-  background: #02735E;
+  background: #02735e;
 }
 
 .toggle-input:checked + .toggle-label::after {

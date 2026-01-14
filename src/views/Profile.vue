@@ -10,18 +10,27 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="loading">
+      <div
+        v-if="loading"
+        class="loading"
+      >
         <div class="spinner"></div>
         <p>{{ $t('common.loading') }}</p>
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="alert alert-error">
+      <div
+        v-else-if="error"
+        class="alert alert-error"
+      >
         {{ error }}
       </div>
 
       <!-- Profile Content -->
-      <div v-else class="profile-content">
+      <div
+        v-else
+        class="profile-content"
+      >
         <!-- Account Information Card -->
         <div class="profile-card">
           <div class="card-header">
@@ -30,8 +39,17 @@
           <div class="card-body">
             <div class="profile-avatar-section">
               <div class="profile-avatar-large">
-                <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                <svg
+                  width="48"
+                  height="48"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               </div>
               <div class="profile-main-info">
@@ -45,8 +63,17 @@
             <div class="info-grid">
               <div class="info-item">
                 <div class="info-label">
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                  <svg
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                   {{ $t('profile.fullName') }}
                 </div>
@@ -55,9 +82,14 @@
 
               <div class="info-item">
                 <div class="info-label">
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                  <svg
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                   </svg>
                   {{ $t('profile.email') }}
                 </div>
@@ -66,9 +98,18 @@
 
               <div class="info-item">
                 <div class="info-label">
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
-                    <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
+                  <svg
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z"
+                      clip-rule="evenodd"
+                    />
+                    <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
                   </svg>
                   {{ $t('profile.role') }}
                 </div>
@@ -81,8 +122,17 @@
 
               <div class="info-item">
                 <div class="info-label">
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                  <svg
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                   {{ $t('profile.memberSince') }}
                 </div>
@@ -93,16 +143,32 @@
         </div>
 
         <!-- Department Information -->
-        <div v-if="departments.length > 0" class="profile-card">
+        <div
+          v-if="departments.length > 0"
+          class="profile-card"
+        >
           <div class="card-header">
             <h2>🏢 {{ $t('profile.departments') }}</h2>
           </div>
           <div class="card-body">
             <div class="departments-list">
-              <div v-for="dept in departments" :key="dept.id" class="department-item">
+              <div
+                v-for="dept in departments"
+                :key="dept.id"
+                class="department-item"
+              >
                 <div class="department-icon">
-                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+                  <svg
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </div>
                 <div class="department-details">
@@ -126,9 +192,18 @@
             <div class="stats-grid">
               <div class="stat-item">
                 <div class="stat-icon stat-icon-primary">
-                  <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                  <svg
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                    <path
+                      fill-rule="evenodd"
+                      d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </div>
                 <div class="stat-details">
@@ -139,9 +214,18 @@
 
               <div class="stat-item">
                 <div class="stat-icon stat-icon-info">
-                  <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
-                    <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
+                  <svg
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                    <path
+                      fill-rule="evenodd"
+                      d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </div>
                 <div class="stat-details">
@@ -152,8 +236,17 @@
 
               <div class="stat-item">
                 <div class="stat-icon stat-icon-warning">
-                  <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                  <svg
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </div>
                 <div class="stat-details">
@@ -164,8 +257,17 @@
 
               <div class="stat-item">
                 <div class="stat-icon stat-icon-success">
-                  <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  <svg
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </div>
                 <div class="stat-details">
@@ -176,8 +278,17 @@
 
               <div class="stat-item">
                 <div class="stat-icon stat-icon-purple">
-                  <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  <svg
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </div>
                 <div class="stat-details">
@@ -188,8 +299,17 @@
 
               <div class="stat-item">
                 <div class="stat-icon stat-icon-error">
-                  <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                  <svg
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </div>
                 <div class="stat-details">
@@ -206,55 +326,49 @@
 </template>
 
 <script setup>
-import { API_URL, BASE_URL } from '../config/api'
-import { ref, onMounted } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useAlert } from '../composables/useAlert'
-import axios from 'axios'
-import { useAuthStore } from '../stores/auth'
-import AppLayout from '../components/AppLayout.vue'
-import BaseBadge from '../components/BaseBadge.vue'
+import { API_URL, BASE_URL } from "../config/api";
+import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
+import { useAlert } from "../composables/useAlert";
+import axios from "axios";
+import { useAuthStore } from "../stores/auth";
+import AppLayout from "../components/AppLayout.vue";
+import BaseBadge from "../components/BaseBadge.vue";
+import { objectToQueryString } from "../services/handle";
+import { httpRequest } from "../services/api";
 
-const { t } = useI18n()
-const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
-const authStore = useAuthStore()
+const { t } = useI18n();
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert();
+const authStore = useAuthStore();
 
-const loading = ref(true)
-const error = ref(null)
-const user = ref(authStore.user || {})
-const departments = ref([])
+const loading = ref(true);
+const error = ref(null);
+const user = ref(authStore.user || {});
+const departments = ref([]);
 const statistics = ref({
   totalRequests: 0,
   draftRequests: 0,
   pendingRequests: 0,
   approvedRequests: 0,
   completedRequests: 0,
-  rejectedRequests: 0
-})
+  rejectedRequests: 0,
+});
 
 const fetchProfile = async () => {
   try {
-    loading.value = true
-    error.value = null
+    loading.value = true;
+    error.value = null;
 
-    const response = await axios.get(`${API_URL}/auth/user`, {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
-    })
+    const response = await httpRequest(`/auth/user`);
 
     if (response.data && response.data.user) {
-      user.value = response.data.user
-      departments.value = response.data.user.departments || []
+      user.value = response.data.user;
+      departments.value = response.data.user.departments || [];
     }
 
     // Fetch user statistics
-    const statsResponse = await axios.get(`${API_URL}/dashboard/statistics`, {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
-    })
 
+    const statsResponse = await httpRequest(`/dashboard/statistics`);
     if (statsResponse.data.stats) {
       statistics.value = {
         totalRequests: statsResponse.data.stats.totalRequests || 0,
@@ -262,40 +376,40 @@ const fetchProfile = async () => {
         pendingRequests: statsResponse.data.stats.pendingRequests || 0,
         approvedRequests: statsResponse.data.stats.approvedRequests || 0,
         completedRequests: statsResponse.data.stats.completedRequests || 0,
-        rejectedRequests: statsResponse.data.stats.rejectedRequests || 0
-      }
+        rejectedRequests: statsResponse.data.stats.rejectedRequests || 0,
+      };
     }
   } catch (err) {
-    console.error('Failed to fetch profile:', err)
-    showError(t('profile.failedToLoad'))
+    console.error("Failed to fetch profile:", err);
+    showError(t("profile.failedToLoad"));
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const getRoleBadgeVariant = (role) => {
   const variants = {
-    'Admin': 'error',
-    'Manager': 'warning',
-    'User': 'primary',
-    'Employee': 'info'
-  }
-  return variants[role] || 'gray'
-}
+    Admin: "error",
+    Manager: "warning",
+    User: "primary",
+    Employee: "info",
+  };
+  return variants[role] || "gray";
+};
 
 const formatDate = (dateString) => {
-  if (!dateString) return '-'
-  const date = new Date(dateString)
+  if (!dateString) return "-";
+  const date = new Date(dateString);
   return date.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
 
 onMounted(() => {
-  fetchProfile()
-})
+  fetchProfile();
+});
 </script>
 
 <style scoped>
@@ -315,7 +429,7 @@ html[dir="rtl"] .profile-page {
   justify-content: space-between;
   margin-bottom: var(--spacing-8);
   padding: var(--spacing-6);
-  background: linear-gradient(135deg, #02735E 0%, #02735E 100%);
+  background: linear-gradient(135deg, #02735e 0%, #02735e 100%);
   border-radius: var(--radius-2xl);
   color: white;
 }
@@ -351,14 +465,16 @@ html[dir="rtl"] .welcome-section {
   width: 40px;
   height: 40px;
   border: 3px solid var(--color-border);
-  border-top-color: #02735E;
+  border-top-color: #02735e;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: var(--spacing-4);
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .alert {
@@ -432,7 +548,7 @@ html[dir="rtl"] .profile-avatar-section {
 .profile-avatar-large {
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #02735E, #015a4a);
+  background: linear-gradient(135deg, #02735e, #015a4a);
   color: white;
   border-radius: var(--radius-full);
   display: flex;
@@ -521,13 +637,13 @@ html[dir="rtl"] .department-item {
 
 .department-item:hover {
   background: #f0fdf4;
-  border-color: #02735E;
+  border-color: #02735e;
 }
 
 .department-icon {
   width: 40px;
   height: 40px;
-  background: #02735E;
+  background: #02735e;
   color: white;
   border-radius: var(--radius-lg);
   display: flex;
@@ -610,7 +726,7 @@ html[dir="rtl"] .stat-item {
 }
 
 .stat-icon-success {
-  background: linear-gradient(135deg, #02735E, #015a4a);
+  background: linear-gradient(135deg, #02735e, #015a4a);
 }
 
 .stat-icon-purple {

@@ -3,34 +3,67 @@
     <div class="request-history">
       <!-- Page Header -->
       <div class="page-header">
-        <BaseButton variant="secondary" @click="goBack">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+        <BaseButton
+          variant="secondary"
+          @click="goBack"
+        >
+          <svg
+            width="20"
+            height="20"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+              clip-rule="evenodd"
+            />
           </svg>
           {{ $t('requestHistory.backToAllRequests') }}
         </BaseButton>
         <h1>{{ $t('request.requestHistory') }}</h1>
-        <BaseButton variant="secondary" @click="loadRequest">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+        <BaseButton
+          variant="secondary"
+          @click="loadRequest"
+        >
+          <svg
+            width="20"
+            height="20"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+              clip-rule="evenodd"
+            />
           </svg>
           {{ $t('common.refresh') }}
         </BaseButton>
       </div>
 
       <!-- Error Alert -->
-      <div v-if="error" class="alert alert-error">
+      <div
+        v-if="error"
+        class="alert alert-error"
+      >
         {{ error }}
       </div>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="loading-state">
+      <div
+        v-if="isLoading"
+        class="loading-state"
+      >
         <div class="spinner"></div>
         <p>{{ $t('requestHistory.loadingDetails') }}</p>
       </div>
 
       <!-- Request Details -->
-      <div v-else-if="request" class="request-details">
+      <div
+        v-else-if="request"
+        class="request-details"
+      >
         <!-- Request Overview -->
         <BaseCard class="section-card">
           <h2 class="section-title">{{ $t('requestHistory.requestOverview') }}</h2>
@@ -69,19 +102,31 @@
               <strong>{{ $t('requestHistory.submittedAt') }}</strong>
               <span>{{ formatDate(request.submitted_at) }}</span>
             </div>
-            <div v-if="request.expected_execution_date" class="info-item">
+            <div
+              v-if="request.expected_execution_date"
+              class="info-item"
+            >
               <strong>{{ $t('requestHistory.expectedExecutionDate') }}</strong>
               <span>{{ formatDate(request.expected_execution_date) }}</span>
             </div>
-            <div v-if="request.idea_ownership" class="info-item">
+            <div
+              v-if="request.idea_ownership"
+              class="info-item"
+            >
               <strong>{{ $t('request.ideaOwnership') }}</strong>
               <span :class="['ownership-badge', request.idea_ownership === 'shared' ? 'shared' : 'individual']">
                 {{ request.idea_ownership === 'shared' ? $t('request.sharedIdea') : $t('request.individualIdea') }}
               </span>
             </div>
-            <div v-if="request.ideaType" class="info-item">
+            <div
+              v-if="request.ideaType"
+              class="info-item"
+            >
               <strong>{{ $t('request.ideaType') }}</strong>
-              <span class="idea-type-badge" :style="{ backgroundColor: request.ideaType.color + '20', color: request.ideaType.color, borderColor: request.ideaType.color }">
+              <span
+                class="idea-type-badge"
+                :style="{ backgroundColor: request.ideaType.color + '20', color: request.ideaType.color, borderColor: request.ideaType.color }"
+              >
                 {{ $i18n.locale === 'ar' ? request.ideaType.name_ar : request.ideaType.name }}
               </span>
             </div>
@@ -93,19 +138,48 @@
         </BaseCard>
 
         <!-- Attachments -->
-        <BaseCard v-if="request.attachments && request.attachments.length > 0" class="section-card">
+        <BaseCard
+          v-if="request.attachments && request.attachments.length > 0"
+          class="section-card"
+        >
           <h2 class="section-title">{{ $t('requestHistory.attachments') }}</h2>
           <div class="attachments-list">
-            <div v-for="attachment in request.attachments" :key="attachment.id" class="attachment-item">
+            <div
+              v-for="attachment in request.attachments"
+              :key="attachment.id"
+              class="attachment-item"
+            >
               <div class="attachment-info">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
                 <span class="attachment-name">{{ attachment.file_name }}</span>
               </div>
-              <a :href="`${BASE_URL}/storage/${attachment.file_path}`" target="_blank" class="download-link">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              <a
+                :href="`${BASE_URL}/storage/${attachment.file_path}`"
+                target="_blank"
+                class="download-link"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
                 {{ $t('common.download') }}
               </a>
@@ -114,34 +188,82 @@
         </BaseCard>
 
         <!-- Collaborating Employees -->
-        <BaseCard v-if="request.employees && request.employees.length > 0" class="section-card">
+        <BaseCard
+          v-if="request.employees && request.employees.length > 0"
+          class="section-card"
+        >
           <h2 class="section-title">{{ $t('requestHistory.collaboratingEmployees') }} ({{ request.employees.length }})</h2>
           <div class="employees-list">
-            <div v-for="employee in request.employees" :key="employee.id" class="employee-item">
+            <div
+              v-for="employee in request.employees"
+              :key="employee.id"
+              class="employee-item"
+            >
               <div class="employee-avatar">
-                <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                <svg
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               </div>
               <div class="employee-info">
                 <div class="employee-name">{{ employee.employee_name }}</div>
-                <div v-if="employee.employee_email" class="employee-detail">
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                <div
+                  v-if="employee.employee_email"
+                  class="employee-detail"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                   </svg>
                   {{ employee.employee_email }}
                 </div>
-                <div v-if="employee.employee_department" class="employee-detail">
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+                <div
+                  v-if="employee.employee_department"
+                  class="employee-detail"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                   {{ employee.employee_department }}
                 </div>
-                <div v-if="employee.employee_title" class="employee-detail">
-                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
-                    <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
+                <div
+                  v-if="employee.employee_title"
+                  class="employee-detail"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z"
+                      clip-rule="evenodd"
+                    />
+                    <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
                   </svg>
                   {{ employee.employee_title }}
                 </div>
@@ -151,10 +273,17 @@
         </BaseCard>
 
         <!-- Department A Evaluations -->
-        <BaseCard v-if="request.evaluations && request.evaluations.length > 0" class="section-card">
+        <BaseCard
+          v-if="request.evaluations && request.evaluations.length > 0"
+          class="section-card"
+        >
           <h2 class="section-title">{{ $t('requestHistory.departmentAEvaluations') }}</h2>
           <div class="evaluations-list">
-            <div v-for="evaluation in request.evaluations" :key="evaluation.id" class="evaluation-item">
+            <div
+              v-for="evaluation in request.evaluations"
+              :key="evaluation.id"
+              class="evaluation-item"
+            >
               <div class="evaluation-question">
                 <strong>{{ evaluation.question?.question }}</strong>
               </div>
@@ -163,7 +292,10 @@
                   {{ evaluation.is_applied ? $t('evaluations.applied') : $t('evaluations.notApplied') }}
                 </BaseBadge>
               </div>
-              <div v-if="evaluation.notes" class="evaluation-notes">
+              <div
+                v-if="evaluation.notes"
+                class="evaluation-notes"
+              >
                 <strong>{{ $t('evaluations.notes') }}:</strong> {{ evaluation.notes }}
               </div>
               <div class="evaluation-meta">
@@ -174,10 +306,17 @@
         </BaseCard>
 
         <!-- Path Evaluations -->
-        <BaseCard v-if="request.path_evaluations && request.path_evaluations.length > 0" class="section-card">
+        <BaseCard
+          v-if="request.path_evaluations && request.path_evaluations.length > 0"
+          class="section-card"
+        >
           <h2 class="section-title">{{ $t('requestHistory.pathEvaluations') }}</h2>
           <div class="path-evaluations-list">
-            <div v-for="pathEval in request.path_evaluations" :key="pathEval.id" class="path-eval-item">
+            <div
+              v-for="pathEval in request.path_evaluations"
+              :key="pathEval.id"
+              class="path-eval-item"
+            >
               <div class="path-eval-question">
                 <strong>{{ pathEval.question?.question }}</strong>
               </div>
@@ -186,7 +325,10 @@
                   {{ pathEval.is_applied ? $t('evaluations.applied') : $t('evaluations.notApplied') }}
                 </BaseBadge>
               </div>
-              <div v-if="pathEval.notes" class="path-eval-notes">
+              <div
+                v-if="pathEval.notes"
+                class="path-eval-notes"
+              >
                 <strong>{{ $t('evaluations.notes') }}:</strong> {{ pathEval.notes }}
               </div>
               <div class="path-eval-meta">
@@ -200,7 +342,11 @@
         <BaseCard class="section-card">
           <h2 class="section-title">{{ $t('requestHistory.transitionHistory') }}</h2>
           <div class="timeline">
-            <div v-for="(transition, index) in request.transitions" :key="transition.id" class="timeline-item">
+            <div
+              v-for="(transition, index) in request.transitions"
+              :key="transition.id"
+              class="timeline-item"
+            >
               <div class="timeline-marker">{{ request.transitions.length - index }}</div>
               <div class="timeline-content">
                 <div class="timeline-header">
@@ -213,7 +359,10 @@
                   <div class="timeline-info">
                     <strong>{{ $t('transitions.by') }}:</strong> {{ transition.actioned_by?.name }}
                   </div>
-                  <div v-if="transition.from_status || transition.to_status" class="timeline-info">
+                  <div
+                    v-if="transition.from_status || transition.to_status"
+                    class="timeline-info"
+                  >
                     <strong>{{ $t('transitions.statusChange') }}:</strong>
                     <span class="status-change">
                       <span v-if="transition.from_status">{{ $t('status.' + transition.from_status) }}</span>
@@ -221,7 +370,10 @@
                       <span v-if="transition.to_status">{{ $t('status.' + transition.to_status) }}</span>
                     </span>
                   </div>
-                  <div v-if="transition.from_department || transition.to_department" class="timeline-info">
+                  <div
+                    v-if="transition.from_department || transition.to_department"
+                    class="timeline-info"
+                  >
                     <strong>{{ $t('transitions.department') }}:</strong>
                     <span class="status-change">
                       <span v-if="transition.from_department">{{ transition.from_department.name }}</span>
@@ -229,10 +381,16 @@
                       <span v-if="transition.to_department">{{ transition.to_department.name }}</span>
                     </span>
                   </div>
-                  <div v-if="transition.to_user" class="timeline-info">
+                  <div
+                    v-if="transition.to_user"
+                    class="timeline-info"
+                  >
                     <strong>{{ $t('requestHistory.assignedTo') }}:</strong> {{ transition.to_user.name }}
                   </div>
-                  <div v-if="transition.comments" class="timeline-comments">
+                  <div
+                    v-if="transition.comments"
+                    class="timeline-comments"
+                  >
                     <strong>{{ $t('transitions.comments') }}:</strong> {{ transition.comments }}
                   </div>
                 </div>
@@ -246,82 +404,80 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
-import { useI18n } from 'vue-i18n'
-import { useAlert } from '../composables/useAlert'
-import axios from 'axios'
-import AppLayout from '../components/AppLayout.vue'
-import BaseCard from '../components/BaseCard.vue'
-import BaseButton from '../components/BaseButton.vue'
-import BaseBadge from '../components/BaseBadge.vue'
-import { API_URL, BASE_URL } from '../config/api'
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useAuthStore } from "../stores/auth";
+import { useI18n } from "vue-i18n";
+import { useAlert } from "../composables/useAlert";
+import axios from "axios";
+import AppLayout from "../components/AppLayout.vue";
+import BaseCard from "../components/BaseCard.vue";
+import BaseButton from "../components/BaseButton.vue";
+import BaseBadge from "../components/BaseBadge.vue";
+import { API_URL, BASE_URL } from "../config/api";
+import { objectToQueryString } from "../services/handle";
+import { httpRequest } from "../services/api";
+const router = useRouter();
+const route = useRoute();
+const authStore = useAuthStore();
+const { t } = useI18n();
+const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert();
 
-const router = useRouter()
-const route = useRoute()
-const authStore = useAuthStore()
-const { t } = useI18n()
-const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
-
-const request = ref(null)
-const error = ref(null)
-const isLoading = ref(true)
+const request = ref(null);
+const error = ref(null);
+const isLoading = ref(true);
 
 onMounted(async () => {
-  await loadRequest()
-})
+  await loadRequest();
+});
 
 const loadRequest = async () => {
   try {
-    isLoading.value = true
-    error.value = null
+    isLoading.value = true;
+    error.value = null;
+    const requestId = route.params.id;
+    const response = await httpRequest(
+      `${API_URL}/workflow/requests/${requestId}/detail`
+    );
 
-    const requestId = route.params.id
-    const response = await axios.get(`${API_URL}/workflow/requests/${requestId}/detail`, {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
-    })
-
-    request.value = response.data.request
+    request.value = response.data.request;
   } catch (err) {
-    showError(err.response?.data?.message || t('requestHistory.failedToLoad'))
+    showError(err.response?.data?.message || t("requestHistory.failedToLoad"));
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 const goBack = () => {
-  router.push('/department-a-requests')
-}
+  router.push("/department-a-requests");
+};
 
 const getStatusVariant = (status) => {
   const variants = {
-    draft: 'gray',
-    pending: 'warning',
-    in_review: 'info',
-    in_progress: 'primary',
-    need_more_details: 'warning',
-    missing_requirement: 'warning',
-    approved: 'success',
-    rejected: 'error',
-    completed: 'success'
-  }
-  return variants[status] || 'gray'
-}
+    draft: "gray",
+    pending: "warning",
+    in_review: "info",
+    in_progress: "primary",
+    need_more_details: "warning",
+    missing_requirement: "warning",
+    approved: "success",
+    rejected: "error",
+    completed: "success",
+  };
+  return variants[status] || "gray";
+};
 
 const formatDate = (dateString) => {
-  if (!dateString) return t('common.notAvailable')
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+  if (!dateString) return t("common.notAvailable");
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 </script>
 
 <style scoped>
@@ -387,7 +543,9 @@ const formatDate = (dateString) => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Section Card */
@@ -569,7 +727,11 @@ const formatDate = (dateString) => {
   width: 48px;
   height: 48px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500),
+    var(--color-primary-600)
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -655,7 +817,7 @@ const formatDate = (dateString) => {
 }
 
 .timeline::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 20px;
   top: 0;

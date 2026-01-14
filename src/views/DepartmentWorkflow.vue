@@ -3,9 +3,21 @@
     <div class="department-workflow">
       <!-- Page Header -->
       <div class="page-header">
-        <BaseButton variant="secondary" @click="goBack">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+        <BaseButton
+          variant="secondary"
+          @click="goBack"
+        >
+          <svg
+            width="20"
+            height="20"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+              clip-rule="evenodd"
+            />
           </svg>
           {{ $t('common.back') }}
         </BaseButton>
@@ -13,35 +25,70 @@
           <h1>{{ $t('nav.departmentWorkflow') }}</h1>
           <p>{{ $t('dashboard.departmentWorkflow.description') }}</p>
         </div>
-        <BaseButton variant="secondary" @click="loadRequests">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+        <BaseButton
+          variant="secondary"
+          @click="loadRequests"
+        >
+          <svg
+            width="20"
+            height="20"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+              clip-rule="evenodd"
+            />
           </svg>
           {{ $t('common.refresh') }}
         </BaseButton>
       </div>
 
       <!-- Error Alert -->
-      <div v-if="error" class="alert alert-error">
+      <div
+        v-if="error"
+        class="alert alert-error"
+      >
         {{ error }}
       </div>
 
       <!-- Success Alert -->
-      <div v-if="success" class="alert alert-success">
+      <div
+        v-if="success"
+        class="alert alert-success"
+      >
         {{ success }}
       </div>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="loading-state">
+      <div
+        v-if="isLoading"
+        class="loading-state"
+      >
         <div class="spinner"></div>
         <p>{{ $t('department.loading') }}</p>
       </div>
 
       <!-- Empty State -->
-      <BaseCard v-else-if="requests.length === 0" class="empty-state-card">
+      <BaseCard
+        v-else-if="requests.length === 0"
+        class="empty-state-card"
+      >
         <div class="empty-state">
-          <svg width="96" height="96" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          <svg
+            width="96"
+            height="96"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+            />
           </svg>
           <h2>{{ $t('department.noRequestsAssigned') }}</h2>
         </div>
@@ -52,198 +99,275 @@
         <div class="requests-grid">
           <RequestCard
             v-for="request in requests"
-          :key="request.id"
-          :request="request"
-          :show-description="true"
-          :show-submitter="true"
-          :show-department="true"
-          :show-workflow-path="true"
-          :show-date="true"
-          :show-expected-date="true"
-          :show-assigned-to="true"
-          :show-attachments="true"
-          :show-attachments-list="true"
-        >
-          <template #extra-content>
-            <!-- View Details Button -->
-            <div class="view-details-container">
-              <button class="view-details-btn" @click="viewRequestDetails(request)">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-                </svg>
-                {{ $t('request.viewDetails') }}
-              </button>
-            </div>
-
-            <!-- Evaluation Results -->
-            <div v-if="request.path_evaluations && request.path_evaluations.length > 0" class="evaluation-section">
-              <div class="evaluation-header" @click="toggleEvaluation(request.id)">
-                <div class="evaluation-header-content">
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                  </svg>
-                  <span>{{ $t('department.evaluationResults') }}</span>
-                  <BaseBadge variant="success" size="sm">{{ request.path_evaluations.length }} {{ $t('department.evaluationsCompleted') }}</BaseBadge>
-                </div>
-                <svg
-                  width="20"
-                  height="20"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  :class="['expand-icon', { expanded: expandedEvaluations[request.id] }]"
+            :key="request.id"
+            :request="request"
+            :show-description="true"
+            :show-submitter="true"
+            :show-department="true"
+            :show-workflow-path="true"
+            :show-date="true"
+            :show-expected-date="true"
+            :show-assigned-to="true"
+            :show-attachments="true"
+            :show-attachments-list="true"
+          >
+            <template #extra-content>
+              <!-- View Details Button -->
+              <div class="view-details-container">
+                <button
+                  class="view-details-btn"
+                  @click="viewRequestDetails(request)"
                 >
-                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>
+                  <svg
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                    <path
+                      fill-rule="evenodd"
+                      d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  {{ $t('request.viewDetails') }}
+                </button>
               </div>
 
-              <div v-if="expandedEvaluations[request.id]" class="evaluation-results-list">
-                <div v-for="(evaluation, index) in request.path_evaluations" :key="evaluation.id" class="evaluation-result-item">
-                  <div class="evaluation-question">
-                    <span class="question-number">{{ index + 1 }}</span>
-                    <span class="question-text">{{ evaluation.question?.question }}</span>
+              <!-- Evaluation Results -->
+              <div
+                v-if="request.path_evaluations && request.path_evaluations.length > 0"
+                class="evaluation-section"
+              >
+                <div
+                  class="evaluation-header"
+                  @click="toggleEvaluation(request.id)"
+                >
+                  <div class="evaluation-header-content">
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>{{ $t('department.evaluationResults') }}</span>
+                    <BaseBadge
+                      variant="success"
+                      size="sm"
+                    >{{ request.path_evaluations.length }} {{ $t('department.evaluationsCompleted') }}</BaseBadge>
                   </div>
-                  <div class="evaluation-answer">
-                    <BaseBadge :variant="evaluation.is_applied ? 'success' : 'danger'" size="sm">
-                      {{ evaluation.is_applied ? $t('department.applied') : $t('department.notApplied') }}
-                    </BaseBadge>
-                  </div>
-                  <div v-if="evaluation.notes" class="evaluation-notes">
-                    <strong>{{ $t('department.notes') }}:</strong>
-                    <p>{{ evaluation.notes }}</p>
+                  <svg
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    :class="['expand-icon', { expanded: expandedEvaluations[request.id] }]"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+
+                <div
+                  v-if="expandedEvaluations[request.id]"
+                  class="evaluation-results-list"
+                >
+                  <div
+                    v-for="(evaluation, index) in request.path_evaluations"
+                    :key="evaluation.id"
+                    class="evaluation-result-item"
+                  >
+                    <div class="evaluation-question">
+                      <span class="question-number">{{ index + 1 }}</span>
+                      <span class="question-text">{{ evaluation.question?.question }}</span>
+                    </div>
+                    <div class="evaluation-answer">
+                      <BaseBadge
+                        :variant="evaluation.is_applied ? 'success' : 'danger'"
+                        size="sm"
+                      >
+                        {{ evaluation.is_applied ? $t('department.applied') : $t('department.notApplied') }}
+                      </BaseBadge>
+                    </div>
+                    <div
+                      v-if="evaluation.notes"
+                      class="evaluation-notes"
+                    >
+                      <strong>{{ $t('department.notes') }}:</strong>
+                      <p>{{ evaluation.notes }}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </template>
+            </template>
 
-          <template #actions>
-            <!-- Manager Actions (only for unassigned requests) -->
-            <template v-if="isManager && !request.current_user_id">
-              <!-- Pending (Accepted for Later) - Show Activate button -->
-              <template v-if="request.status === 'pending' && request.expected_execution_date">
-                <div class="pending-idea-notice">
-                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                  </svg>
-                  <span>
-                    {{ $t('department.acceptedForLater') }} - {{ $t('department.executeOn') }}: {{ formatDate(request.expected_execution_date) }}
-                    <span v-if="isExecutionDateDue(request.expected_execution_date)" class="date-due-badge">
-                      {{ $t('department.dateDue') }}!
+            <template #actions>
+              <!-- Manager Actions (only for unassigned requests) -->
+              <template v-if="isManager && !request.current_user_id">
+                <!-- Pending (Accepted for Later) - Show Activate button -->
+                <template v-if="request.status === 'pending' && request.expected_execution_date">
+                  <div class="pending-idea-notice">
+                    <svg
+                      width="20"
+                      height="20"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>
+                      {{ $t('department.acceptedForLater') }} - {{ $t('department.executeOn') }}: {{ formatDate(request.expected_execution_date) }}
+                      <span
+                        v-if="isExecutionDateDue(request.expected_execution_date)"
+                        class="date-due-badge"
+                      >
+                        {{ $t('department.dateDue') }}!
+                      </span>
                     </span>
-                  </span>
-                </div>
-                <BaseButton variant="success" @click="activateIdea(request)">
-                  <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
-                  </svg>
-                  {{ $t('department.startImplementing') }}
-                </BaseButton>
+                  </div>
+                  <BaseButton
+                    variant="success"
+                    @click="activateIdea(request)"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    {{ $t('department.startImplementing') }}
+                  </BaseButton>
+                </template>
+
+                <!-- Show Evaluate button if evaluation is required but not completed -->
+                <template v-else-if="request.requires_evaluation && !request.has_evaluated">
+                  <BaseButton
+                    variant="primary"
+                    @click="openPathEvaluationModal(request, null)"
+                  >
+                    {{ $t('department.evaluateRequest') }}
+                  </BaseButton>
+                  <div class="evaluation-required-message">
+                    {{ $t('department.evaluationRequiredMessage') }}
+                  </div>
+                </template>
+
+                <!-- Show action buttons only after evaluation is complete or not required -->
+                <template v-else>
+                  <!-- Always show all buttons, but disable based on state -->
+                  <BaseButton
+                    variant="success"
+                    @click="openPathEvaluationModal(request, 'accept')"
+                    :disabled="request.returned_from_employee"
+                  >
+                    {{ $t('department.acceptIdea') }}
+                  </BaseButton>
+
+                  <!-- Show Return to Employee button only if was assigned to employee -->
+                  <BaseButton
+                    v-if="request.last_assigned_user_id"
+                    variant="primary"
+                    @click="openReturnToEmployeeModal(request)"
+                  >
+                    {{ $t('department.returnToEmployee') }}
+                  </BaseButton>
+
+                  <BaseButton
+                    variant="warning"
+                    @click="openPathEvaluationModal(request, 'accept_later')"
+                    :disabled="request.returned_from_employee"
+                  >
+                    {{ $t('department.acceptForLater') }}
+                  </BaseButton>
+
+                  <BaseButton
+                    variant="danger"
+                    @click="openPathEvaluationModal(request, 'reject')"
+                    :disabled="request.returned_from_employee"
+                  >
+                    {{ $t('department.rejectIdea') }}
+                  </BaseButton>
+
+                  <BaseButton
+                    variant="info"
+                    @click="openPathEvaluationModal(request, 'return')"
+                  >
+                    {{ $t('common.back') }} {{ $t('common.to') }} {{ getDepartmentAName(request) }}
+                  </BaseButton>
+                </template>
               </template>
 
-              <!-- Show Evaluate button if evaluation is required but not completed -->
-              <template v-else-if="request.requires_evaluation && !request.has_evaluated">
-                <BaseButton variant="primary" @click="openPathEvaluationModal(request, null)">
-                  {{ $t('department.evaluateRequest') }}
-                </BaseButton>
-                <div class="evaluation-required-message">
-                  {{ $t('department.evaluationRequiredMessage') }}
-                </div>
-              </template>
+              <!-- Employee Actions -->
+              <template v-if="isEmployee(request) && request.current_user_id === authStore.user?.id">
+                <!-- Not yet accepted: Show Reject/Accept -->
+                <template v-if="request.status !== 'in_progress'">
+                  <BaseButton
+                    variant="danger"
+                    @click="openEmployeeRejectModal(request)"
+                  >
+                    {{ $t('department.rejectRequest') }}
+                  </BaseButton>
+                  <BaseButton
+                    variant="success"
+                    @click="openEmployeeAcceptModal(request)"
+                  >
+                    {{ $t('department.acceptRequest') }}
+                  </BaseButton>
+                </template>
 
-              <!-- Show action buttons only after evaluation is complete or not required -->
-              <template v-else>
-                <!-- Always show all buttons, but disable based on state -->
-                <BaseButton
-                  variant="success"
-                  @click="openPathEvaluationModal(request, 'accept')"
-                  :disabled="request.returned_from_employee"
-                >
-                  {{ $t('department.acceptIdea') }}
-                </BaseButton>
+                <!-- In progress: Show progress tracking -->
+                <template v-else>
+                  <div class="progress-display">
+                    <div class="progress-label">
+                      {{ $t('department.currentProgress') }}: {{ request.progress_percentage }}%
+                    </div>
+                    <div class="progress-bar-container">
+                      <div
+                        class="progress-bar"
+                        :style="{ width: request.progress_percentage + '%' }"
+                      ></div>
+                    </div>
+                  </div>
 
-                <!-- Show Return to Employee button only if was assigned to employee -->
-                <BaseButton
-                  v-if="request.last_assigned_user_id"
-                  variant="primary"
-                  @click="openReturnToEmployeeModal(request)"
-                >
-                  {{ $t('department.returnToEmployee') }}
-                </BaseButton>
+                  <BaseButton
+                    variant="primary"
+                    @click="openEmployeeUpdateProgressModal(request)"
+                    :disabled="request.progress_percentage === 100"
+                  >
+                    {{ $t('department.updateProgress') }}
+                  </BaseButton>
 
-                <BaseButton
-                  variant="warning"
-                  @click="openPathEvaluationModal(request, 'accept_later')"
-                  :disabled="request.returned_from_employee"
-                >
-                  {{ $t('department.acceptForLater') }}
-                </BaseButton>
-
-                <BaseButton
-                  variant="danger"
-                  @click="openPathEvaluationModal(request, 'reject')"
-                  :disabled="request.returned_from_employee"
-                >
-                  {{ $t('department.rejectIdea') }}
-                </BaseButton>
-
-                <BaseButton
-                  variant="info"
-                  @click="openPathEvaluationModal(request, 'return')"
-                >
-                  {{ $t('common.back') }} {{ $t('common.to') }} {{ getDepartmentAName(request) }}
-                </BaseButton>
+                  <BaseButton
+                    v-if="request.progress_percentage === 100"
+                    variant="success"
+                    @click="openEmployeeCompleteModal(request)"
+                  >
+                    {{ $t('department.completeRequest') }}
+                  </BaseButton>
+                </template>
               </template>
             </template>
-
-            <!-- Employee Actions -->
-            <template v-if="isEmployee(request) && request.current_user_id === authStore.user?.id">
-              <!-- Not yet accepted: Show Reject/Accept -->
-              <template v-if="request.status !== 'in_progress'">
-                <BaseButton
-                  variant="danger"
-                  @click="openEmployeeRejectModal(request)"
-                >
-                  {{ $t('department.rejectRequest') }}
-                </BaseButton>
-                <BaseButton
-                  variant="success"
-                  @click="openEmployeeAcceptModal(request)"
-                >
-                  {{ $t('department.acceptRequest') }}
-                </BaseButton>
-              </template>
-
-              <!-- In progress: Show progress tracking -->
-              <template v-else>
-                <div class="progress-display">
-                  <div class="progress-label">
-                    {{ $t('department.currentProgress') }}: {{ request.progress_percentage }}%
-                  </div>
-                  <div class="progress-bar-container">
-                    <div class="progress-bar" :style="{ width: request.progress_percentage + '%' }"></div>
-                  </div>
-                </div>
-
-                <BaseButton
-                  variant="primary"
-                  @click="openEmployeeUpdateProgressModal(request)"
-                  :disabled="request.progress_percentage === 100"
-                >
-                  {{ $t('department.updateProgress') }}
-                </BaseButton>
-
-                <BaseButton
-                  v-if="request.progress_percentage === 100"
-                  variant="success"
-                  @click="openEmployeeCompleteModal(request)"
-                >
-                  {{ $t('department.completeRequest') }}
-                </BaseButton>
-              </template>
-            </template>
-          </template>
-        </RequestCard>
+          </RequestCard>
         </div>
 
         <!-- Pagination -->
@@ -255,17 +379,30 @@
     </div>
 
     <!-- Assign to Employee Modal -->
-    <div v-if="assignModal.show" class="modal-overlay" @click="closeAssignModal">
-      <div class="modal-content" @click.stop>
+    <div
+      v-if="assignModal.show"
+      class="modal-overlay"
+      @click="closeAssignModal"
+    >
+      <div
+        class="modal-content"
+        @click.stop
+      >
         <h2>{{ $t('department.assignToEmployee') }}</h2>
         <p class="modal-subtitle">{{ $t('request.request') }}: {{ assignModal.request?.title }}</p>
 
         <div class="form-group">
           <label>{{ $t('department.selectEmployee') }} *</label>
-          <div v-if="employees.length === 0" class="alert alert-info">
+          <div
+            v-if="employees.length === 0"
+            class="alert alert-info"
+          >
             {{ $t('messages.loading.employees') }}
           </div>
-          <div v-else class="employees-list">
+          <div
+            v-else
+            class="employees-list"
+          >
             <div
               v-for="employee in employees"
               :key="employee.id"
@@ -288,7 +425,10 @@
         </div>
 
         <div class="modal-actions">
-          <BaseButton variant="secondary" @click="closeAssignModal">
+          <BaseButton
+            variant="secondary"
+            @click="closeAssignModal"
+          >
             {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
@@ -303,8 +443,15 @@
     </div>
 
     <!-- Return to Employee Modal (Manager) -->
-    <div v-if="returnToEmployeeModal.show" class="modal-overlay" @click="closeReturnToEmployeeModal">
-      <div class="modal-content" @click.stop>
+    <div
+      v-if="returnToEmployeeModal.show"
+      class="modal-overlay"
+      @click="closeReturnToEmployeeModal"
+    >
+      <div
+        class="modal-content"
+        @click.stop
+      >
         <h2>{{ $t('department.returnToEmployee') }}</h2>
         <p class="modal-subtitle">{{ $t('request.request') }}: {{ returnToEmployeeModal.request?.title }}</p>
 
@@ -323,7 +470,10 @@
         </div>
 
         <div class="modal-actions">
-          <BaseButton variant="secondary" @click="closeReturnToEmployeeModal">
+          <BaseButton
+            variant="secondary"
+            @click="closeReturnToEmployeeModal"
+          >
             {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
@@ -338,8 +488,15 @@
     </div>
 
     <!-- Return to Manager Modal (Employee) -->
-    <div v-if="returnToManagerModal.show" class="modal-overlay" @click="closeReturnToManagerModal">
-      <div class="modal-content" @click.stop>
+    <div
+      v-if="returnToManagerModal.show"
+      class="modal-overlay"
+      @click="closeReturnToManagerModal"
+    >
+      <div
+        class="modal-content"
+        @click.stop
+      >
         <h2>{{ $t('department.returnToManager') }}</h2>
         <p class="modal-subtitle">{{ $t('request.request') }}: {{ returnToManagerModal.request?.title }}</p>
 
@@ -358,7 +515,10 @@
         </div>
 
         <div class="modal-actions">
-          <BaseButton variant="secondary" @click="closeReturnToManagerModal">
+          <BaseButton
+            variant="secondary"
+            @click="closeReturnToManagerModal"
+          >
             {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
@@ -373,8 +533,15 @@
     </div>
 
     <!-- Employee Reject Modal -->
-    <div v-if="employeeRejectModal.show" class="modal-overlay" @click="closeEmployeeRejectModal">
-      <div class="modal-content" @click.stop>
+    <div
+      v-if="employeeRejectModal.show"
+      class="modal-overlay"
+      @click="closeEmployeeRejectModal"
+    >
+      <div
+        class="modal-content"
+        @click.stop
+      >
         <h2>{{ $t('department.rejectRequest') }}</h2>
         <p class="modal-subtitle">{{ $t('request.request') }}: {{ employeeRejectModal.request?.title }}</p>
 
@@ -393,7 +560,10 @@
         </div>
 
         <div class="modal-actions">
-          <BaseButton variant="secondary" @click="closeEmployeeRejectModal">
+          <BaseButton
+            variant="secondary"
+            @click="closeEmployeeRejectModal"
+          >
             {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
@@ -408,8 +578,15 @@
     </div>
 
     <!-- Employee Accept Modal -->
-    <div v-if="employeeAcceptModal.show" class="modal-overlay" @click="closeEmployeeAcceptModal">
-      <div class="modal-content" @click.stop>
+    <div
+      v-if="employeeAcceptModal.show"
+      class="modal-overlay"
+      @click="closeEmployeeAcceptModal"
+    >
+      <div
+        class="modal-content"
+        @click.stop
+      >
         <h2>{{ $t('department.acceptRequest') }}</h2>
         <p class="modal-subtitle">{{ $t('request.request') }}: {{ employeeAcceptModal.request?.title }}</p>
 
@@ -438,7 +615,10 @@
         </div>
 
         <div class="modal-actions">
-          <BaseButton variant="secondary" @click="closeEmployeeAcceptModal">
+          <BaseButton
+            variant="secondary"
+            @click="closeEmployeeAcceptModal"
+          >
             {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
@@ -453,8 +633,15 @@
     </div>
 
     <!-- Employee Update Progress Modal -->
-    <div v-if="employeeUpdateProgressModal.show" class="modal-overlay" @click="closeEmployeeUpdateProgressModal">
-      <div class="modal-content" @click.stop>
+    <div
+      v-if="employeeUpdateProgressModal.show"
+      class="modal-overlay"
+      @click="closeEmployeeUpdateProgressModal"
+    >
+      <div
+        class="modal-content"
+        @click.stop
+      >
         <h2>{{ $t('department.updateProgress') }}</h2>
         <p class="modal-subtitle">{{ $t('request.request') }}: {{ employeeUpdateProgressModal.request?.title }}</p>
 
@@ -472,7 +659,10 @@
             <div class="progress-value">{{ employeeUpdateProgressModal.progress }}%</div>
           </div>
           <div class="progress-bar-preview">
-            <div class="progress-bar" :style="{ width: employeeUpdateProgressModal.progress + '%' }"></div>
+            <div
+              class="progress-bar"
+              :style="{ width: employeeUpdateProgressModal.progress + '%' }"
+            ></div>
           </div>
         </div>
 
@@ -487,7 +677,10 @@
         </div>
 
         <div class="modal-actions">
-          <BaseButton variant="secondary" @click="closeEmployeeUpdateProgressModal">
+          <BaseButton
+            variant="secondary"
+            @click="closeEmployeeUpdateProgressModal"
+          >
             {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
@@ -502,8 +695,15 @@
     </div>
 
     <!-- Employee Complete Modal -->
-    <div v-if="employeeCompleteModal.show" class="modal-overlay" @click="closeEmployeeCompleteModal">
-      <div class="modal-content" @click.stop>
+    <div
+      v-if="employeeCompleteModal.show"
+      class="modal-overlay"
+      @click="closeEmployeeCompleteModal"
+    >
+      <div
+        class="modal-content"
+        @click.stop
+      >
         <h2>{{ $t('department.completeRequest') }}</h2>
         <p class="modal-subtitle">{{ $t('request.request') }}: {{ employeeCompleteModal.request?.title }}</p>
 
@@ -522,7 +722,10 @@
         </div>
 
         <div class="modal-actions">
-          <BaseButton variant="secondary" @click="closeEmployeeCompleteModal">
+          <BaseButton
+            variant="secondary"
+            @click="closeEmployeeCompleteModal"
+          >
             {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
@@ -537,19 +740,41 @@
     </div>
 
     <!-- Path Evaluation Modal (Manager) -->
-    <div v-if="pathEvaluationModal.show" class="modal-overlay" @click="closePathEvaluationModal">
-      <div class="modal-content evaluation-modal" @click.stop>
+    <div
+      v-if="pathEvaluationModal.show"
+      class="modal-overlay"
+      @click="closePathEvaluationModal"
+    >
+      <div
+        class="modal-content evaluation-modal"
+        @click.stop
+      >
         <div class="modal-header">
           <h2>{{ $t('department.pathEvaluationRequired') }}</h2>
-          <button @click="closePathEvaluationModal" class="modal-close">
-            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          <button
+            @click="closePathEvaluationModal"
+            class="modal-close"
+          >
+            <svg
+              width="24"
+              height="24"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
             </svg>
           </button>
         </div>
         <p class="modal-subtitle">{{ $t('request.request') }}: {{ pathEvaluationModal.request?.title }}</p>
 
-        <div v-if="pathEvaluationModal.action" class="alert alert-info">
+        <div
+          v-if="pathEvaluationModal.action"
+          class="alert alert-info"
+        >
           <strong>{{ $t('department.action') }}:</strong>
           <span v-if="pathEvaluationModal.action === 'accept'">{{ $t('department.acceptIdeaAction') }}</span>
           <span v-else-if="pathEvaluationModal.action === 'accept_later'">{{ $t('department.acceptLaterAction') }}</span>
@@ -557,17 +782,30 @@
           <span v-else-if="pathEvaluationModal.action === 'return'">{{ $t('common.back') }} {{ $t('common.to') }} {{ getDepartmentAName(pathEvaluationModal.request) }} {{ $t('department.forValidation') }}</span>
         </div>
 
-        <div v-if="pathEvaluationModal.isLoading" class="loading-state">
+        <div
+          v-if="pathEvaluationModal.isLoading"
+          class="loading-state"
+        >
           <div class="spinner"></div>
           <p>{{ $t('department.loadingQuestions') }}</p>
         </div>
 
-        <div v-else-if="pathEvaluationModal.questions.length === 0" class="alert alert-warning">
+        <div
+          v-else-if="pathEvaluationModal.questions.length === 0"
+          class="alert alert-warning"
+        >
           {{ $t('department.noQuestions') }} {{ $t('department.canProceed') }}
         </div>
 
-        <div v-else class="evaluation-form">
-          <div v-for="(question, index) in pathEvaluationModal.questions" :key="question.id" class="evaluation-question">
+        <div
+          v-else
+          class="evaluation-form"
+        >
+          <div
+            v-for="(question, index) in pathEvaluationModal.questions"
+            :key="question.id"
+            class="evaluation-question"
+          >
             <div class="question-header">
               <BaseBadge variant="primary">Q{{ index + 1 }}</BaseBadge>
               <BaseBadge variant="gray">{{ $t('department.applied') }} / {{ $t('department.notApplied') }}</BaseBadge>
@@ -611,7 +849,10 @@
         </div>
 
         <div class="modal-actions">
-          <BaseButton variant="secondary" @click="closePathEvaluationModal">
+          <BaseButton
+            variant="secondary"
+            @click="closePathEvaluationModal"
+          >
             {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
@@ -635,8 +876,15 @@
     </div>
 
     <!-- Return to Department A Modal (Manager) -->
-    <div v-if="returnToDeptAModal.show" class="modal-overlay" @click="closeReturnToDeptAModal">
-      <div class="modal-content" @click.stop>
+    <div
+      v-if="returnToDeptAModal.show"
+      class="modal-overlay"
+      @click="closeReturnToDeptAModal"
+    >
+      <div
+        class="modal-content"
+        @click.stop
+      >
         <h2>{{ $t('common.back') }} {{ $t('common.to') }} {{ getDepartmentAName(returnToDeptAModal.request) }}</h2>
         <p class="modal-subtitle">{{ $t('request.request') }}: {{ returnToDeptAModal.request?.title }}</p>
 
@@ -655,7 +903,10 @@
         </div>
 
         <div class="modal-actions">
-          <BaseButton variant="secondary" @click="closeReturnToDeptAModal">
+          <BaseButton
+            variant="secondary"
+            @click="closeReturnToDeptAModal"
+          >
             {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
@@ -670,8 +921,15 @@
     </div>
 
     <!-- Accept for Later Modal (Manager) -->
-    <div v-if="acceptLaterModal.show" class="modal-overlay" @click="closeAcceptLaterModal">
-      <div class="modal-content" @click.stop>
+    <div
+      v-if="acceptLaterModal.show"
+      class="modal-overlay"
+      @click="closeAcceptLaterModal"
+    >
+      <div
+        class="modal-content"
+        @click.stop
+      >
         <h2>{{ $t('department.acceptForLater') }}</h2>
         <p class="modal-subtitle">{{ $t('request.request') }}: {{ acceptLaterModal.request?.title }}</p>
 
@@ -700,7 +958,10 @@
         </div>
 
         <div class="modal-actions">
-          <BaseButton variant="secondary" @click="closeAcceptLaterModal">
+          <BaseButton
+            variant="secondary"
+            @click="closeAcceptLaterModal"
+          >
             {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
@@ -717,32 +978,34 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
-import { useI18n } from 'vue-i18n'
-import axios from 'axios'
-import AppLayout from '../components/AppLayout.vue'
-import BaseCard from '../components/BaseCard.vue'
-import BaseButton from '../components/BaseButton.vue'
-import BaseBadge from '../components/BaseBadge.vue'
-import RequestCard from '../components/RequestCard.vue'
-import Pagination from '../components/common/Pagination.vue'
-import { API_URL, BASE_URL } from '../config/api'
-import { useAlert } from '../composables/useAlert'
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../stores/auth";
+import { useI18n } from "vue-i18n";
+import axios from "axios";
+import AppLayout from "../components/AppLayout.vue";
+import BaseCard from "../components/BaseCard.vue";
+import BaseButton from "../components/BaseButton.vue";
+import BaseBadge from "../components/BaseBadge.vue";
+import RequestCard from "../components/RequestCard.vue";
+import Pagination from "../components/common/Pagination.vue";
+import { API_URL, BASE_URL } from "../config/api";
+import { useAlert } from "../composables/useAlert";
+import { httpRequest } from "../services/api";
+import { objectToQueryString } from "../services/handle";
 
-const router = useRouter()
-const authStore = useAuthStore()
-const { t } = useI18n()
-const { showSuccess, showError, showConfirm, showInput } = useAlert()
+const router = useRouter();
+const authStore = useAuthStore();
+const { t } = useI18n();
+const { showSuccess, showError, showConfirm, showInput } = useAlert();
 
-const requests = ref([])
-const employees = ref([])
-const departmentA = ref(null)
-const error = ref(null)
-const success = ref(null)
-const isLoading = ref(true)
-const expandedEvaluations = ref({})
+const requests = ref([]);
+const employees = ref([]);
+const departmentA = ref(null);
+const error = ref(null);
+const success = ref(null);
+const isLoading = ref(true);
+const expandedEvaluations = ref({});
 
 // Pagination state
 const pagination = ref({
@@ -752,74 +1015,74 @@ const pagination = ref({
   last_page: 1,
   from: 0,
   to: 0,
-})
+});
 
 const assignModal = ref({
   show: false,
   request: null,
   employeeId: null,
-  comments: '',
-  isLoading: false
-})
+  comments: "",
+  isLoading: false,
+});
 
 const returnToEmployeeModal = ref({
   show: false,
   request: null,
-  comments: '',
-  isLoading: false
-})
+  comments: "",
+  isLoading: false,
+});
 
 const returnToManagerModal = ref({
   show: false,
   request: null,
-  comments: '',
-  isLoading: false
-})
+  comments: "",
+  isLoading: false,
+});
 
 const employeeRejectModal = ref({
   show: false,
   request: null,
-  comments: '',
-  isLoading: false
-})
+  comments: "",
+  isLoading: false,
+});
 
 const employeeAcceptModal = ref({
   show: false,
   request: null,
-  comments: '',
-  expectedExecutionDate: '',
-  isLoading: false
-})
+  comments: "",
+  expectedExecutionDate: "",
+  isLoading: false,
+});
 
 const employeeUpdateProgressModal = ref({
   show: false,
   request: null,
   progress: 0,
-  comments: '',
-  isLoading: false
-})
+  comments: "",
+  isLoading: false,
+});
 
 const employeeCompleteModal = ref({
   show: false,
   request: null,
-  comments: '',
-  isLoading: false
-})
+  comments: "",
+  isLoading: false,
+});
 
 const returnToDeptAModal = ref({
   show: false,
   request: null,
-  comments: '',
-  isLoading: false
-})
+  comments: "",
+  isLoading: false,
+});
 
 const acceptLaterModal = ref({
   show: false,
   request: null,
-  expectedDate: '',
-  comments: '',
-  isLoading: false
-})
+  expectedDate: "",
+  comments: "",
+  isLoading: false,
+});
 
 const pathEvaluationModal = ref({
   show: false,
@@ -828,860 +1091,913 @@ const pathEvaluationModal = ref({
   questions: [],
   evaluations: {},
   isLoading: false,
-  isSaving: false
-})
+  isSaving: false,
+});
 
-const isManager = computed(() => authStore.user?.role === 'manager')
+const isManager = computed(() => authStore.user?.role === "manager");
 
 const isEmployee = (request) => {
   // Check if user is an employee (not manager) in the department
-  return authStore.user?.role === 'employee' && request.current_user_id === authStore.user?.id
-}
+  return (
+    authStore.user?.role === "employee" &&
+    request.current_user_id === authStore.user?.id
+  );
+};
 
 // Get Department A name
 const getDepartmentAName = (request) => {
-  return departmentA.value?.name || 'Department A'
-}
+  return departmentA.value?.name || "Department A";
+};
 
 onMounted(async () => {
   await Promise.all([
     loadRequests(),
     loadDepartmentA(),
-    isManager.value ? loadEmployees() : Promise.resolve()
-  ])
-})
+    isManager.value ? loadEmployees() : Promise.resolve(),
+  ]);
+});
 
 const loadRequests = async () => {
   try {
-    isLoading.value = true
-    error.value = null
+    isLoading.value = true;
+    error.value = null;
 
     const params = {
       page: pagination.value.current_page,
-      per_page: pagination.value.per_page
-    }
-
-    const response = await axios.get(`${API_URL}/department/requests`, {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
-      },
-      params
-    })
-
-    requests.value = response.data.requests
+      per_page: pagination.value.per_page,
+    };
+    let queryString = objectToQueryString(params);
+    const response = await httpRequest(`/department/requests?${queryString}`);
+    requests.value = response.data.requests;
 
     // Update pagination state
     if (response.data.pagination) {
-      pagination.value = response.data.pagination
+      pagination.value = response.data.pagination;
     }
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToLoadRequests'))
+    showError(
+      err.response?.data?.message || t("messages.error.failedToLoadRequests")
+    );
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 // Pagination methods
 const goToPage = (page) => {
   if (page >= 1 && page <= pagination.value.last_page) {
-    pagination.value.current_page = page
-    loadRequests()
+    pagination.value.current_page = page;
+    loadRequests();
   }
-}
+};
 
 const loadEmployees = async () => {
   try {
-    const response = await axios.get(`${API_URL}/department/employees`, {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
-    })
-
-    employees.value = response.data.employees
-    console.log('Loaded employees:', employees.value)
+    const response = await httpRequest(`/department/employees`);
+    employees.value = response.data.employees;
+    console.log("Loaded employees:", employees.value);
   } catch (err) {
-    console.error('Failed to load employees:', err)
-    showError('Failed to load employees. Please refresh the page.')
+    console.error("Failed to load employees:", err);
+    showError("Failed to load employees. Please refresh the page.");
   }
-}
+};
 
 const loadDepartmentA = async () => {
   try {
-    const response = await axios.get(`${API_URL}/departments`, {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`
-      }
-    })
-
+    const response = await httpRequest(`/departments`);
     // Find the department marked as Department A
-    departmentA.value = response.data.departments.find(dept => dept.is_department_a === true)
+    departmentA.value = response.data.departments.find(
+      (dept) => dept.is_department_a === true
+    );
   } catch (err) {
-    console.error('Failed to load Department A:', err)
+    console.error("Failed to load Department A:", err);
   }
-}
+};
 
 const goBack = () => {
-  router.push('/dashboard')
-}
+  router.push("/dashboard");
+};
 
 const viewRequestDetails = (request) => {
-  router.push(`/requests/${request.id}`)
-}
+  router.push(`/requests/${request.id}`);
+};
 
 const toggleEvaluation = (requestId) => {
-  expandedEvaluations.value[requestId] = !expandedEvaluations.value[requestId]
-}
+  expandedEvaluations.value[requestId] = !expandedEvaluations.value[requestId];
+};
 
 const getStatusVariant = (status) => {
   const variants = {
-    draft: 'gray',
-    pending: 'warning',
-    in_review: 'info',
-    in_progress: 'primary',
-    need_more_details: 'warning',
-    missing_requirement: 'warning',
-    approved: 'success',
-    rejected: 'error',
-    completed: 'success'
-  }
-  return variants[status] || 'gray'
-}
+    draft: "gray",
+    pending: "warning",
+    in_review: "info",
+    in_progress: "primary",
+    need_more_details: "warning",
+    missing_requirement: "warning",
+    approved: "success",
+    rejected: "error",
+    completed: "success",
+  };
+  return variants[status] || "gray";
+};
 
 const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 
 // Assign to Employee Modal
 const openAssignModal = (request) => {
-  assignModal.value.show = true
-  assignModal.value.request = request
-  assignModal.value.employeeId = null
-  assignModal.value.comments = ''
-}
+  assignModal.value.show = true;
+  assignModal.value.request = request;
+  assignModal.value.employeeId = null;
+  assignModal.value.comments = "";
+};
 
 const closeAssignModal = () => {
-  assignModal.value.show = false
-  assignModal.value.request = null
-  assignModal.value.employeeId = null
-  assignModal.value.comments = ''
-  assignModal.value.isLoading = false
-}
+  assignModal.value.show = false;
+  assignModal.value.request = null;
+  assignModal.value.employeeId = null;
+  assignModal.value.comments = "";
+  assignModal.value.isLoading = false;
+};
 
 const confirmAssign = async () => {
   try {
-    assignModal.value.isLoading = true
-    error.value = null
+    assignModal.value.isLoading = true;
+    error.value = null;
 
     await axios.post(
       `${API_URL}/department/requests/${assignModal.value.request.id}/assign-employee`,
       {
         employee_id: assignModal.value.employeeId,
-        comments: assignModal.value.comments
+        comments: assignModal.value.comments,
       },
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
     // Close modal immediately after success
-    closeAssignModal()
+    closeAssignModal();
 
-    showSuccess(t('messages.success.requestAssigned'))
+    showSuccess(t("messages.success.requestAssigned"));
 
     // Reload requests (don't await to prevent blocking modal close)
-    loadRequests().catch(err => {
-      console.error('Failed to reload requests:', err)
-    })
+    loadRequests().catch((err) => {
+      console.error("Failed to reload requests:", err);
+    });
 
-    setTimeout(() => (success.value = null), 5000)
+    setTimeout(() => (success.value = null), 5000);
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToAssign'))
-    assignModal.value.isLoading = false
+    showError(
+      err.response?.data?.message || t("messages.error.failedToAssign")
+    );
+    assignModal.value.isLoading = false;
   }
-}
+};
 
 // Return request to the previously assigned employee (quick action without modal)
 const returnToEmployee = async (request) => {
   if (!request.last_assigned_user_id) {
-    showError(t('messages.error.noPreviousEmployee'))
-    return
+    showError(t("messages.error.noPreviousEmployee"));
+    return;
   }
 
   try {
-    error.value = null
+    error.value = null;
 
     await axios.post(
       `${API_URL}/department/requests/${request.id}/assign-employee`,
       {
         employee_id: request.last_assigned_user_id,
-        comments: t('department.returnedToEmployee')
+        comments: t("department.returnedToEmployee"),
       },
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
-    showSuccess(t('messages.success.requestReturnedToEmployee'))
+    showSuccess(t("messages.success.requestReturnedToEmployee"));
 
     // Reload requests (don't await to prevent blocking)
-    loadRequests().catch(err => {
-      console.error('Failed to reload requests:', err)
-    })
+    loadRequests().catch((err) => {
+      console.error("Failed to reload requests:", err);
+    });
 
-    setTimeout(() => (success.value = null), 5000)
+    setTimeout(() => (success.value = null), 5000);
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToAssign'))
+    showError(
+      err.response?.data?.message || t("messages.error.failedToAssign")
+    );
   }
-}
+};
 
 // Return to Employee Modal (with comments)
 const openReturnToEmployeeModal = (request) => {
-  returnToEmployeeModal.value.show = true
-  returnToEmployeeModal.value.request = request
-  returnToEmployeeModal.value.comments = ''
-}
+  returnToEmployeeModal.value.show = true;
+  returnToEmployeeModal.value.request = request;
+  returnToEmployeeModal.value.comments = "";
+};
 
 const closeReturnToEmployeeModal = () => {
-  returnToEmployeeModal.value.show = false
-  returnToEmployeeModal.value.request = null
-  returnToEmployeeModal.value.comments = ''
-  returnToEmployeeModal.value.isLoading = false
-}
+  returnToEmployeeModal.value.show = false;
+  returnToEmployeeModal.value.request = null;
+  returnToEmployeeModal.value.comments = "";
+  returnToEmployeeModal.value.isLoading = false;
+};
 
 const confirmReturnToEmployee = async () => {
   try {
-    returnToEmployeeModal.value.isLoading = true
-    error.value = null
+    returnToEmployeeModal.value.isLoading = true;
+    error.value = null;
 
     await axios.post(
       `${API_URL}/department/requests/${returnToEmployeeModal.value.request.id}/assign-employee`,
       {
         employee_id: returnToEmployeeModal.value.request.last_assigned_user_id,
-        comments: returnToEmployeeModal.value.comments
+        comments: returnToEmployeeModal.value.comments,
       },
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
-    closeReturnToEmployeeModal()
-    showSuccess(t('messages.success.requestReturnedToEmployee'))
-    loadRequests().catch(err => console.error('Failed to reload requests:', err))
-    setTimeout(() => (success.value = null), 5000)
+    closeReturnToEmployeeModal();
+    showSuccess(t("messages.success.requestReturnedToEmployee"));
+    loadRequests().catch((err) =>
+      console.error("Failed to reload requests:", err)
+    );
+    setTimeout(() => (success.value = null), 5000);
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToAssign'))
-    returnToEmployeeModal.value.isLoading = false
+    showError(
+      err.response?.data?.message || t("messages.error.failedToAssign")
+    );
+    returnToEmployeeModal.value.isLoading = false;
   }
-}
+};
 
 // Return to Manager Modal (Employee)
 const openReturnToManagerModal = (request) => {
-  returnToManagerModal.value.show = true
-  returnToManagerModal.value.request = request
-  returnToManagerModal.value.comments = ''
-}
+  returnToManagerModal.value.show = true;
+  returnToManagerModal.value.request = request;
+  returnToManagerModal.value.comments = "";
+};
 
 const closeReturnToManagerModal = () => {
-  returnToManagerModal.value.show = false
-  returnToManagerModal.value.request = null
-  returnToManagerModal.value.comments = ''
-  returnToManagerModal.value.isLoading = false
-}
+  returnToManagerModal.value.show = false;
+  returnToManagerModal.value.request = null;
+  returnToManagerModal.value.comments = "";
+  returnToManagerModal.value.isLoading = false;
+};
 
 const confirmReturnToManager = async () => {
   try {
-    returnToManagerModal.value.isLoading = true
-    error.value = null
+    returnToManagerModal.value.isLoading = true;
+    error.value = null;
 
     await axios.post(
       `${API_URL}/department/requests/${returnToManagerModal.value.request.id}/return-to-manager`,
       {
-        comments: returnToManagerModal.value.comments
+        comments: returnToManagerModal.value.comments,
       },
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
     // Close modal immediately after success
-    closeReturnToManagerModal()
+    closeReturnToManagerModal();
 
-    showSuccess(t('messages.success.requestReturned'))
+    showSuccess(t("messages.success.requestReturned"));
 
     // Reload requests (don't await to prevent blocking modal close)
-    loadRequests().catch(err => {
-      console.error('Failed to reload requests:', err)
-    })
+    loadRequests().catch((err) => {
+      console.error("Failed to reload requests:", err);
+    });
 
-    setTimeout(() => (success.value = null), 5000)
+    setTimeout(() => (success.value = null), 5000);
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToReturn'))
-    returnToManagerModal.value.isLoading = false
+    showError(
+      err.response?.data?.message || t("messages.error.failedToReturn")
+    );
+    returnToManagerModal.value.isLoading = false;
   }
-}
+};
 
 // Employee Reject Modal
 const openEmployeeRejectModal = (request) => {
-  employeeRejectModal.value.show = true
-  employeeRejectModal.value.request = request
-  employeeRejectModal.value.comments = ''
-}
+  employeeRejectModal.value.show = true;
+  employeeRejectModal.value.request = request;
+  employeeRejectModal.value.comments = "";
+};
 
 const closeEmployeeRejectModal = () => {
-  employeeRejectModal.value.show = false
-  employeeRejectModal.value.request = null
-  employeeRejectModal.value.comments = ''
-  employeeRejectModal.value.isLoading = false
-}
+  employeeRejectModal.value.show = false;
+  employeeRejectModal.value.request = null;
+  employeeRejectModal.value.comments = "";
+  employeeRejectModal.value.isLoading = false;
+};
 
 const confirmEmployeeReject = async () => {
   try {
-    employeeRejectModal.value.isLoading = true
-    error.value = null
+    employeeRejectModal.value.isLoading = true;
+    error.value = null;
 
     await axios.post(
       `${API_URL}/department/requests/${employeeRejectModal.value.request.id}/employee-reject`,
       {
-        comments: employeeRejectModal.value.comments
+        comments: employeeRejectModal.value.comments,
       },
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
-    closeEmployeeRejectModal()
-    showSuccess(t('messages.success.requestRejected'))
-    loadRequests().catch(err => console.error('Failed to reload requests:', err))
-    setTimeout(() => (success.value = null), 5000)
+    closeEmployeeRejectModal();
+    showSuccess(t("messages.success.requestRejected"));
+    loadRequests().catch((err) =>
+      console.error("Failed to reload requests:", err)
+    );
+    setTimeout(() => (success.value = null), 5000);
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToReject'))
-    employeeRejectModal.value.isLoading = false
+    showError(
+      err.response?.data?.message || t("messages.error.failedToReject")
+    );
+    employeeRejectModal.value.isLoading = false;
   }
-}
+};
 
 // Employee Accept Modal
 const openEmployeeAcceptModal = (request) => {
-  employeeAcceptModal.value.show = true
-  employeeAcceptModal.value.request = request
-  employeeAcceptModal.value.comments = ''
-}
+  employeeAcceptModal.value.show = true;
+  employeeAcceptModal.value.request = request;
+  employeeAcceptModal.value.comments = "";
+};
 
 const closeEmployeeAcceptModal = () => {
-  employeeAcceptModal.value.show = false
-  employeeAcceptModal.value.request = null
-  employeeAcceptModal.value.comments = ''
-  employeeAcceptModal.value.expectedExecutionDate = ''
-  employeeAcceptModal.value.isLoading = false
-}
+  employeeAcceptModal.value.show = false;
+  employeeAcceptModal.value.request = null;
+  employeeAcceptModal.value.comments = "";
+  employeeAcceptModal.value.expectedExecutionDate = "";
+  employeeAcceptModal.value.isLoading = false;
+};
 
 const confirmEmployeeAccept = async () => {
   try {
-    employeeAcceptModal.value.isLoading = true
-    error.value = null
+    employeeAcceptModal.value.isLoading = true;
+    error.value = null;
 
     await axios.post(
       `${API_URL}/department/requests/${employeeAcceptModal.value.request.id}/employee-accept`,
       {
         comments: employeeAcceptModal.value.comments,
-        expected_execution_date: employeeAcceptModal.value.expectedExecutionDate
+        expected_execution_date:
+          employeeAcceptModal.value.expectedExecutionDate,
       },
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
-    closeEmployeeAcceptModal()
-    showSuccess(t('messages.success.requestAccepted'))
-    loadRequests().catch(err => console.error('Failed to reload requests:', err))
-    setTimeout(() => (success.value = null), 5000)
+    closeEmployeeAcceptModal();
+    showSuccess(t("messages.success.requestAccepted"));
+    loadRequests().catch((err) =>
+      console.error("Failed to reload requests:", err)
+    );
+    setTimeout(() => (success.value = null), 5000);
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToAccept'))
-    employeeAcceptModal.value.isLoading = false
+    showError(
+      err.response?.data?.message || t("messages.error.failedToAccept")
+    );
+    employeeAcceptModal.value.isLoading = false;
   }
-}
+};
 
 // Employee Update Progress Modal
 const openEmployeeUpdateProgressModal = (request) => {
-  employeeUpdateProgressModal.value.show = true
-  employeeUpdateProgressModal.value.request = request
-  employeeUpdateProgressModal.value.progress = request.progress_percentage || 0
-  employeeUpdateProgressModal.value.comments = ''
-}
+  employeeUpdateProgressModal.value.show = true;
+  employeeUpdateProgressModal.value.request = request;
+  employeeUpdateProgressModal.value.progress = request.progress_percentage || 0;
+  employeeUpdateProgressModal.value.comments = "";
+};
 
 const closeEmployeeUpdateProgressModal = () => {
-  employeeUpdateProgressModal.value.show = false
-  employeeUpdateProgressModal.value.request = null
-  employeeUpdateProgressModal.value.progress = 0
-  employeeUpdateProgressModal.value.comments = ''
-  employeeUpdateProgressModal.value.isLoading = false
-}
+  employeeUpdateProgressModal.value.show = false;
+  employeeUpdateProgressModal.value.request = null;
+  employeeUpdateProgressModal.value.progress = 0;
+  employeeUpdateProgressModal.value.comments = "";
+  employeeUpdateProgressModal.value.isLoading = false;
+};
 
 const confirmEmployeeUpdateProgress = async () => {
   try {
-    employeeUpdateProgressModal.value.isLoading = true
-    error.value = null
+    employeeUpdateProgressModal.value.isLoading = true;
+    error.value = null;
 
     await axios.post(
       `${API_URL}/department/requests/${employeeUpdateProgressModal.value.request.id}/employee-update-progress`,
       {
         progress_percentage: employeeUpdateProgressModal.value.progress,
-        comments: employeeUpdateProgressModal.value.comments
+        comments: employeeUpdateProgressModal.value.comments,
       },
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
-    closeEmployeeUpdateProgressModal()
-    showSuccess(t('messages.success.progressUpdated'))
-    loadRequests().catch(err => console.error('Failed to reload requests:', err))
-    setTimeout(() => (success.value = null), 5000)
+    closeEmployeeUpdateProgressModal();
+    showSuccess(t("messages.success.progressUpdated"));
+    loadRequests().catch((err) =>
+      console.error("Failed to reload requests:", err)
+    );
+    setTimeout(() => (success.value = null), 5000);
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToUpdateProgress'))
-    employeeUpdateProgressModal.value.isLoading = false
+    showError(
+      err.response?.data?.message || t("messages.error.failedToUpdateProgress")
+    );
+    employeeUpdateProgressModal.value.isLoading = false;
   }
-}
+};
 
 // Employee Complete Modal
 const openEmployeeCompleteModal = (request) => {
-  employeeCompleteModal.value.show = true
-  employeeCompleteModal.value.request = request
-  employeeCompleteModal.value.comments = ''
-}
+  employeeCompleteModal.value.show = true;
+  employeeCompleteModal.value.request = request;
+  employeeCompleteModal.value.comments = "";
+};
 
 const closeEmployeeCompleteModal = () => {
-  employeeCompleteModal.value.show = false
-  employeeCompleteModal.value.request = null
-  employeeCompleteModal.value.comments = ''
-  employeeCompleteModal.value.isLoading = false
-}
+  employeeCompleteModal.value.show = false;
+  employeeCompleteModal.value.request = null;
+  employeeCompleteModal.value.comments = "";
+  employeeCompleteModal.value.isLoading = false;
+};
 
 const confirmEmployeeComplete = async () => {
   try {
-    employeeCompleteModal.value.isLoading = true
-    error.value = null
+    employeeCompleteModal.value.isLoading = true;
+    error.value = null;
 
     await axios.post(
       `${API_URL}/department/requests/${employeeCompleteModal.value.request.id}/employee-complete`,
       {
-        comments: employeeCompleteModal.value.comments
+        comments: employeeCompleteModal.value.comments,
       },
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
-    closeEmployeeCompleteModal()
-    showSuccess(t('messages.success.requestCompleted'))
-    loadRequests().catch(err => console.error('Failed to reload requests:', err))
-    setTimeout(() => (success.value = null), 5000)
+    closeEmployeeCompleteModal();
+    showSuccess(t("messages.success.requestCompleted"));
+    loadRequests().catch((err) =>
+      console.error("Failed to reload requests:", err)
+    );
+    setTimeout(() => (success.value = null), 5000);
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToComplete'))
-    employeeCompleteModal.value.isLoading = false
+    showError(
+      err.response?.data?.message || t("messages.error.failedToComplete")
+    );
+    employeeCompleteModal.value.isLoading = false;
   }
-}
+};
 
 // Return to Department A Modal (Manager)
 const openReturnToDeptAModal = (request) => {
-  returnToDeptAModal.value.show = true
-  returnToDeptAModal.value.request = request
-  returnToDeptAModal.value.comments = ''
-}
+  returnToDeptAModal.value.show = true;
+  returnToDeptAModal.value.request = request;
+  returnToDeptAModal.value.comments = "";
+};
 
 const closeReturnToDeptAModal = () => {
-  returnToDeptAModal.value.show = false
-  returnToDeptAModal.value.request = null
-  returnToDeptAModal.value.comments = ''
-  returnToDeptAModal.value.isLoading = false
-}
+  returnToDeptAModal.value.show = false;
+  returnToDeptAModal.value.request = null;
+  returnToDeptAModal.value.comments = "";
+  returnToDeptAModal.value.isLoading = false;
+};
 
 const confirmReturnToDeptA = async () => {
   try {
-    returnToDeptAModal.value.isLoading = true
-    error.value = null
+    returnToDeptAModal.value.isLoading = true;
+    error.value = null;
 
     await axios.post(
       `${API_URL}/department/requests/${returnToDeptAModal.value.request.id}/return-to-dept-a`,
       {
-        comments: returnToDeptAModal.value.comments
+        comments: returnToDeptAModal.value.comments,
       },
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
     // Close modal immediately after success
-    closeReturnToDeptAModal()
+    closeReturnToDeptAModal();
 
-    showSuccess(t('messages.success.requestReturnedDeptA'))
+    showSuccess(t("messages.success.requestReturnedDeptA"));
 
     // Reload requests (don't await to prevent blocking modal close)
-    loadRequests().catch(err => {
-      console.error('Failed to reload requests:', err)
-    })
+    loadRequests().catch((err) => {
+      console.error("Failed to reload requests:", err);
+    });
 
-    setTimeout(() => (success.value = null), 5000)
+    setTimeout(() => (success.value = null), 5000);
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToReturn'))
-    returnToDeptAModal.value.isLoading = false
+    showError(
+      err.response?.data?.message || t("messages.error.failedToReturn")
+    );
+    returnToDeptAModal.value.isLoading = false;
   }
-}
+};
 
 // Path Evaluation Modal
 const isEvaluationComplete = computed(() => {
-  if (pathEvaluationModal.value.questions.length === 0) return true
+  if (pathEvaluationModal.value.questions.length === 0) return true;
 
-  return pathEvaluationModal.value.questions.every(q => {
-    const evaluation = pathEvaluationModal.value.evaluations[q.id]
-    return evaluation && evaluation.is_applied !== undefined && evaluation.is_applied !== null
-  })
-})
+  return pathEvaluationModal.value.questions.every((q) => {
+    const evaluation = pathEvaluationModal.value.evaluations[q.id];
+    return (
+      evaluation &&
+      evaluation.is_applied !== undefined &&
+      evaluation.is_applied !== null
+    );
+  });
+});
 
 const answeredPathQuestionsCount = computed(() => {
-  if (pathEvaluationModal.value.questions.length === 0) return 0
+  if (pathEvaluationModal.value.questions.length === 0) return 0;
 
-  return pathEvaluationModal.value.questions.filter(q => {
-    const evaluation = pathEvaluationModal.value.evaluations[q.id]
-    return evaluation && evaluation.is_applied !== undefined && evaluation.is_applied !== null
-  }).length
-})
+  return pathEvaluationModal.value.questions.filter((q) => {
+    const evaluation = pathEvaluationModal.value.evaluations[q.id];
+    return (
+      evaluation &&
+      evaluation.is_applied !== undefined &&
+      evaluation.is_applied !== null
+    );
+  }).length;
+});
 
 const openPathEvaluationModal = async (request, action) => {
   // If request is already evaluated and an action is specified, skip modal and proceed directly
   if (request.has_evaluated && action) {
-    pathEvaluationModal.value.request = request
-    pathEvaluationModal.value.action = action
-    proceedWithAction()
-    return
+    pathEvaluationModal.value.request = request;
+    pathEvaluationModal.value.action = action;
+    proceedWithAction();
+    return;
   }
 
-  pathEvaluationModal.value.show = true
-  pathEvaluationModal.value.request = request
-  pathEvaluationModal.value.action = action
-  pathEvaluationModal.value.questions = []
-  pathEvaluationModal.value.evaluations = {}
-  pathEvaluationModal.value.isLoading = true
+  pathEvaluationModal.value.show = true;
+  pathEvaluationModal.value.request = request;
+  pathEvaluationModal.value.action = action;
+  pathEvaluationModal.value.questions = [];
+  pathEvaluationModal.value.evaluations = {};
+  pathEvaluationModal.value.isLoading = true;
 
   try {
     const response = await axios.get(
       `${API_URL}/department/requests/${request.id}/path-evaluation-questions`,
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
-    pathEvaluationModal.value.questions = response.data.questions
+    pathEvaluationModal.value.questions = response.data.questions;
 
     // Initialize evaluations object
-    response.data.questions.forEach(q => {
+    response.data.questions.forEach((q) => {
       pathEvaluationModal.value.evaluations[q.id] = {
         is_applied: null,
-        notes: ''
-      }
-    })
+        notes: "",
+      };
+    });
 
     // Load existing evaluations if any
     if (response.data.evaluations) {
-      Object.values(response.data.evaluations).forEach(evaluation => {
-        if (pathEvaluationModal.value.evaluations[evaluation.path_evaluation_question_id]) {
-          pathEvaluationModal.value.evaluations[evaluation.path_evaluation_question_id] = {
+      Object.values(response.data.evaluations).forEach((evaluation) => {
+        if (
+          pathEvaluationModal.value.evaluations[
+            evaluation.path_evaluation_question_id
+          ]
+        ) {
+          pathEvaluationModal.value.evaluations[
+            evaluation.path_evaluation_question_id
+          ] = {
             is_applied: evaluation.is_applied,
-            notes: evaluation.notes || ''
-          }
+            notes: evaluation.notes || "",
+          };
         }
-      })
+      });
     }
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToLoadQuestions'))
-    closePathEvaluationModal()
+    showError(
+      err.response?.data?.message || t("messages.error.failedToLoadQuestions")
+    );
+    closePathEvaluationModal();
   } finally {
-    pathEvaluationModal.value.isLoading = false
+    pathEvaluationModal.value.isLoading = false;
   }
-}
+};
 
 const closePathEvaluationModal = () => {
-  pathEvaluationModal.value.show = false
-  pathEvaluationModal.value.request = null
-  pathEvaluationModal.value.questions = []
-  pathEvaluationModal.value.evaluations = {}
-  pathEvaluationModal.value.isLoading = false
-  pathEvaluationModal.value.isSaving = false
-}
+  pathEvaluationModal.value.show = false;
+  pathEvaluationModal.value.request = null;
+  pathEvaluationModal.value.questions = [];
+  pathEvaluationModal.value.evaluations = {};
+  pathEvaluationModal.value.isLoading = false;
+  pathEvaluationModal.value.isSaving = false;
+};
 
 const setEvaluation = (questionId, isApplied) => {
   if (!pathEvaluationModal.value.evaluations[questionId]) {
-    pathEvaluationModal.value.evaluations[questionId] = { notes: '' }
+    pathEvaluationModal.value.evaluations[questionId] = { notes: "" };
   }
-  pathEvaluationModal.value.evaluations[questionId].is_applied = isApplied
-}
+  pathEvaluationModal.value.evaluations[questionId].is_applied = isApplied;
+};
 
 const submitPathEvaluation = async () => {
   try {
-    pathEvaluationModal.value.isSaving = true
-    error.value = null
+    pathEvaluationModal.value.isSaving = true;
+    error.value = null;
 
     // Transform evaluations object to array format expected by API
-    const evaluationsArray = pathEvaluationModal.value.questions.map(q => ({
+    const evaluationsArray = pathEvaluationModal.value.questions.map((q) => ({
       question_id: q.id,
       is_applied: pathEvaluationModal.value.evaluations[q.id].is_applied,
-      notes: pathEvaluationModal.value.evaluations[q.id].notes || null
-    }))
+      notes: pathEvaluationModal.value.evaluations[q.id].notes || null,
+    }));
 
     await axios.post(
       `${API_URL}/department/requests/${pathEvaluationModal.value.request.id}/path-evaluation`,
       {
-        evaluations: evaluationsArray
+        evaluations: evaluationsArray,
       },
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
     // Close modal immediately after successful submission
-    closePathEvaluationModal()
+    closePathEvaluationModal();
 
-    showSuccess(t('messages.success.evaluationSubmitted'))
-    setTimeout(() => (success.value = null), 3000)
+    showSuccess(t("messages.success.evaluationSubmitted"));
+    setTimeout(() => (success.value = null), 3000);
 
     // If there's an action, proceed with it, otherwise just reload
     if (pathEvaluationModal.value.action) {
-      const request = pathEvaluationModal.value.request
-      const action = pathEvaluationModal.value.action
+      const request = pathEvaluationModal.value.request;
+      const action = pathEvaluationModal.value.action;
 
       // Small delay to ensure modal closes before opening next modal
       setTimeout(() => {
         switch (action) {
-          case 'accept':
-            openAssignModal(request)
-            break
-          case 'accept_later':
-            openAcceptLaterModal(request)
-            break
-          case 'reject':
-            rejectIdea(request)
-            break
-          case 'return':
-            openReturnToDeptAModal(request)
-            break
+          case "accept":
+            openAssignModal(request);
+            break;
+          case "accept_later":
+            openAcceptLaterModal(request);
+            break;
+          case "reject":
+            rejectIdea(request);
+            break;
+          case "return":
+            openReturnToDeptAModal(request);
+            break;
         }
-      }, 100)
+      }, 100);
     } else {
       // Reload requests (don't await to prevent blocking)
-      loadRequests().catch(err => {
-        console.error('Failed to reload requests:', err)
-      })
+      loadRequests().catch((err) => {
+        console.error("Failed to reload requests:", err);
+      });
     }
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToSubmitEvaluation'))
+    showError(
+      err.response?.data?.message ||
+        t("messages.error.failedToSubmitEvaluation")
+    );
   } finally {
-    pathEvaluationModal.value.isSaving = false
+    pathEvaluationModal.value.isSaving = false;
   }
-}
+};
 
 const getActionButtonText = () => {
   switch (pathEvaluationModal.value.action) {
-    case 'accept':
-      return t('department.proceedToAssign')
-    case 'accept_later':
-      return t('department.acceptForLater')
-    case 'reject':
-      return t('department.rejectIdea')
-    case 'return':
-      return t('common.back') + ' ' + t('common.to') + ' ' + getDepartmentAName(pathEvaluationModal.value.request)
+    case "accept":
+      return t("department.proceedToAssign");
+    case "accept_later":
+      return t("department.acceptForLater");
+    case "reject":
+      return t("department.rejectIdea");
+    case "return":
+      return (
+        t("common.back") +
+        " " +
+        t("common.to") +
+        " " +
+        getDepartmentAName(pathEvaluationModal.value.request)
+      );
     default:
-      return t('common.continue')
+      return t("common.continue");
   }
-}
+};
 
 const proceedWithAction = () => {
-  const request = pathEvaluationModal.value.request
-  const action = pathEvaluationModal.value.action
-  closePathEvaluationModal()
+  const request = pathEvaluationModal.value.request;
+  const action = pathEvaluationModal.value.action;
+  closePathEvaluationModal();
 
   switch (action) {
-    case 'accept':
-      openAssignModal(request)
-      break
-    case 'accept_later':
-      openAcceptLaterModal(request)
-      break
-    case 'reject':
-      rejectIdea(request)
-      break
-    case 'return':
-      openReturnToDeptAModal(request)
-      break
+    case "accept":
+      openAssignModal(request);
+      break;
+    case "accept_later":
+      openAcceptLaterModal(request);
+      break;
+    case "reject":
+      rejectIdea(request);
+      break;
+    case "return":
+      openReturnToDeptAModal(request);
+      break;
   }
-}
+};
 
 // Accept for Later Modal
 const openAcceptLaterModal = (request) => {
-  acceptLaterModal.value.show = true
-  acceptLaterModal.value.request = request
-  acceptLaterModal.value.expectedDate = ''
-  acceptLaterModal.value.comments = ''
-}
+  acceptLaterModal.value.show = true;
+  acceptLaterModal.value.request = request;
+  acceptLaterModal.value.expectedDate = "";
+  acceptLaterModal.value.comments = "";
+};
 
 const closeAcceptLaterModal = () => {
-  acceptLaterModal.value.show = false
-  acceptLaterModal.value.request = null
-  acceptLaterModal.value.expectedDate = ''
-  acceptLaterModal.value.comments = ''
-  acceptLaterModal.value.isLoading = false
-}
+  acceptLaterModal.value.show = false;
+  acceptLaterModal.value.request = null;
+  acceptLaterModal.value.expectedDate = "";
+  acceptLaterModal.value.comments = "";
+  acceptLaterModal.value.isLoading = false;
+};
 
 const confirmAcceptLater = async () => {
   try {
-    acceptLaterModal.value.isLoading = true
-    error.value = null
+    acceptLaterModal.value.isLoading = true;
+    error.value = null;
 
     await axios.post(
       `${API_URL}/department/requests/${acceptLaterModal.value.request.id}/accept-later`,
       {
         expected_execution_date: acceptLaterModal.value.expectedDate,
-        comments: acceptLaterModal.value.comments || 'Idea accepted for future implementation'
+        comments:
+          acceptLaterModal.value.comments ||
+          "Idea accepted for future implementation",
       },
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
     // Close modal immediately after success
-    closeAcceptLaterModal()
+    closeAcceptLaterModal();
 
-    showSuccess(t('messages.success.ideaAccepted'))
+    showSuccess(t("messages.success.ideaAccepted"));
 
     // Reload requests (don't await to prevent blocking modal close)
-    loadRequests().catch(err => {
-      console.error('Failed to reload requests:', err)
-    })
+    loadRequests().catch((err) => {
+      console.error("Failed to reload requests:", err);
+    });
 
-    setTimeout(() => (success.value = null), 5000)
+    setTimeout(() => (success.value = null), 5000);
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToAccept'))
-    acceptLaterModal.value.isLoading = false
+    showError(
+      err.response?.data?.message || t("messages.error.failedToAccept")
+    );
+    acceptLaterModal.value.isLoading = false;
   }
-}
+};
 
 // Activate Accepted Idea
 const activateIdea = async (request) => {
   const { value: comments, isConfirmed } = await showInput({
-    title: t('department.activateIdeaPrompt'),
-    text: `${t('request.request')}: ${request.title}`,
-    inputType: 'textarea',
-    inputPlaceholder: t('department.optionalComments'),
-    confirmButtonText: t('common.confirm'),
-    cancelButtonText: t('common.cancel')
-  })
+    title: t("department.activateIdeaPrompt"),
+    text: `${t("request.request")}: ${request.title}`,
+    inputType: "textarea",
+    inputPlaceholder: t("department.optionalComments"),
+    confirmButtonText: t("common.confirm"),
+    cancelButtonText: t("common.cancel"),
+  });
 
   // Allow empty comments (user can press OK without entering anything)
-  if (!isConfirmed) return // Only cancel if user pressed Cancel
+  if (!isConfirmed) return; // Only cancel if user pressed Cancel
 
   try {
-    error.value = null
+    error.value = null;
     await axios.post(
       `${API_URL}/department/requests/${request.id}/activate`,
-      { comments: comments || 'Idea activated for implementation' },
+      { comments: comments || "Idea activated for implementation" },
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
-    showSuccess(t('messages.success.ideaActivated'))
+    showSuccess(t("messages.success.ideaActivated"));
 
     // Reload requests
-    loadRequests().catch(err => {
-      console.error('Failed to reload requests:', err)
-    })
+    loadRequests().catch((err) => {
+      console.error("Failed to reload requests:", err);
+    });
 
-    setTimeout(() => (success.value = null), 5000)
+    setTimeout(() => (success.value = null), 5000);
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToActivate'))
+    showError(
+      err.response?.data?.message || t("messages.error.failedToActivate")
+    );
   }
-}
+};
 
 // Helper to check if execution date is due
 const isExecutionDateDue = (executionDate) => {
-  if (!executionDate) return false
-  const today = new Date()
-  const execDate = new Date(executionDate)
-  return execDate <= today
-}
+  if (!executionDate) return false;
+  const today = new Date();
+  const execDate = new Date(executionDate);
+  return execDate <= today;
+};
 
 const rejectIdea = async (request) => {
   const { value: reason, isConfirmed } = await showInput({
-    title: t('department.rejectIdea'),
-    text: `${t('request.request')}: ${request.title}`,
-    inputType: 'textarea',
-    inputPlaceholder: t('department.provideReason'),
-    confirmButtonText: t('common.confirm'),
-    cancelButtonText: t('common.cancel'),
+    title: t("department.rejectIdea"),
+    text: `${t("request.request")}: ${request.title}`,
+    inputType: "textarea",
+    inputPlaceholder: t("department.provideReason"),
+    confirmButtonText: t("common.confirm"),
+    cancelButtonText: t("common.cancel"),
     inputValidator: (value) => {
       if (!value || !value.trim()) {
-        return t('department.reasonRequired')
+        return t("department.reasonRequired");
       }
-    }
-  })
-  if (!isConfirmed || !reason) return
+    },
+  });
+  if (!isConfirmed || !reason) return;
 
   try {
-    error.value = null
+    error.value = null;
     await axios.post(
       `${API_URL}/department/requests/${request.id}/return-to-dept-a`,
       { comments: reason },
       {
         headers: {
-          Authorization: `Bearer ${authStore.token}`
-        }
+          Authorization: `Bearer ${authStore.token}`,
+        },
       }
-    )
+    );
 
-    showSuccess(t('messages.success.requestReturnedDeptA'))
+    showSuccess(t("messages.success.requestReturnedDeptA"));
 
     // Reload requests (don't await to prevent blocking)
-    loadRequests().catch(err => {
-      console.error('Failed to reload requests:', err)
-    })
+    loadRequests().catch((err) => {
+      console.error("Failed to reload requests:", err);
+    });
 
-    setTimeout(() => (success.value = null), 5000)
+    setTimeout(() => (success.value = null), 5000);
   } catch (err) {
-    showError(err.response?.data?.message || t('messages.error.failedToReject'))
+    showError(
+      err.response?.data?.message || t("messages.error.failedToReject")
+    );
   }
-}
+};
 </script>
 
 <style scoped>
@@ -1768,7 +2084,9 @@ const rejectIdea = async (request) => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Empty State */
@@ -2129,7 +2447,8 @@ const rejectIdea = async (request) => {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -2432,7 +2751,11 @@ const rejectIdea = async (request) => {
 
 .progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-primary-500), var(--color-primary-600));
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-500),
+    var(--color-primary-600)
+  );
   border-radius: var(--radius-full);
   transition: width 0.3s ease;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);

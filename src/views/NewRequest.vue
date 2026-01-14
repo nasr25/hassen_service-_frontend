@@ -613,13 +613,10 @@ const searchEmployees = async () => {
   clearTimeout(searchTimeout);
   searchTimeout = setTimeout(async () => {
     isSearching.value = true;
+    const params = { query: employeeSearchQuery.value };
     try {
-      const response = await axios.get(`${API_URL}/employees/search`, {
-        params: { query: employeeSearchQuery.value },
-        headers: {
-          Authorization: `Bearer ${authStore.token}`,
-        },
-      });
+      let queryString = objectToQueryString(params);
+      const response = await httpRequest(`/employees/search?${queryString}`);
 
       employeeSearchResults.value = response.data.data || [];
     } catch (err) {
