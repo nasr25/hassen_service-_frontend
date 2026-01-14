@@ -306,8 +306,9 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.rejectedRequests }}</div>
-            <div class="stat-label">{{ $t('dashboard.stats.rejected') }}</div>
+            <div class="stat-label">{{ $t('dashboard.stats.rejected') }}33</div>
           </div>
+
         </div>
       </div>
 
