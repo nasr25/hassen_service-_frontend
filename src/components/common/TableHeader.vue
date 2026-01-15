@@ -17,7 +17,7 @@
               <!-- Chevron separator (skip for first item) -->
               <svg
                 v-if="index > 0"
-                class="w-4 h-4 text-gray-400 mx-2"
+                :class="['w-4 h-4 text-gray-400 mx-2', $i18n.locale === 'ar' ? 'rotate-180' : '']"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -42,6 +42,9 @@
 </template>
 
 <script setup>
+import { useI18n } from "vue-i18n";
+const { locale } = useI18n();
+
 const props = defineProps({
   title: { type: String, default: "Inventory List" },
   description: { type: String, default: "Manage your assets and inventory." },
