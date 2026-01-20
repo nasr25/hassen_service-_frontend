@@ -100,7 +100,10 @@
       <!-- Requests List -->
       <div v-else>
         <!-- Filter Bar -->
-        <div class="filter-bar">
+        <div
+          class="filter-bar"
+          :dir="t('dir')"
+        >
           <button
             v-for="status in statuses"
             :key="status.value"
@@ -414,6 +417,7 @@ const truncate = (text, length) => {
   background: var(--color-background);
   border-radius: var(--radius-xl);
   border: 1px solid var(--color-border);
+  direction: ltr;
 }
 
 .filter-chip {

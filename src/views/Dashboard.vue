@@ -65,7 +65,7 @@
               />
             </svg>
           </div>
-          <h3>{{ $t('dashboard.newRequest.title') }}eeeeeeee</h3>
+          <h3>{{ $t('dashboard.newRequest.title') }}</h3>
           <p>{{ $t('dashboard.newRequest.description') }}</p>
         </BaseCard>
 
@@ -157,6 +157,48 @@
           <h3>{{ $t('dashboard.adminPanel.title') }}</h3>
           <p>{{ $t('dashboard.adminPanel.description') }}</p>
         </BaseCard>
+
+        <BaseCard
+          class="action-card"
+          @click="goToIdeaBank"
+        >
+          <div class="action-icon action-icon-secondary">
+            <svg
+              width="32"
+              height="32"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <h3>{{ $t('ideasBank.title') }}</h3>
+          <p>{{ $t('ideasBank.short_description') }}</p>
+        </BaseCard>
+        <a href="https://www.google.com/">
+          <BaseCard class="action-card">
+            <div class="action-icon action-icon-secondary">
+              <svg
+                width="32"
+                height="32"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+            <h3>{{ $t('ideasBank.title') }}</h3>
+            <p>{{ $t('ideasBank.short_description') }}</p>
+          </BaseCard>
+        </a>
       </div>
 
       <!-- Stats Grid -->
@@ -313,7 +355,10 @@
       </div>
 
       <!-- Charts Section -->
-      <div class="section-header" style="margin-top: 30px;">
+      <div
+        class="section-header"
+        style="margin-top: 30px;"
+      >
         <h2>{{ $t('dashboard.charts.title') || 'Request Overview' }}</h2>
         <p>{{ $t('dashboard.charts.subtitle') || 'Visual representation of all requests in the system' }}</p>
       </div>
@@ -583,6 +628,9 @@ const goDepartmentWorkflow = () => {
 
 const goToAdmin = () => {
   router.push("/admin");
+};
+const goToIdeaBank = () => {
+  router.push("/ideas-bank");
 };
 </script>
 
