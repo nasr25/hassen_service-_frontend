@@ -931,7 +931,7 @@ html[dir="rtl"] .chart-title {
 
 /* Override RTL for Dashboard - Force LTR */
 [dir="rtl"] .welcome-section {
-  direction: ltr !important;
+  direction: rtl !important;
   flex-direction: row !important;
 }
 
