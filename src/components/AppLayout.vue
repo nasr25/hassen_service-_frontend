@@ -106,7 +106,7 @@
           </svg>
           <span v-if="!sidebarCollapsed">{{ $t('nav.myIdeas') }}</span>
         </router-link>
-
+        <!---
         <router-link
           to="/ideas-bank"
           class="nav-item"
@@ -122,7 +122,7 @@
           </svg>
           <span v-if="!sidebarCollapsed">{{ $t('nav.ideasBank') }}</span>
         </router-link>
-
+!--->
         <router-link
           v-if="canReview"
           to="/workflow/review"
@@ -447,7 +447,6 @@ const pageTitle = computed(() => {
 const systemTitle = computed(() => {
   return locale.value === "ar" ? siteNameAr.value : siteName.value;
 });
-
 
 const isAdmin = computed(() => authStore.user?.role?.toLowerCase() === "admin");
 
