@@ -4,7 +4,7 @@
       <!-- Page Header -->
       <div class="page-header">
         <TableHeader
-          :title="$t('request.requestDetails')"
+          :title="$t('request.ideaDetails')"
           :breadcrumbs="pageBreadcrumbs"
         />
 
@@ -197,7 +197,7 @@
       >
         <!-- Request Overview -->
         <BaseCard class="section-card">
-          <h2 class="section-title">{{ $t('request.requestOverview') }}</h2>
+          <h2 class="section-title">{{ $t('request.ideaOverview') }}</h2>
           <div class="info-grid">
             <div class="info-item">
               <strong>{{ $t('request.requestId') }}</strong>
@@ -218,17 +218,17 @@
               </BaseBadge>
             </div>
             <div class="info-item">
-              <strong>{{ $t('request.workflowPath') }}</strong>
+              <strong>{{ $t('request.innovativePath') }}</strong>
               <span>{{ request.workflow_path?.name || $t('request.notAssigned') }}</span>
             </div>
             <div class="info-item">
-              <strong>{{ $t('request.currentLocation') }}</strong>
+              <strong>{{ $t('request.responsibleForTheProcedure') }}</strong>
               <span>{{ request.current_department?.name || $t('common.notAvailable') }}</span>
             </div>
-            <div class="info-item">
+            <!-- <div class="info-item">
               <strong>{{ $t('request.assignedTo') }}</strong>
               <span>{{ request.current_assignee?.name || $t('request.unassigned') }}</span>
-            </div>
+            </div> -->
             <div class="info-item">
               <strong>{{ $t('request.submittedAt') }}</strong>
               <span>{{ formatDate(request.submitted_at || request.created_at) }}</span>
@@ -552,7 +552,9 @@
                     <strong>{{ $t('workflow.statusChange') }}:</strong>
                     <span class="status-change">
                       <span v-if="transition.from_status">{{ $t('status.' + transition.from_status) }}</span>
-                      <span v-if="transition.from_status && transition.to_status"> → </span>
+                      <span v-if="transition.from_status && transition.to_status">
+                        {{ $i18n.locale === 'ar' ? '←' : '→' }}
+                      </span>
                       <span v-if="transition.to_status">{{ $t('status.' + transition.to_status) }}</span>
                     </span>
                   </div>
@@ -560,10 +562,12 @@
                     v-if="transition.from_department || transition.to_department"
                     class="timeline-info"
                   >
-                    <strong>{{ $t('workflow.department') }}:</strong>
+                    <strong>{{ $t('request.responsible') }}:</strong>
                     <span class="status-change">
                       <span v-if="transition.from_department">{{ transition.from_department.name }}</span>
-                      <span v-if="transition.from_department && transition.to_department"> → </span>
+                      <span v-if="transition.from_department && transition.to_department">
+                        {{ $i18n.locale === 'ar' ? '←' : '→' }}
+                      </span>
                       <span v-if="transition.to_department">{{ transition.to_department.name }}</span>
                     </span>
                   </div>
@@ -620,7 +624,7 @@ const pageBreadcrumbs = [
   { name: t("nav.dashboard"), link: "/" },
 
   { name: t("nav.myRequests"), link: "/requests" },
-  { name: t("request.requestDetails"), link: "" },
+  { name: t("request.ideaDetails"), link: "" },
 ];
 onMounted(async () => {
   await loadRequest();

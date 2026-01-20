@@ -62,6 +62,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "myRequests": "My Requests",
+    "myIdeas": "My Ideas",
     "newRequest": "New Request",
     "viewRequest": "View Request",
     "workflowReview": "Workflow Review",
@@ -80,16 +81,16 @@
     "searchPlaceholder": "Search ideas...",
     "stats": {
       "total": "Total Ideas",
-      "underReview": "Under Review",
-      "inProgress": "In Progress",
-      "completed": "Completed"
+      "underReview": "Ideas Under Review",
+      "inProgress": "Ideas In Progress",
+      "completed": "Ideas Completed"
     },
     "status": {
-      "pending": "Pending",
-      "under_review": "Under Review",
-      "in_review": "In Review",
-      "in_progress": "In Progress",
-      "completed": "Completed"
+      "pending": "Ideas Pending",
+      "under_review": "Ideas Under Review",
+      "in_review": "Ideas In Review",
+      "in_progress": "Ideas In Progress",
+      "completed": "Ideas Completed"
     },
     "assignedTo": "Assigned to",
     "noIdeas": "No Ideas Found",
@@ -170,7 +171,7 @@
     "charts": {
       "title": "Request Overview",
       "subtitle": "Visual representation of all requests in the system",
-      "distribution": "Request Distribution",
+      "distribution": "Status of Requests",
       "overview": "Request Overview",
       "numberOfRequests": "Number of Requests",
       "count": "Count"
@@ -244,6 +245,7 @@
     "requestDetails": "Request Details",
     "requestHistory": "Request History",
     "requestOverview": "Request Overview",
+    "ideaOverview": "Idea Overview",
     "requestId": "Request ID",
     "workflowHistory": "Workflow History",
     "transitionHistory": "Transition History",
@@ -269,7 +271,7 @@
     "ideaTitlePlaceholder": "Enter a clear and concise title for your idea",
     "ideaTitleCharCount": "{count}/200 characters",
     "ideaDescription": "Idea Description",
-    "ideaDescriptionPlaceholder": "Describe your idea in detail (minimum 25 characters)",
+    "ideaDescriptionPlaceholder": "Describe your idea in detail",
     "ideaDescriptionCharCount": "{count} characters (minimum 25 required)",
     "ideaType": "Idea Type",
     "ideaTypePlaceholder": "Select an idea type",
@@ -288,6 +290,7 @@
     "searching": "Searching...",
     "selectedEmployees": "Selected Employees ({count})",
     "benefits": "Benefits",
+    "expectedImpact": "Expected Impact - (optional)",
     "benefitsPlaceholder": "Describe the potential benefits of implementing this idea (optional)",
     "benefitsHelp": "Optional: Explain how this idea will benefit the organization",
     "additionalDetailsLabel": "Additional Details",
@@ -301,6 +304,10 @@
     "saveAsDraft": "Save as Draft",
     "updateResubmit": "Update & Resubmit",
     "submitIdea": "Submit Idea",
+    "innovativePath": "Innovative Path",
+    "newIdea": "New Idea",
+    "responsible": "Responsible",
+    "responsibleForTheProcedure": "Responsible For The Procedure",
     "validationErrors": {
       "titleRequired": "Idea title is required",
       "titleTooLong": "Title must not exceed 200 characters",
@@ -308,6 +315,7 @@
       "descriptionTooShort": "Description must be at least 25 characters",
       "ideaTypeRequired": "Please select an idea type",
       "departmentRequired": "Please select a department",
+      "pathRequired": "Please select a path",
       "maxFilesExceeded": "Maximum {max} files allowed",
       "invalidFileType": "Only PDF, JPG, JPEG, and PNG files are allowed",
       "fixValidationErrors": "Please fix the validation errors",
@@ -337,14 +345,14 @@
   },
   "status": {
     "draft": "Draft",
-    "pending": "Pending",
-    "in_review": "In Review",
-    "in_progress": "In Progress",
-    "need_more_details": "Need Details",
-    "missing_requirement": "Missing Requirement",
-    "approved": "Approved",
-    "rejected": "Rejected",
-    "completed": "Completed"
+    "pending": "Ideas Pending",
+    "in_review": "Ideas In Review",
+    "in_progress": "Ideas In Progress",
+    "need_more_details": "Ideas Need Details",
+    "missing_requirement": "Ideas Missing Requirement",
+    "approved": "Ideas Approved",
+    "rejected": "Ideas Rejected",
+    "completed": "Ideas Completed"
   },
   "workflow": {
     "title": "Workflow Review",
@@ -376,6 +384,7 @@
     "submitContinue": "Submit & Continue",
     "assignPath": "Assign Path",
     "requestDetails": "Request Details",
+    "ideaDetails": "Idea Details",
     "requestMoreDetails": "Request More Details",
     "whatAdditionalInfo": "What additional information do you need?",
     "explainDetailsNeeded": "Explain what details are needed from the user...",

@@ -7,12 +7,12 @@
           <h1>{{ $t('common.welcome') }}, {{ user?.name }}!</h1>
           <p class="welcome-subtitle">{{ systemTitle }}</p>
         </div>
-        <BaseBadge
+        <!-- <BaseBadge
           :variant="getRoleBadgeVariant(user?.role)"
           class="role-badge-large"
         >
           {{ $t('admin.' + (user?.role || 'user').toLowerCase()) }}
-        </BaseBadge>
+        </BaseBadge> -->
       </div>
 
       <!-- Quick Actions -->
@@ -65,7 +65,7 @@
               />
             </svg>
           </div>
-          <h3>{{ $t('dashboard.newRequest.title') }}</h3>
+          <h3>{{ $t('dashboard.newRequest.title') }}eeeeeeee</h3>
           <p>{{ $t('dashboard.newRequest.description') }}</p>
         </BaseCard>
 
@@ -313,7 +313,7 @@
       </div>
 
       <!-- Charts Section -->
-      <div class="section-header">
+      <div class="section-header" style="margin-top: 30px;">
         <h2>{{ $t('dashboard.charts.title') || 'Request Overview' }}</h2>
         <p>{{ $t('dashboard.charts.subtitle') || 'Visual representation of all requests in the system' }}</p>
       </div>

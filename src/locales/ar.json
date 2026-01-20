@@ -62,6 +62,7 @@
   "nav": {
     "dashboard": "لوحة التحكم",
     "myRequests": "طلباتي",
+    "myIdeas": "افكاري",
     "newRequest": "طلب جديد",
     "viewRequest": "عرض الطلب",
     "workflowReview": "مراجعة سير العمل",
@@ -80,16 +81,16 @@
     "searchPlaceholder": "البحث عن الأفكار...",
     "stats": {
       "total": "إجمالي الأفكار",
-      "underReview": "قيد المراجعة",
-      "inProgress": "قيد التنفيذ",
-      "completed": "مكتملة"
+      "underReview": "افكار قيد المراجعة",
+      "inProgress": "افكار قيد التنفيذ",
+      "completed": "افكار مكتملة"
     },
     "status": {
       "pending": "معلق",
-      "under_review": "قيد المراجعة",
-      "in_review": "قيد المراجعة",
-      "in_progress": "قيد التنفيذ",
-      "completed": "مكتمل"
+      "under_review": "افكار قيد المراجعة",
+      "in_review": "افكار قيد المراجعة",
+      "in_progress": "افكار قيد التنفيذ",
+      "completed": "افكار مكتملة"
     },
     "assignedTo": "مسند إلى",
     "noIdeas": "لا توجد أفكار",
@@ -161,16 +162,16 @@
     "stats": {
       "totalRequests": "إجمالي الطلبات",
       "draft": "مسودة",
-      "pendingRequests": "قيد الانتظار",
-      "inProgress": "قيد التنفيذ",
-      "approved": "موافق عليها",
-      "completed": "مكتملة",
-      "rejected": "مرفوضة"
+      "pendingRequests": "افكار قيد الانتظار",
+      "inProgress": "افكار قيد التنفيذ",
+      "approved": "افكار موافق عليها",
+      "completed": "افكار مكتملة",
+      "rejected": "افكار لم يتم اعتمادها"
     },
     "charts": {
       "title": "نظرة عامة على الطلبات",
       "subtitle": "تمثيل مرئي لجميع الطلبات في النظام",
-      "distribution": "توزيع الطلبات",
+      "distribution": "حالة الطلبات",
       "overview": "نظرة عامة على الطلبات",
       "numberOfRequests": "عدد الطلبات",
       "count": "العدد"
@@ -242,8 +243,10 @@
     "resubmitRequest": "إعادة تقديم الطلب",
     "editAndResubmit": "تعديل وإعادة التقديم",
     "requestDetails": "تفاصيل الطلب",
+    "ideaDetails": "تفاصيل الفكرة",
     "requestHistory": "سجل الطلب",
     "requestOverview": "نظرة عامة على الطلب",
+    "ideaOverview": "نظرة عامة على الفكرة",
     "requestId": "رقم الطلب",
     "workflowHistory": "سجل سير العمل",
     "transitionHistory": "سجل التحويلات",
@@ -269,10 +272,10 @@
     "ideaTitlePlaceholder": "أدخل عنواناً واضحاً وموجزاً لفكرتك",
     "ideaTitleCharCount": "{count}/200 حرف",
     "ideaDescription": "وصف الفكرة",
-    "ideaDescriptionPlaceholder": "صف فكرتك بالتفصيل (25 حرفاً على الأقل)",
+    "ideaDescriptionPlaceholder": "صف فكرتك بالتفصيل",
     "ideaDescriptionCharCount": "{count} حرف (الحد الأدنى 25 حرفاً مطلوب)",
-    "ideaType": "نوع الفكرة",
-    "ideaTypePlaceholder": "اختر نوع الفكرة",
+    "ideaType": "فئة الفكرة",
+    "ideaTypePlaceholder": "اختر فئة الفكرة",
     "ideaTypeHelp": "اختر الفئة التي تناسب فكرتك بشكل أفضل",
     "department": "المسار",
     "departmentPlaceholder": "اختر المسار",
@@ -288,8 +291,9 @@
     "searching": "جاري البحث...",
     "selectedEmployees": "الموظفون المختارون ({count})",
     "benefits": "الفوائد",
+    "expectedImpact": "الأثر المتوقع - (إختياري)",
     "benefitsPlaceholder": "صف الفوائد المحتملة من تطبيق هذه الفكرة (اختياري)",
-    "benefitsHelp": "اختياري: اشرح كيف ستفيد هذه الفكرة المؤسسة",
+    "benefitsHelp": "اختياري: اشرح كيف ستفيد هذه الفكرة الهيئة",
     "additionalDetailsLabel": "تفاصيل إضافية",
     "additionalDetailsRequestPlaceholder": "أضف أي معلومات إضافية طلبها المراجع",
     "additionalDetailsRequestHelp": "قدّم أي توضيحات أو معلومات إضافية مطلوبة",
@@ -301,6 +305,10 @@
     "saveAsDraft": "حفظ كمسودة",
     "updateResubmit": "تحديث وإعادة التقديم",
     "submitIdea": "تقديم الفكرة",
+    "innovativePath": "المسار الإبتكاري",
+    "newIdea": "فكرة جديدة",
+    "responsibleForTheProcedure": "المسؤل عن الإجراء",
+    "responsible": "المسؤل",
     "validationErrors": {
       "titleRequired": "عنوان الفكرة مطلوب",
       "titleTooLong": "يجب ألا يتجاوز العنوان 200 حرف",
@@ -308,6 +316,7 @@
       "descriptionTooShort": "يجب أن يكون الوصف 25 حرفاً على الأقل",
       "ideaTypeRequired": "الرجاء اختيار نوع الفكرة",
       "departmentRequired": "الرجاء اختيار القسم",
+      "pathRequired": "الرجاء اختيار المسار",
       "maxFilesExceeded": "الحد الأقصى {max} ملفات مسموح",
       "invalidFileType": "يُسمح فقط بملفات PDF وJPG وJPEG وPNG",
       "fixValidationErrors": "الرجاء إصلاح أخطاء التحقق",
@@ -337,14 +346,14 @@
   },
   "status": {
     "draft": "مسودة",
-    "pending": "قيد الانتظار",
-    "in_review": "قيد المراجعة",
-    "in_progress": "قيد التنفيذ",
-    "need_more_details": "بحاجة لتفاصيل",
+    "pending": "افكار قيد الانتظار",
+    "in_review": "افكار قيد المراجعة",
+    "in_progress": "افكار قيد التنفيذ",
+    "need_more_details": "افكار بحاجة لتفاصيل",
     "missing_requirement": "متطلبات ناقصة",
-    "approved": "موافق عليه",
-    "rejected": "مرفوض",
-    "completed": "مكتمل"
+    "approved": "افكار موافق عليه",
+    "rejected": "افكار لم يتم اعتمادها",
+    "completed": "افكار مكتملة"
   },
   "workflow": {
     "title": "مراجعة سير العمل",

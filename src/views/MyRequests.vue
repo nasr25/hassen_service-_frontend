@@ -4,7 +4,7 @@
       <!-- Header Actions -->
       <div class="page-header">
         <TableHeader
-          :title="$t('nav.myRequests')  "
+          :title="$t('nav.myIdeas')  "
           :breadcrumbs="pageBreadcrumbs"
         />
 
@@ -43,7 +43,7 @@
                 clip-rule="evenodd"
               />
             </svg>
-            {{ $t('request.newRequest') }}
+            {{ $t('request.newIdea') }}
           </BaseButton>
         </div>
       </div>
@@ -92,7 +92,7 @@
             size="lg"
             @click="createNew"
           >
-            {{ $t('request.newRequest') }}
+            {{ $t('request.newIdea') }}
           </BaseButton>
         </div>
       </BaseCard>
@@ -205,7 +205,7 @@ const filterStatus = ref("all");
 const pageBreadcrumbs = [
   { name: t("nav.dashboard"), link: "/" },
 
-  { name: t("nav.myRequests"), link: "/requests" },
+  { name: t("nav.myIdeas"), link: "/requests" },
 ];
 // Pagination state
 const pagination = ref({

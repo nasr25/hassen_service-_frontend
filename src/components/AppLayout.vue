@@ -104,7 +104,7 @@
               clip-rule="evenodd"
             />
           </svg>
-          <span v-if="!sidebarCollapsed">{{ $t('nav.myRequests') }}</span>
+          <span v-if="!sidebarCollapsed">{{ $t('nav.myIdeas') }}</span>
         </router-link>
 
         <router-link
@@ -177,7 +177,7 @@
       <!-- Top Navigation Bar -->
       <header class="top-nav">
         <div class="top-nav-left">
-          <h2 class="page-title">{{ t('app_name') }}</h2>
+          <h2 class="page-title">{{ systemTitle }}</h2>
         </div>
 
         <div class="top-nav-right">
@@ -437,12 +437,17 @@ const pageTitle = computed(() => {
   const titles = {
     "/dashboard": t("nav.dashboard"),
     "/requests/new": t("nav.newRequest"),
-    "/requests": t("nav.myRequests"),
+    "/requests": t("nav.myIdeas"),
     "/workflow/review": t("nav.workflowReview"),
     "/admin": t("nav.admin"),
   };
   return titles[route.path] || t("nav.dashboard");
 });
+
+const systemTitle = computed(() => {
+  return locale.value === "ar" ? siteNameAr.value : siteName.value;
+});
+
 
 const isAdmin = computed(() => authStore.user?.role?.toLowerCase() === "admin");
 

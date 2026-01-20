@@ -82,7 +82,7 @@
           <!-- Department -->
           <BaseSelect
             v-model="form.department"
-            :label="$t('request.department')"
+            :label="$t('request.innovativePath')"
             :placeholder="$t('request.departmentPlaceholder')"
             required
             :options="departmentOptions"
@@ -234,7 +234,7 @@
           <BaseInput
             v-model="form.benefits"
             type="textarea"
-            :label="$t('request.benefits')"
+            :label="$t('request.expectedImpact')"
             :placeholder="$t('request.benefitsPlaceholder')"
             :rows="4"
             :help="$t('request.benefitsHelp')"
@@ -491,7 +491,7 @@ const isFormValid = computed(() => {
   return (
     form.value.title.length > 0 &&
     form.value.title.length <= 200 &&
-    form.value.description.length >= 25 &&
+    // form.value.description.length >= 25 &&
     form.value.department !== "" &&
     uploadedFiles.value.length <= 5
   );
@@ -668,19 +668,19 @@ const validateField = (fieldName) => {
       }
       break;
 
-    case "description":
-      if (!form.value.description || form.value.description.trim() === "") {
-        errors.description = t("request.validationErrors.descriptionRequired");
-      } else if (form.value.description.length < 25) {
-        errors.description = t("request.validationErrors.descriptionTooShort");
-      } else {
-        delete errors.description;
-      }
-      break;
+    // case "description":
+    //   if (!form.value.description || form.value.description.trim() === "") {
+    //     errors.description = t("request.validationErrors.descriptionRequired");
+    //   } else if (form.value.description.length < 25) {
+    //     errors.description = t("request.validationErrors.descriptionTooShort");
+    //   } else {
+    //     delete errors.description;
+    //   }
+    //   break;
 
     case "department":
       if (!form.value.department) {
-        errors.department = t("request.validationErrors.departmentRequired");
+        errors.department = t("request.validationErrors.pathRequired");
       } else {
         delete errors.department;
       }
@@ -728,13 +728,14 @@ const validateForm = () => {
   // Description validation
   if (!form.value.description || form.value.description.trim() === "") {
     errors.description = t("request.validationErrors.descriptionRequired");
-  } else if (form.value.description.length < 25) {
-    errors.description = t("request.validationErrors.descriptionTooShort");
   }
+  //  else if (form.value.description.length < 25) {
+  //   errors.description = t("request.validationErrors.descriptionTooShort");
+  // }
 
   // Department validation
   if (!form.value.department) {
-    errors.department = t("request.validationErrors.departmentRequired");
+    errors.department = t("request.validationErrors.pathRequired");
   }
 
   // File validation
