@@ -345,7 +345,7 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.rejectedRequests }}</div>
-            <div class="stat-label">{{ $t('dashboard.stats.rejected') }}33</div>
+            <div class="stat-label">{{ $t('dashboard.stats.rejected') }}</div>
           </div>
 
         </div>
@@ -450,10 +450,10 @@ const pieChartData = computed(() => ({
     {
       data: [stats.value.inProgressRequests, stats.value.completedRequests],
       backgroundColor: [
-        "rgba(59, 130, 246, 0.8)", // Primary - In Progress
-        "rgba(34, 197, 94, 0.8)", // Success - Completed
+        "rgba(64, 113, 100, 0.8)", // In Progress
+        "rgba(150, 166, 163, 0.8)", // Completed
       ],
-      borderColor: ["rgba(59, 130, 246, 1)", "rgba(34, 197, 94, 1)"],
+      borderColor: ["rgba(64, 113, 100, 1)", "rgba(150, 166, 163, 1)"],
       borderWidth: 2,
     },
   ],
@@ -495,10 +495,10 @@ const barChartData = computed(() => ({
       label: t("dashboard.charts.numberOfRequests"),
       data: [stats.value.inProgressRequests, stats.value.completedRequests],
       backgroundColor: [
-        "rgba(59, 130, 246, 0.8)", // In Progress
-        "rgba(34, 197, 94, 0.8)", // Completed
+        "rgba(64, 113, 100, 0.8)", // In Progress
+        "rgba(150, 166, 163, 0.8)", // Completed
       ],
-      borderColor: ["rgba(59, 130, 246, 1)", "rgba(34, 197, 94, 1)"],
+      borderColor: ["rgba(64, 113, 100, 1)", "rgba(150, 166, 163, 1)"],
       borderWidth: 2,
     },
   ],
