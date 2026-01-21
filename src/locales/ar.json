@@ -1,5 +1,6 @@
 {
   "app_name": "WorkFlow Management System",
+  "dir": "rtl",
   "common": {
     "loading": "جاري التحميل...",
     "loadingDetails": "جاري تحميل التفاصيل...",
@@ -78,6 +79,7 @@
   "ideasBank": {
     "title": "بنك الأفكار",
     "subtitle": "استكشف الأفكار المبتكرة من جميع أنحاء المؤسسة",
+    "short_description": "short description",
     "searchPlaceholder": "البحث عن الأفكار...",
     "stats": {
       "total": "إجمالي الأفكار",

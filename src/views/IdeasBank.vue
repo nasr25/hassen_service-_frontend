@@ -261,7 +261,10 @@
           <strong>{{ pagination.total }}</strong>
           {{ $t('ideasBank.results') }}
         </div>
-        <div class="pagination-controls">
+        <div
+          class="pagination-controls"
+          v-if="locale==='en'"
+        >
           <button
             class="btn-pagination"
             :disabled="pagination.current_page === 1"
@@ -308,6 +311,61 @@
             </svg>
           </button>
         </div>
+
+        <div
+          class="pagination-controls"
+          v-else
+        >
+          <button
+            class="btn-pagination"
+            :disabled="pagination.current_page === pagination.last_page"
+            @click="goToPage(pagination.current_page + 1)"
+          >
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            {{ $t('common.next') }}
+
+          </button>
+
+          <span class="pagination-pages">
+            {{ $t('common.page') }} {{ pagination.current_page }} {{ $t('common.of') }} {{ pagination.last_page }}
+          </span>
+          <button
+            class="btn-pagination"
+            :disabled="pagination.current_page === 1"
+            @click="goToPage(pagination.current_page - 1)"
+          >
+
+            {{ $t('common.previous') }}
+            <svg
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
+
       </div>
     </div>
   </AppLayout>
@@ -740,6 +798,7 @@ onMounted(() => {
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   margin-top: 24px;
+  flex-direction: row-reverse;
 }
 
 .pagination-info-left {

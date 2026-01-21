@@ -65,7 +65,7 @@
               />
             </svg>
           </div>
-          <h3>{{ $t('dashboard.newRequest.title') }}eeeeeeee</h3>
+          <h3>{{ $t('dashboard.newRequest.title') }}</h3>
           <p>{{ $t('dashboard.newRequest.description') }}</p>
         </BaseCard>
 
@@ -140,7 +140,7 @@
           class="action-card"
           @click="goToAdmin"
         >
-          <div class="action-icon action-icon-secondary">
+          <div class="action-icon action-icon-info">
             <svg
               width="32"
               height="32"
@@ -157,6 +157,45 @@
           <h3>{{ $t('dashboard.adminPanel.title') }}</h3>
           <p>{{ $t('dashboard.adminPanel.description') }}</p>
         </BaseCard>
+
+        <BaseCard
+          class="action-card"
+          @click="goToIdeaBank"
+        >
+          <div class="action-icon action-icon-primary">
+
+            <svg
+              width="32"
+              height="32"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
+            </svg>
+          </div>
+          <h3>{{ $t('ideasBank.title') }}</h3>
+          <p>{{ $t('ideasBank.short_description') }}</p>
+        </BaseCard>
+        <a href="https://www.google.com/">
+          <BaseCard class="action-card">
+            <div class="action-icon action-icon-secondary">
+              <svg
+                width="32"
+                height="32"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+            <h3>{{ $t('ideasBank.title') }}</h3>
+            <p>{{ $t('ideasBank.short_description') }}</p>
+          </BaseCard>
+        </a>
       </div>
 
       <!-- Stats Grid -->
@@ -306,14 +345,17 @@
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.rejectedRequests }}</div>
-            <div class="stat-label">{{ $t('dashboard.stats.rejected') }}33</div>
+            <div class="stat-label">{{ $t('dashboard.stats.rejected') }}</div>
           </div>
 
         </div>
       </div>
 
       <!-- Charts Section -->
-      <div class="section-header" style="margin-top: 30px;">
+      <div
+        class="section-header"
+        style="margin-top: 30px;"
+      >
         <h2>{{ $t('dashboard.charts.title') || 'Request Overview' }}</h2>
         <p>{{ $t('dashboard.charts.subtitle') || 'Visual representation of all requests in the system' }}</p>
       </div>
@@ -408,10 +450,10 @@ const pieChartData = computed(() => ({
     {
       data: [stats.value.inProgressRequests, stats.value.completedRequests],
       backgroundColor: [
-        "rgba(59, 130, 246, 0.8)", // Primary - In Progress
-        "rgba(34, 197, 94, 0.8)", // Success - Completed
+        "rgba(64, 113, 100, 0.8)", // In Progress
+        "rgba(150, 166, 163, 0.8)", // Completed
       ],
-      borderColor: ["rgba(59, 130, 246, 1)", "rgba(34, 197, 94, 1)"],
+      borderColor: ["rgba(64, 113, 100, 1)", "rgba(150, 166, 163, 1)"],
       borderWidth: 2,
     },
   ],
@@ -453,10 +495,10 @@ const barChartData = computed(() => ({
       label: t("dashboard.charts.numberOfRequests"),
       data: [stats.value.inProgressRequests, stats.value.completedRequests],
       backgroundColor: [
-        "rgba(59, 130, 246, 0.8)", // In Progress
-        "rgba(34, 197, 94, 0.8)", // Completed
+        "rgba(64, 113, 100, 0.8)", // In Progress
+        "rgba(150, 166, 163, 0.8)", // Completed
       ],
-      borderColor: ["rgba(59, 130, 246, 1)", "rgba(34, 197, 94, 1)"],
+      borderColor: ["rgba(64, 113, 100, 1)", "rgba(150, 166, 163, 1)"],
       borderWidth: 2,
     },
   ],
@@ -583,6 +625,9 @@ const goDepartmentWorkflow = () => {
 
 const goToAdmin = () => {
   router.push("/admin");
+};
+const goToIdeaBank = () => {
+  router.push("/ideas-bank");
 };
 </script>
 
@@ -886,7 +931,7 @@ html[dir="rtl"] .chart-title {
 
 /* Override RTL for Dashboard - Force LTR */
 [dir="rtl"] .welcome-section {
-  direction: ltr !important;
+  direction: rtl !important;
   flex-direction: row !important;
 }
 
