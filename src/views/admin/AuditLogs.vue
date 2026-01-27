@@ -352,11 +352,10 @@ import Pagination from "../../components/common/Pagination.vue";
 import { objectToQueryString } from "../../services/handle";
 import { httpRequest } from "../../services/api";
 // 2. Define the data for the breadcrumbs and title
-const pageBreadcrumbs = [
-  { name: "Home", link: "/" },
-
-  { name: "Department", link: "/admin/users" },
-];
+const pageBreadcrumbs = computed(() => [
+  { name: t("nav.dashboard"), link: "/" },
+  { name: t("admin.auditLogs"), link: "/admin/audit-logs" },
+]);
 
 const { t } = useI18n();
 const authStore = useAuthStore();

@@ -240,39 +240,39 @@
             :help="$t('request.benefitsHelp')"
           />
 
-          <!-- Idea Type (Optional) -->
+          <!-- Idea Type (Optional - Multiple Selection) -->
           <div class="form-group">
             <label class="form-label">
-              {{ $t('request.ideaType') }}
+              {{ $t('request.ideaTypes') }}
               <span class="optional-text">({{ $t('common.optional') }})</span>
             </label>
-            <div class="radio-group idea-type-radio-group">
+            <div class="checkbox-group idea-type-checkbox-group">
               <label
                 v-for="type in ideaTypes"
                 :key="type.id"
-                class="radio-label idea-type-option"
-                :class="{ 'active': form.idea_type === type.id.toString() }"
+                class="checkbox-label idea-type-option"
+                :class="{ 'active': form.idea_types.includes(type.id.toString()) }"
               >
                 <input
-                  type="radio"
-                  v-model="form.idea_type"
+                  type="checkbox"
+                  v-model="form.idea_types"
                   :value="type.id.toString()"
-                  class="radio-input"
+                  class="checkbox-input"
                 />
-                <span class="radio-text">{{ locale === 'ar' ? type.name_ar : type.name }}</span>
+                <span class="checkbox-text">{{ locale === 'ar' ? type.name_ar : type.name }}</span>
                 <div class="idea-type-tooltip">
                   {{ locale === 'ar' ? type.description_ar : type.description }}
                 </div>
               </label>
             </div>
             <span
-              v-if="validationErrors.idea_type"
+              v-if="validationErrors.idea_types"
               class="form-error"
-            >{{ validationErrors.idea_type }}</span>
+            >{{ validationErrors.idea_types }}</span>
             <span
               v-else
               class="form-help"
-            >{{ $t('request.ideaTypeHelp') }}</span>
+            >{{ $t('request.ideaTypesHelp') }}</span>
           </div>
 
           <!-- Additional Details (Edit Mode Only) -->
@@ -436,7 +436,7 @@ const { showSuccess, showError } = useAlert();
 const form = ref({
   title: "",
   description: "",
-  idea_type: "",
+  idea_types: [],
   department: "",
   benefits: "",
   additional_details: "",
@@ -459,15 +459,14 @@ const employeeSearchQuery = ref("");
 const employeeSearchResults = ref([]);
 const isSearching = ref(false);
 let searchTimeout = null;
-const pageBreadcrumbs = [
+const pageBreadcrumbs = computed(() => [
   { name: t("nav.dashboard"), link: "/" },
-
   { name: t("nav.myRequests"), link: "/requests" },
   {
-    name: isEditMode ? t("request.editRequest") : t("request.submitNewIdea"),
+    name: isEditMode.value ? t("request.editRequest") : t("request.submitNewIdea"),
     link: "",
   },
-];
+]);
 // Idea Type Options (computed from fetched data with bilingual support)
 const ideaTypeOptions = computed(() => {
   return ideaTypes.value.map((type) => ({
@@ -565,7 +564,9 @@ const loadRequest = async (id) => {
     // Update form properties individually for better Vue reactivity
     form.value.title = request.title || "";
     form.value.description = request.description || "";
-    form.value.idea_type = request.idea_type_id?.toString() || "";
+    form.value.idea_types = request.idea_types && Array.isArray(request.idea_types)
+      ? request.idea_types.map(type => type.id.toString())
+      : [];
     form.value.department = request.department_id?.toString() || "unknown";
     form.value.benefits = request.benefits || "";
     form.value.additional_details = request.additional_details || "";
@@ -818,7 +819,14 @@ const handleSubmit = async () => {
     const formData = new FormData();
     formData.append("title", form.value.title);
     formData.append("description", form.value.description);
-    formData.append("idea_type", form.value.idea_type);
+
+    // Append multiple idea types
+    if (form.value.idea_types && form.value.idea_types.length > 0) {
+      form.value.idea_types.forEach((typeId, index) => {
+        formData.append(`idea_types[${index}]`, typeId);
+      });
+    }
+
     formData.append("department", form.value.department);
     formData.append("benefits", form.value.benefits || "");
     formData.append("status", "pending");
@@ -915,7 +923,14 @@ const saveDraft = async () => {
     const formData = new FormData();
     formData.append("title", form.value.title);
     formData.append("description", form.value.description);
-    formData.append("idea_type", form.value.idea_type || "");
+
+    // Append multiple idea types
+    if (form.value.idea_types && form.value.idea_types.length > 0) {
+      form.value.idea_types.forEach((typeId, index) => {
+        formData.append(`idea_types[${index}]`, typeId);
+      });
+    }
+
     formData.append("department", form.value.department || "");
     formData.append("benefits", form.value.benefits || "");
     formData.append("status", "draft");
@@ -1365,7 +1380,8 @@ const goBack = () => {
 }
 
 /* Idea Type Radio Group with Tooltips */
-.idea-type-radio-group {
+.idea-type-radio-group,
+.idea-type-checkbox-group {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: var(--spacing-3);
@@ -1397,12 +1413,17 @@ const goBack = () => {
   box-shadow: 0 0 0 3px rgba(2, 115, 94, 0.1);
 }
 
-.idea-type-option .radio-input {
+.idea-type-option .radio-input,
+.idea-type-option .checkbox-input {
   flex-shrink: 0;
   accent-color: #02735e;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
 }
 
-.idea-type-option .radio-text {
+.idea-type-option .radio-text,
+.idea-type-option .checkbox-text {
   flex: 1;
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
@@ -1453,7 +1474,8 @@ html[dir="rtl"] .idea-type-tooltip {
 }
 
 @media (max-width: 768px) {
-  .idea-type-radio-group {
+  .idea-type-radio-group,
+  .idea-type-checkbox-group {
     grid-template-columns: 1fr;
   }
 

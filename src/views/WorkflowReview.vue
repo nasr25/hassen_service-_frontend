@@ -80,7 +80,7 @@
       <!-- Requests List -->
       <div v-else>
         <!-- Filter Bar -->
-        <div class="filter-bar">
+        <div class="filter-bar" :dir="$t('dir')">
           <button
             @click="filterStatus = 'all'"
             :class="['filter-chip', { active: filterStatus === 'all' }]"
@@ -155,14 +155,16 @@
 
               <!-- Idea Category Badge -->
               <div
-                v-if="request.ideaType"
+                v-if="(request.ideaTypes || request.idea_types) && ((request.ideaTypes?.length || 0) > 0 || (request.idea_types?.length || 0) > 0)"
                 class="idea-category-section"
               >
                 <span
+                  v-for="ideaType in (request.ideaTypes || request.idea_types)"
+                  :key="ideaType.id"
                   class="idea-type-badge"
-                  :style="{ backgroundColor: request.ideaType.color + '20', color: request.ideaType.color, borderColor: request.ideaType.color }"
+                  :style="{ backgroundColor: ideaType.color + '20', color: ideaType.color, borderColor: ideaType.color }"
                 >
-                  {{ $i18n.locale === 'ar' ? request.ideaType.name_ar : request.ideaType.name }}
+                  {{ $i18n.locale === 'ar' ? ideaType.name_ar : ideaType.name }}
                 </span>
               </div>
 
@@ -899,6 +901,96 @@
           ></textarea>
         </div>
 
+        <!-- File Attachments -->
+        <div class="form-group">
+          <label class="form-label">{{ $t('request.attachments') }} ({{ $t('common.optional') }})</label>
+          <div class="file-upload-area">
+            <input
+              type="file"
+              ref="completeFileInput"
+              @change="handleCompleteFileSelect"
+              accept=".pdf,.jpg,.jpeg,.png"
+              multiple
+              class="file-input"
+              id="complete-file-input"
+              :disabled="completeModal.attachments.length >= 5"
+            />
+            <label
+              for="complete-file-input"
+              class="file-upload-label"
+              :class="{ disabled: completeModal.attachments.length >= 5 }"
+            >
+              <svg
+                width="24"
+                height="24"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span v-if="completeModal.attachments.length < 5">
+                {{ $t('request.clickToUpload') }} ({{ completeModal.attachments.length }}/5)
+              </span>
+              <span v-else>{{ $t('request.maxFilesReached') }}</span>
+            </label>
+            <p class="file-upload-hint">{{ $t('request.supportedFormats') }}: PDF, JPG, JPEG, PNG ({{ $t('request.maxSize') }}: 10MB)</p>
+          </div>
+
+          <!-- Selected Files List -->
+          <div
+            v-if="completeModal.attachments.length > 0"
+            class="selected-files-list"
+          >
+            <div
+              v-for="(file, index) in completeModal.attachments"
+              :key="index"
+              class="file-item"
+            >
+              <div class="file-info">
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <div class="file-details">
+                  <span class="file-name">{{ file.name }}</span>
+                  <span class="file-size">{{ formatCompleteFileSize(file.size) }}</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                @click="removeCompleteAttachment(index)"
+                class="remove-file-btn"
+                :title="$t('common.remove')"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="modal-actions">
           <BaseButton
             variant="secondary"
@@ -1039,6 +1131,7 @@ const completeModal = ref({
   show: false,
   request: null,
   comments: "",
+  attachments: [],
   isLoading: false,
 });
 
@@ -1339,6 +1432,51 @@ const closeCompleteModal = () => {
   completeModal.value.show = false;
   completeModal.value.request = null;
   completeModal.value.comments = "";
+  completeModal.value.attachments = [];
+};
+
+const handleCompleteFileSelect = (event) => {
+  const files = Array.from(event.target.files);
+  const maxFiles = 5;
+  const maxSize = 10 * 1024 * 1024; // 10MB
+  const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+
+  const currentCount = completeModal.value.attachments.length;
+  const remainingSlots = maxFiles - currentCount;
+
+  if (files.length > remainingSlots) {
+    showError(t('messages.error.maxFilesExceeded', { max: maxFiles }));
+    return;
+  }
+
+  for (const file of files) {
+    if (!allowedTypes.includes(file.type)) {
+      showError(t('messages.error.invalidFileType', { name: file.name }));
+      continue;
+    }
+
+    if (file.size > maxSize) {
+      showError(t('messages.error.fileTooLarge', { name: file.name, max: '10MB' }));
+      continue;
+    }
+
+    completeModal.value.attachments.push(file);
+  }
+
+  // Reset input
+  event.target.value = '';
+};
+
+const removeCompleteAttachment = (index) => {
+  completeModal.value.attachments.splice(index, 1);
+};
+
+const formatCompleteFileSize = (bytes) => {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
 };
 
 const confirmComplete = async () => {
@@ -1346,14 +1484,26 @@ const confirmComplete = async () => {
     completeModal.value.isLoading = true;
     error.value = null;
 
+    // Create FormData to handle file uploads
+    const formData = new FormData();
+
+    // Add comments
+    if (completeModal.value.comments) {
+      formData.append('comments', completeModal.value.comments);
+    }
+
+    // Add file attachments
+    completeModal.value.attachments.forEach((file, index) => {
+      formData.append(`attachments[${index}]`, file);
+    });
+
     await axios.post(
       `${API_URL}/workflow/requests/${completeModal.value.request.id}/complete`,
-      {
-        comments: completeModal.value.comments,
-      },
+      formData,
       {
         headers: {
           Authorization: `Bearer ${authStore.token}`,
+          'Content-Type': 'multipart/form-data',
         },
       }
     );
@@ -1696,6 +1846,7 @@ const getLatestActionLabel = (request) => {
   background: var(--color-background);
   border-radius: var(--radius-xl);
   border: 1px solid var(--color-border);
+  direction: ltr;
 }
 
 .filter-chip {
@@ -1793,6 +1944,9 @@ const getLatestActionLabel = (request) => {
 .idea-type-section,
 .idea-category-section {
   margin-bottom: var(--spacing-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
 }
 
 .view-details-btn {
@@ -2535,5 +2689,129 @@ const getLatestActionLabel = (request) => {
   .toggle-buttons {
     flex-direction: column;
   }
+}
+
+/* File Upload Styles */
+.file-upload-area {
+  margin-bottom: var(--spacing-4);
+}
+
+.file-input {
+  display: none;
+}
+
+.file-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-8);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--color-text-secondary);
+}
+
+.file-upload-label:hover:not(.disabled) {
+  border-color: var(--color-primary-500);
+  background: var(--color-primary-50);
+  color: var(--color-primary-700);
+}
+
+.file-upload-label.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.file-upload-label svg {
+  color: var(--color-primary-600);
+}
+
+.file-upload-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-2);
+  text-align: center;
+}
+
+.selected-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4);
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.file-item:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-300);
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  flex: 1;
+  min-width: 0;
+}
+
+.file-info svg {
+  color: var(--color-primary-600);
+  flex-shrink: 0;
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  min-width: 0;
+  flex: 1;
+}
+
+.file-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-size {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.remove-file-btn {
+  padding: var(--spacing-2);
+  background: var(--color-error-50);
+  border: 1px solid var(--color-error-200);
+  border-radius: var(--radius-md);
+  color: var(--color-error-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.remove-file-btn:hover {
+  background: var(--color-error-600);
+  border-color: var(--color-error-600);
+  color: white;
 }
 </style>

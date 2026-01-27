@@ -65,9 +65,31 @@
         <p>{{ $t('common.loading') }}</p>
       </div>
 
+      <!-- Filter Bar (Always Visible) -->
+      <div
+        v-else
+        class="filter-bar"
+        :dir="t('dir')"
+      >
+        <button
+          v-for="status in statuses"
+          :key="status.value"
+          @click="onFilterChange(status.value)"
+          :class="['filter-chip', { active: filterStatus === status.value }]"
+        >
+          {{ status.label }}
+          <span
+            v-if="statusCounts[status.value] !== undefined"
+            class="count"
+          >
+            {{ statusCounts[status.value] }}
+          </span>
+        </button>
+      </div>
+
       <!-- Empty State -->
       <BaseCard
-        v-else-if="requests.length === 0"
+        v-if="!isLoading && requests.length === 0"
         class="empty-state-card"
       >
         <div class="empty-state">
@@ -85,37 +107,32 @@
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <h2>{{ $t('request.noRequests') }}</h2>
-          <p>{{ $t('request.noRequestsMessage') }}</p>
+          <h2>{{ getEmptyStateTitle() }}</h2>
+          <p>{{ getEmptyStateMessage() }}</p>
           <BaseButton
+            v-if="filterStatus === 'all'"
             variant="primary"
             size="lg"
             @click="createNew"
           >
             {{ $t('request.newIdea') }}
           </BaseButton>
+          <BaseButton
+            v-else
+            variant="secondary"
+            size="lg"
+            @click="onFilterChange('all')"
+          >
+            {{ $t('common.viewAll') }}
+          </BaseButton>
         </div>
       </BaseCard>
 
-      <!-- Requests List -->
-      <div v-else>
-        <!-- Filter Bar -->
-        <div
-          class="filter-bar"
-          :dir="t('dir')"
-        >
-          <button
-            v-for="status in statuses"
-            :key="status.value"
-            @click="onFilterChange(status.value)"
-            :class="['filter-chip', { active: filterStatus === status.value }]"
-          >
-            {{ status.label }}
-          </button>
-        </div>
-
-        <!-- Requests Grid -->
-        <div class="requests-grid">
+      <!-- Requests Grid -->
+      <div
+        v-if="!isLoading && requests.length > 0"
+        class="requests-grid"
+      >
           <RequestCard
             v-for="request in requests"
             :key="request.id"
@@ -134,7 +151,7 @@
           >
             <template #actions>
               <button
-                v-if="request.status === 'draft' || request.status === 'need_more_details' || request.status === 'rejected'"
+                v-if="request.status === 'draft' || request.status === 'need_more_details'"
                 class="edit-btn"
                 @click.stop="editRequest(request.id)"
               >
@@ -168,14 +185,14 @@
               </button>
             </template>
           </RequestCard>
-        </div>
-
-        <!-- Pagination -->
-        <Pagination
-          :pagination="pagination"
-          @change="goToPage"
-        />
       </div>
+
+      <!-- Pagination -->
+      <Pagination
+        v-if="!isLoading && requests.length > 0"
+        :pagination="pagination"
+        @change="goToPage"
+      />
     </div>
   </AppLayout>
 </template>
@@ -205,11 +222,20 @@ const requests = ref([]);
 const error = ref(null);
 const isLoading = ref(true);
 const filterStatus = ref("all");
-const pageBreadcrumbs = [
+const statusCounts = ref({
+  all: 0,
+  draft: 0,
+  pending: 0,
+  in_review: 0,
+  need_more_details: 0,
+  approved: 0,
+  rejected: 0,
+  completed: 0,
+});
+const pageBreadcrumbs = computed(() => [
   { name: t("nav.dashboard"), link: "/" },
-
   { name: t("nav.myIdeas"), link: "/requests" },
-];
+]);
 // Pagination state
 const pagination = ref({
   total: 0,
@@ -267,6 +293,11 @@ const loadRequests = async () => {
     if (response.data.pagination) {
       pagination.value = response.data.pagination;
     }
+
+    // Update status counts from the response
+    if (response.data.status_counts) {
+      statusCounts.value = response.data.status_counts;
+    }
   } catch (err) {
     console.error("Failed to load requests:", err);
     showError(
@@ -295,6 +326,20 @@ const editRequest = (id) => {
 
 const viewDetails = (id) => {
   router.push(`/requests/${id}`);
+};
+
+const getEmptyStateTitle = () => {
+  if (filterStatus.value === 'all') {
+    return t('request.noRequests');
+  }
+  return t('request.noRequestsWithFilter', { status: t(`status.${filterStatus.value}`) });
+};
+
+const getEmptyStateMessage = () => {
+  if (filterStatus.value === 'all') {
+    return t('request.noRequestsMessage');
+  }
+  return t('request.noRequestsWithFilterMessage', { status: t(`status.${filterStatus.value}`).toLowerCase() });
 };
 
 const getStatusVariant = (status) => {

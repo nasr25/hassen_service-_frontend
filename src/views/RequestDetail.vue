@@ -25,25 +25,6 @@
             {{ $t('common.edit') }}
           </BaseButton>
           <BaseButton
-            v-if="request && request.status === 'rejected'"
-            variant="primary"
-            @click="showResubmitModal = true"
-          >
-            <svg
-              width="20"
-              height="20"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
-                clip-rule="evenodd"
-              />
-            </svg>
-            {{ $t('request.resubmit') }}
-          </BaseButton>
-          <BaseButton
             variant="secondary"
             @click="loadRequest"
           >
@@ -217,6 +198,13 @@
                 {{ $t('status.' + request.status) }}
               </BaseBadge>
             </div>
+            <div
+              v-if="request.department"
+              class="info-item"
+            >
+              <strong>{{ $t('request.selectedPath') }}</strong>
+              <span>{{ request.department?.name || $t('common.notAvailable') }}</span>
+            </div>
             <div class="info-item">
               <strong>{{ $t('request.innovativePath') }}</strong>
               <span>{{ request.workflow_path?.name || $t('request.notAssigned') }}</span>
@@ -257,16 +245,20 @@
               </span>
             </div>
             <div
-              v-if="request.ideaType"
+              v-if="(request.ideaTypes || request.idea_types) && (request.ideaTypes?.length > 0 || request.idea_types?.length > 0)"
               class="info-item"
             >
               <strong>{{ $t('request.ideaType') }}</strong>
-              <span
-                class="idea-type-badge"
-                :style="{ backgroundColor: request.ideaType.color + '20', color: request.ideaType.color, borderColor: request.ideaType.color }"
-              >
-                {{ $i18n.locale === 'ar' ? request.ideaType.name_ar : request.ideaType.name }}
-              </span>
+              <div class="idea-types-container">
+                <span
+                  v-for="ideaType in (request.ideaTypes || request.idea_types)"
+                  :key="ideaType.id"
+                  class="idea-type-badge"
+                  :style="{ backgroundColor: ideaType.color + '20', color: ideaType.color, borderColor: ideaType.color }"
+                >
+                  {{ $i18n.locale === 'ar' ? ideaType.name_ar : ideaType.name }}
+                </span>
+              </div>
             </div>
             <div class="info-item info-full">
               <strong>{{ $t('request.description') }}</strong>
@@ -578,10 +570,15 @@
                     <strong>{{ $t('request.assignedTo') }}:</strong> {{ transition.to_user.name }}
                   </div>
                   <div
-                    v-if="transition.comments"
+                    v-if="transition.comments_ar || transition.comments_en || transition.comments"
                     class="timeline-comments"
                   >
-                    <strong>{{ $t('workflow.comments') }}:</strong> {{ transition.comments }}
+                    <strong>{{ $t('workflow.comments') }}:</strong>
+                    <p class="comment-text">{{
+                      transition.comments_ar || transition.comments_en
+                        ? ($i18n.locale === 'ar' ? transition.comments_ar : transition.comments_en)
+                        : transition.comments
+                    }}</p>
                   </div>
                 </div>
               </div>
@@ -594,7 +591,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 import { useI18n } from "vue-i18n";
@@ -620,12 +617,11 @@ const isLoading = ref(true);
 const showResubmitModal = ref(false);
 const resubmissionReason = ref("");
 const isSubmitting = ref(false);
-const pageBreadcrumbs = [
+const pageBreadcrumbs = computed(() => [
   { name: t("nav.dashboard"), link: "/" },
-
   { name: t("nav.myRequests"), link: "/requests" },
   { name: t("request.ideaDetails"), link: "" },
-];
+]);
 onMounted(async () => {
   await loadRequest();
 });
@@ -910,6 +906,12 @@ const formatFileSize = (bytes) => {
 }
 
 /* Idea Type Badge */
+.idea-types-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
 .idea-type-badge {
   display: inline-block;
   padding: var(--spacing-1) var(--spacing-3);
@@ -1211,6 +1213,19 @@ const formatFileSize = (bytes) => {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   margin-top: var(--spacing-2);
+}
+
+.timeline-comments strong {
+  display: block;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-2);
+}
+
+.comment-text {
+  margin: 0;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 /* Modal */

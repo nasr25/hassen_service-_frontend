@@ -32,31 +32,6 @@
 
         <div
           class="stat-card"
-          :class="{ active: filter === 'under_review' }"
-          @click="setFilter('under_review')"
-        >
-          <div class="stat-icon under-review">
-            <svg
-              width="24"
-              height="24"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </div>
-          <div class="stat-content">
-            <span class="stat-value">{{ stats.under_review }}</span>
-            <span class="stat-label">{{ $t('ideasBank.stats.underReview') }}</span>
-          </div>
-        </div>
-
-        <div
-          class="stat-card"
           :class="{ active: filter === 'in_progress' }"
           @click="setFilter('in_progress')"
         >
@@ -152,12 +127,16 @@
           class="idea-card"
         >
           <div class="idea-header">
-            <span
-              class="idea-type-badge"
-              :style="{ backgroundColor: idea.idea_type?.color || '#6b7280' }"
-            >
-              {{ getIdeaTypeName(idea.idea_type) }}
-            </span>
+            <div class="idea-types-badges">
+              <span
+                v-for="ideaType in (idea.ideaTypes || idea.idea_types || [])"
+                :key="ideaType.id"
+                class="idea-type-badge"
+                :style="{ backgroundColor: ideaType.color || '#6b7280' }"
+              >
+                {{ getIdeaTypeName(ideaType) }}
+              </span>
+            </div>
             <span
               class="idea-status"
               :class="getStatusClass(idea.status)"
@@ -372,7 +351,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import axios from "axios";
 import { useAuthStore } from "../stores/auth";
@@ -388,11 +367,10 @@ const ideas = ref([]);
 const isLoading = ref(false);
 const search = ref("");
 const filter = ref("all");
-const pageBreadcrumbs = [
+const pageBreadcrumbs = computed(() => [
   { name: t("nav.dashboard"), link: "/" },
-
   { name: t("ideasBank.title"), link: "/ideas-bank" },
-];
+]);
 const pagination = ref({
   current_page: 1,
   last_page: 1,
@@ -403,7 +381,6 @@ const pagination = ref({
 
 const stats = ref({
   total: 0,
-  under_review: 0,
   in_progress: 0,
   completed: 0,
 });
@@ -458,7 +435,6 @@ const getIdeaTypeName = (ideaType) => {
 const getStatusClass = (status) => {
   const classes = {
     pending: "status-pending",
-    under_review: "status-under-review",
     in_progress: "status-in-progress",
     completed: "status-completed",
   };
@@ -666,6 +642,12 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+}
+
+.idea-types-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .idea-type-badge {

@@ -119,16 +119,20 @@
               </span>
             </div>
             <div
-              v-if="request.ideaType"
+              v-if="(request.ideaTypes || request.idea_types) && ((request.ideaTypes?.length || 0) > 0 || (request.idea_types?.length || 0) > 0)"
               class="info-item"
             >
               <strong>{{ $t('request.ideaType') }}</strong>
-              <span
-                class="idea-type-badge"
-                :style="{ backgroundColor: request.ideaType.color + '20', color: request.ideaType.color, borderColor: request.ideaType.color }"
-              >
-                {{ $i18n.locale === 'ar' ? request.ideaType.name_ar : request.ideaType.name }}
-              </span>
+              <div class="idea-types-container">
+                <span
+                  v-for="ideaType in (request.ideaTypes || request.idea_types)"
+                  :key="ideaType.id"
+                  class="idea-type-badge"
+                  :style="{ backgroundColor: ideaType.color + '20', color: ideaType.color, borderColor: ideaType.color }"
+                >
+                  {{ $i18n.locale === 'ar' ? ideaType.name_ar : ideaType.name }}
+                </span>
+              </div>
             </div>
             <div class="info-item info-full">
               <strong>{{ $t('requestHistory.description') }}</strong>
@@ -625,6 +629,12 @@ const formatDate = (dateString) => {
 }
 
 /* Idea Type Badge */
+.idea-types-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
 .idea-type-badge {
   display: inline-block;
   padding: var(--spacing-1) var(--spacing-3);

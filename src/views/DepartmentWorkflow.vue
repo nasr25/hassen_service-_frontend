@@ -312,13 +312,13 @@
                     variant="info"
                     @click="openPathEvaluationModal(request, 'return')"
                   >
-                    {{ $t('common.back') }} {{ $t('common.to') }} {{ getDepartmentAName(request) }}
+                    {{ $t('department.implementationApproval') }}
                   </BaseButton>
                 </template>
               </template>
 
               <!-- Employee Actions -->
-              <template v-if="isEmployee(request) && request.current_user_id === authStore.user?.id">
+              <template v-if="isEmployee(request)">
                 <!-- Not yet accepted: Show Reject/Accept -->
                 <template v-if="request.status !== 'in_progress'">
                   <BaseButton
@@ -721,6 +721,96 @@
           ></textarea>
         </div>
 
+        <!-- File Attachments -->
+        <div class="form-group">
+          <label class="form-label">{{ $t('request.attachments') }} ({{ $t('common.optional') }})</label>
+          <div class="file-upload-area">
+            <input
+              type="file"
+              ref="employeeFileInput"
+              @change="handleEmployeeFileSelect"
+              accept=".pdf,.jpg,.jpeg,.png"
+              multiple
+              class="file-input"
+              id="employee-file-input"
+              :disabled="employeeCompleteModal.attachments.length >= 5"
+            />
+            <label
+              for="employee-file-input"
+              class="file-upload-label"
+              :class="{ disabled: employeeCompleteModal.attachments.length >= 5 }"
+            >
+              <svg
+                width="24"
+                height="24"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span v-if="employeeCompleteModal.attachments.length < 5">
+                {{ $t('request.clickToUpload') }} ({{ employeeCompleteModal.attachments.length }}/5)
+              </span>
+              <span v-else>{{ $t('request.maxFilesReached') }}</span>
+            </label>
+            <p class="file-upload-hint">{{ $t('request.supportedFormats') }}: PDF, JPG, JPEG, PNG ({{ $t('request.maxSize') }}: 10MB)</p>
+          </div>
+
+          <!-- Selected Files List -->
+          <div
+            v-if="employeeCompleteModal.attachments.length > 0"
+            class="selected-files-list"
+          >
+            <div
+              v-for="(file, index) in employeeCompleteModal.attachments"
+              :key="index"
+              class="file-item"
+            >
+              <div class="file-info">
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <div class="file-details">
+                  <span class="file-name">{{ file.name }}</span>
+                  <span class="file-size">{{ formatEmployeeFileSize(file.size) }}</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                @click="removeEmployeeAttachment(index)"
+                class="remove-file-btn"
+                :title="$t('common.remove')"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="modal-actions">
           <BaseButton
             variant="secondary"
@@ -779,7 +869,7 @@
           <span v-if="pathEvaluationModal.action === 'accept'">{{ $t('department.acceptIdeaAction') }}</span>
           <span v-else-if="pathEvaluationModal.action === 'accept_later'">{{ $t('department.acceptLaterAction') }}</span>
           <span v-else-if="pathEvaluationModal.action === 'reject'">{{ $t('department.rejectIdeaAction') }}</span>
-          <span v-else-if="pathEvaluationModal.action === 'return'">{{ $t('common.back') }} {{ $t('common.to') }} {{ getDepartmentAName(pathEvaluationModal.request) }} {{ $t('department.forValidation') }}</span>
+          <span v-else-if="pathEvaluationModal.action === 'return'">{{ $t('department.implementationApproval') }}</span>
         </div>
 
         <div
@@ -885,7 +975,7 @@
         class="modal-content"
         @click.stop
       >
-        <h2>{{ $t('common.back') }} {{ $t('common.to') }} {{ getDepartmentAName(returnToDeptAModal.request) }}</h2>
+        <h2>{{ $t('department.implementationApproval') }}</h2>
         <p class="modal-subtitle">{{ $t('request.request') }}: {{ returnToDeptAModal.request?.title }}</p>
 
         <div class="alert alert-info">
@@ -914,7 +1004,7 @@
             @click="confirmReturnToDeptA"
             :disabled="!returnToDeptAModal.comments || returnToDeptAModal.isLoading"
           >
-            {{ returnToDeptAModal.isLoading ? $t('department.returning') : $t('common.back') + ' ' + $t('common.to') + ' ' + getDepartmentAName(returnToDeptAModal.request) }}
+            {{ returnToDeptAModal.isLoading ? $t('department.returning') : $t('department.implementationApproval') }}
           </BaseButton>
         </div>
       </div>
@@ -1066,6 +1156,7 @@ const employeeCompleteModal = ref({
   show: false,
   request: null,
   comments: "",
+  attachments: [],
   isLoading: false,
 });
 
@@ -1552,7 +1643,52 @@ const closeEmployeeCompleteModal = () => {
   employeeCompleteModal.value.show = false;
   employeeCompleteModal.value.request = null;
   employeeCompleteModal.value.comments = "";
+  employeeCompleteModal.value.attachments = [];
   employeeCompleteModal.value.isLoading = false;
+};
+
+const handleEmployeeFileSelect = (event) => {
+  const files = Array.from(event.target.files);
+  const maxFiles = 5;
+  const maxSize = 10 * 1024 * 1024; // 10MB
+  const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+
+  const currentCount = employeeCompleteModal.value.attachments.length;
+  const remainingSlots = maxFiles - currentCount;
+
+  if (files.length > remainingSlots) {
+    showError(t('messages.error.maxFilesExceeded', { max: maxFiles }));
+    return;
+  }
+
+  for (const file of files) {
+    if (!allowedTypes.includes(file.type)) {
+      showError(t('messages.error.invalidFileType', { name: file.name }));
+      continue;
+    }
+
+    if (file.size > maxSize) {
+      showError(t('messages.error.fileTooLarge', { name: file.name, max: '10MB' }));
+      continue;
+    }
+
+    employeeCompleteModal.value.attachments.push(file);
+  }
+
+  // Reset input
+  event.target.value = '';
+};
+
+const removeEmployeeAttachment = (index) => {
+  employeeCompleteModal.value.attachments.splice(index, 1);
+};
+
+const formatEmployeeFileSize = (bytes) => {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
 };
 
 const confirmEmployeeComplete = async () => {
@@ -1560,14 +1696,22 @@ const confirmEmployeeComplete = async () => {
     employeeCompleteModal.value.isLoading = true;
     error.value = null;
 
+    // Create FormData to handle file uploads
+    const formData = new FormData();
+    formData.append('comments', employeeCompleteModal.value.comments);
+
+    // Add file attachments
+    employeeCompleteModal.value.attachments.forEach((file, index) => {
+      formData.append(`attachments[${index}]`, file);
+    });
+
     await axios.post(
       `${API_URL}/department/requests/${employeeCompleteModal.value.request.id}/employee-complete`,
-      {
-        comments: employeeCompleteModal.value.comments,
-      },
+      formData,
       {
         headers: {
           Authorization: `Bearer ${authStore.token}`,
+          'Content-Type': 'multipart/form-data',
         },
       }
     );
@@ -1819,13 +1963,7 @@ const getActionButtonText = () => {
     case "reject":
       return t("department.rejectIdea");
     case "return":
-      return (
-        t("common.back") +
-        " " +
-        t("common.to") +
-        " " +
-        getDepartmentAName(pathEvaluationModal.value.request)
-      );
+      return t("department.implementationApproval");
     default:
       return t("common.continue");
   }
@@ -2826,6 +2964,130 @@ const rejectIdea = async (request) => {
   font-weight: var(--font-weight-bold);
   color: var(--color-primary-600);
   text-align: right;
+}
+
+/* File Upload Styles */
+.file-upload-area {
+  margin-bottom: var(--spacing-4);
+}
+
+.file-input {
+  display: none;
+}
+
+.file-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-8);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--color-text-secondary);
+}
+
+.file-upload-label:hover:not(.disabled) {
+  border-color: var(--color-primary-500);
+  background: var(--color-primary-50);
+  color: var(--color-primary-700);
+}
+
+.file-upload-label.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.file-upload-label svg {
+  color: var(--color-primary-600);
+}
+
+.file-upload-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-2);
+  text-align: center;
+}
+
+.selected-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4);
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.file-item:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-300);
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  flex: 1;
+  min-width: 0;
+}
+
+.file-info svg {
+  color: var(--color-primary-600);
+  flex-shrink: 0;
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  min-width: 0;
+  flex: 1;
+}
+
+.file-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-size {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.remove-file-btn {
+  padding: var(--spacing-2);
+  background: var(--color-error-50);
+  border: 1px solid var(--color-error-200);
+  border-radius: var(--radius-md);
+  color: var(--color-error-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.remove-file-btn:hover {
+  background: var(--color-error-600);
+  border-color: var(--color-error-600);
+  color: white;
 }
 
 /* Responsive */
