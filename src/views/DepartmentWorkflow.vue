@@ -2297,7 +2297,7 @@ const rejectIdea = async (request) => {
   gap: var(--spacing-2);
   padding: var(--spacing-2) var(--spacing-3);
   background: #03735e;
-  color: #03735e;
+  color: #ffffff;
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
