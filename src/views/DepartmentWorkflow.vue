@@ -2296,8 +2296,8 @@ const rejectIdea = async (request) => {
   align-items: center;
   gap: var(--spacing-2);
   padding: var(--spacing-2) var(--spacing-3);
-  background: var(--color-gray-100);
-  color: var(--color-text-primary);
+  background: #03735e;
+  color: #03735e;
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
@@ -2307,8 +2307,8 @@ const rejectIdea = async (request) => {
 }
 
 .view-details-btn:hover {
-  background: var(--color-gray-200);
-  border-color: var(--color-gray-400);
+  background: #025848;
+  border-color: #025848;
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
