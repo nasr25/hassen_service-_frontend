@@ -351,8 +351,8 @@
                 </BaseButton>
               </template>
 
-              <!-- Request returned from department - Check if went through employee processing -->
-              <template v-else-if="request.status === 'in_review' && request.workflow_path_id">
+              <!-- Request with workflow path but pending (after details provided) or in review -->
+              <template v-else-if="request.workflow_path_id && (request.status === 'in_review' || request.status === 'pending')">
                 <!-- If request went through employee processing, show final actions -->
                 <template v-if="request.went_through_employee_processing">
                   <BaseButton
@@ -399,7 +399,7 @@
                     variant="error"
                     size="sm"
                     @click="checkEvaluationAndOpen(request, 'reject')"
-                    :disabled="!requestEvaluationStatus[request.id]"
+                    :disabled="!requestEvaluationStatus[request.id] || request.went_through_employee_processing"
                   >
                     <svg
                       width="16"
@@ -1021,7 +1021,7 @@
         @click.stop
       >
         <div class="modal-header">
-          <h2>Return to Previous Department</h2>
+          <h2>{{ $t('workflow.returnToPreviousDepartment') }}</h2>
           <button
             @click="closeReturnToPreviousModal"
             class="modal-close"
@@ -1040,17 +1040,17 @@
             </svg>
           </button>
         </div>
-        <p class="modal-subtitle">Request: {{ returnToPreviousModal.request?.title }}</p>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ returnToPreviousModal.request?.title }}</p>
 
         <div class="alert alert-warning">
-          <strong>Note:</strong> This will send the request back to the previous department for revision.
+          <strong>{{ $t('common.note') }}:</strong> {{ $t('workflow.returnToPreviousNote') }}
         </div>
 
         <div class="form-group">
-          <label class="form-label">Reason for Return *</label>
+          <label class="form-label">{{ $t('workflow.reasonForReturn') }} *</label>
           <textarea
             v-model="returnToPreviousModal.comments"
-            placeholder="Explain what needs to be revised..."
+            :placeholder="$t('workflow.explainRevision')"
             rows="4"
             class="form-textarea"
             required
@@ -1062,7 +1062,7 @@
             variant="secondary"
             @click="closeReturnToPreviousModal"
           >
-            Cancel
+            {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
             variant="primary"

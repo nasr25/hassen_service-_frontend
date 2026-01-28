@@ -409,6 +409,7 @@
     "explainRejection": "Explain why this request is being rejected...",
     "complete": "Complete Request",
     "returnToPrevious": "Return to the path manager",
+    "returnToPreviousDepartment": "Return to Previous Department",
     "returnToPreviousNote": "This will send the request back to the previous department for revision.",
     "reasonForReturn": "Reason for Return",
     "explainRevision": "Explain what needs to be revised...",
