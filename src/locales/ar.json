@@ -407,6 +407,7 @@
     "rejectionReason": "سبب الرفض",
     "explainRejection": "اشرح سبب رفض هذا الطلب...",
     "complete": "إكمال الطلب",
+    "implementation_approval": "إعتماد التنفيذ",
     "returnToPrevious": "العودة إلى قائد المسار",
     "returnToPreviousDepartment": "العودة إلى القسم السابق",
     "returnToPreviousNote": "سيؤدي ذلك إلى إرسال الطلب مرة أخرى إلى القسم السابق للمراجعة.",

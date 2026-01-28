@@ -373,7 +373,7 @@
                         clip-rule="evenodd"
                       />
                     </svg>
-                    {{ $t('workflow.complete') }}
+                    {{ $t('workflow.implementation_approval') }}
                   </BaseButton>
                   <BaseButton
                     variant="warning"
