@@ -1954,8 +1954,8 @@ const getLatestActionLabel = (request) => {
   align-items: center;
   gap: var(--spacing-2);
   padding: var(--spacing-2) var(--spacing-3);
-  background: #000000;
-  border: 1px solid #000000;
+  background: #03735e;
+  border: 1px solid #03735e;
   border-radius: var(--radius-lg);
   color: #ffffff;
   font-size: var(--font-size-sm);
@@ -1965,8 +1965,8 @@ const getLatestActionLabel = (request) => {
 }
 
 .view-details-btn:hover {
-  background: #1a1a1a;
-  border-color: #333333;
+  background: #025848;
+  border-color: #025848;
   color: #ffffff;
 }
 
