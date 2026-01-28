@@ -82,6 +82,7 @@
     "subtitle": "استكشف الأفكار المبتكرة من جميع أنحاء المؤسسة",
     "short_description": "short description",
     "searchPlaceholder": "البحث عن الأفكار...",
+    "document_library": "مكتبة الوثائق",
     "stats": {
       "total": "إجمالي الأفكار",
       "underReview": "افكار قيد المراجعة",
@@ -163,7 +164,7 @@
     "quickActions": "إجراءات سريعة",
     "quickActionsSubtitle": "الوصول إلى الميزات المستخدمة بشكل متكرر",
     "stats": {
-      "totalRequests": "إجمالي الطلبات",
+      "totalRequests": "إجمالي الأفكار",
       "draft": "مسودة",
       "pendingRequests": "افكار قيد الانتظار",
       "inProgress": "افكار قيد التنفيذ",
@@ -184,16 +185,16 @@
       "description": "عرض وإدارة طلباتك"
     },
     "newRequest": {
-      "title": "طلب جديد",
-      "description": "تقديم طلب جديد لسير العمل"
+      "title": "فكرة جديدة",
+      "description": "تقديم فكرة جديدة لسير العمل"
     },
     "reviewRequests": {
-      "title": "مراجعة الطلبات",
+      "title": "مراجعة الأفكار",
       "description": "مراجعة سير عمل القسم أ"
     },
     "allRequests": {
-      "title": "جميع الطلبات",
-      "description": "عرض جميع الطلبات مع السجل والحالة"
+      "title": "جميع الأفكار",
+      "description": "عرض جميع الأفكار مع السجل والحالة"
     },
     "departmentWorkflow": {
       "title": "سير عمل القسم",
@@ -406,7 +407,7 @@
     "rejectionReason": "سبب الرفض",
     "explainRejection": "اشرح سبب رفض هذا الطلب...",
     "complete": "إكمال الطلب",
-    "returnToPrevious": "العودة إلى القسم السابق",
+    "returnToPrevious": "العودة إلى قائد المسار",
     "returnToPreviousNote": "سيؤدي ذلك إلى إرسال الطلب مرة أخرى إلى القسم السابق للمراجعة.",
     "reasonForReturn": "سبب الإرجاع",
     "explainRevision": "اشرح ما يحتاج إلى مراجعة...",
@@ -492,7 +493,7 @@
     "acceptForLater": "قبول للمستقبل",
     "rejectIdea": "رفض الفكرة",
     "returnToDeptA": "العودة إلى القسم أ",
-    "implementationApproval": "موافقة التنفيذ",
+    "implementationApproval": "اعتماد التنفيذ",
     "returnToManager": "العودة إلى المدير",
     "returnToEmployee": "إعادة إلى الموظف",
     "returnedToEmployee": "تم إرجاعه للموظف لمتابعة العمل",
@@ -1018,10 +1019,10 @@
     "memberSince": "عضو منذ",
     "departments": "الأقسام",
     "statistics": "الإحصائيات",
-    "totalRequests": "إجمالي الطلبات",
-    "pendingRequests": "الطلبات قيد الانتظار",
-    "approvedRequests": "الطلبات المعتمدة",
-    "completedRequests": "الطلبات المكتملة",
+    "totalRequests": "إجمالي الأفكار",
+    "pendingRequests": "الأفكار قيد الانتظار",
+    "approvedRequests": "الأفكار المعتمدة",
+    "completedRequests": "الأفكار المكتملة",
     "failedToLoad": "فشل تحميل الملف الشخصي. يرجى المحاولة مرة أخرى."
   },
   "userSettings": {

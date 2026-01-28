@@ -192,7 +192,7 @@
                 />
               </svg>
             </div>
-            <h3>{{ $t('ideasBank.title') }}</h3>
+            <h3>{{ $t('ideasBank.document_library') }}</h3>
             <p>{{ $t('ideasBank.short_description') }}</p>
           </BaseCard>
         </a>

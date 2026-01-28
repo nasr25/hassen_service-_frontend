@@ -82,6 +82,7 @@
     "subtitle": "Explore innovative ideas from across the organization",
     "short_description": "short description",
     "searchPlaceholder": "Search ideas...",
+    "document_library": "Document Library",
     "stats": {
       "total": "Total Ideas",
       "underReview": "Ideas Under Review",
@@ -407,7 +408,7 @@
     "rejectionReason": "Rejection Reason",
     "explainRejection": "Explain why this request is being rejected...",
     "complete": "Complete Request",
-    "returnToPrevious": "Return to Previous Dept",
+    "returnToPrevious": "Return to the path manager",
     "returnToPreviousNote": "This will send the request back to the previous department for revision.",
     "reasonForReturn": "Reason for Return",
     "explainRevision": "Explain what needs to be revised...",

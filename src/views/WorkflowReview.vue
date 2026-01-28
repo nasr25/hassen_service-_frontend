@@ -1070,7 +1070,7 @@
             :disabled="!returnToPreviousModal.comments || returnToPreviousModal.isLoading"
             :loading="returnToPreviousModal.isLoading"
           >
-            Return to Department
+            {{ $t('workflow.returnToPrevious') }}
           </BaseButton>
         </div>
       </div>
