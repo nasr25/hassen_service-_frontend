@@ -310,7 +310,7 @@
     "additionalDetailsRequestPlaceholder": "Add any additional information requested by the reviewer",
     "additionalDetailsRequestHelp": "Provide any clarifications or additional information requested",
     "attachmentsOptional": "Attachments",
-    "attachmentsOptionalMax": "(Optional - Max 4 files)",
+    "attachmentsOptionalMax": "(Optional - Max 5 files)",
     "chooseFilesOrDrag": "Choose files or drag and drop",
     "allowedFileTypes": "PDF, JPG, JPEG, PNG (Max 5 files)",
     "uploadedFilesCount": "New Files ({count}/5)",

@@ -311,7 +311,7 @@
     "additionalDetailsRequestPlaceholder": "أضف أي معلومات إضافية طلبها المراجع",
     "additionalDetailsRequestHelp": "قدّم أي توضيحات أو معلومات إضافية مطلوبة",
     "attachmentsOptional": "المرفقات",
-    "attachmentsOptionalMax": "(اختياري - 4 ملفات كحد أقصى)",
+    "attachmentsOptionalMax": "(اختياري - 5 ملفات كحد أقصى)",
     "chooseFilesOrDrag": "اختر الملفات أو اسحبها وأفلتها",
     "allowedFileTypes": "PDF، JPG، JPEG، PNG (5 ملفات كحد أقصى)",
     "uploadedFilesCount": "ملفات جديدة ({count}/5)",
