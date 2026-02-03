@@ -80,9 +80,10 @@
   "ideasBank": {
     "title": "بنك الأفكار",
     "subtitle": "استكشف الأفكار المبتكرة من جميع أنحاء المؤسسة",
-    "short_description": "short description",
+    "short_description": "أفكار سبق أن قدمها الموظفون",
     "searchPlaceholder": "البحث عن الأفكار...",
     "document_library": "مكتبة الوثائق",
+    "document_library_description": "السياسات و الوثائق ذات العلاقة في ال DMS او يتم رلافعها بشكل مباشر",
     "stats": {
       "total": "إجمالي الأفكار",
       "underReview": "افكار قيد المراجعة",

@@ -176,7 +176,7 @@
           <h3>{{ $t('ideasBank.title') }}</h3>
           <p>{{ $t('ideasBank.short_description') }}</p>
         </BaseCard>
-        <a href="https://www.google.com/">
+        <a href="https://knowledge-base.gadd.gov.sa/" target="_blank">
           <BaseCard class="action-card">
             <div class="action-icon action-icon-secondary">
               <svg
@@ -193,7 +193,7 @@
               </svg>
             </div>
             <h3>{{ $t('ideasBank.document_library') }}</h3>
-            <p>{{ $t('ideasBank.short_description') }}</p>
+            <p>{{ $t('ideasBank.document_library_description') }}</p>
           </BaseCard>
         </a>
       </div>

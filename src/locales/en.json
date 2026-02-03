@@ -80,9 +80,10 @@
   "ideasBank": {
     "title": "Ideas Bank",
     "subtitle": "Explore innovative ideas from across the organization",
-    "short_description": "short description",
+    "short_description": "Ideas previously submitted by employees",
     "searchPlaceholder": "Search ideas...",
     "document_library": "Document Library",
+    "document_library_description": "The relevant policies and documents are in the DMS or are uploaded directly",
     "stats": {
       "total": "Total Ideas",
       "underReview": "Ideas Under Review",
