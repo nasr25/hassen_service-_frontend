@@ -328,7 +328,62 @@
             >{{ validationErrors.attachments }}</span>
           </div>
 
-          <!-- Uploaded Files List -->
+          <!-- Existing Attachments List (when editing) -->
+          <div
+            v-if="existingAttachments.length > 0"
+            class="uploaded-files-section"
+          >
+            <div class="files-header">
+              <h3>{{ $t('request.existingFilesCount', { count: existingAttachments.length }) }}</h3>
+            </div>
+            <div class="files-list">
+              <div
+                v-for="(file, index) in existingAttachments"
+                :key="'existing-' + file.id"
+                class="file-item"
+              >
+                <div class="file-info">
+                  <svg
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <div class="file-details">
+                    <span class="file-name">{{ file.name }}</span>
+                    <span class="file-size">{{ formatFileSize(file.size) }}</span>
+                  </div>
+                </div>
+                <BaseButton
+                  variant="ghost"
+                  size="sm"
+                  @click="removeExistingAttachment(index)"
+                  type="button"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </BaseButton>
+              </div>
+            </div>
+          </div>
+
+          <!-- Uploaded Files List (new files) -->
           <div
             v-if="uploadedFiles.length > 0"
             class="uploaded-files-section"
@@ -339,7 +394,7 @@
             <div class="files-list">
               <div
                 v-for="(file, index) in uploadedFiles"
-                :key="index"
+                :key="'new-' + index"
                 class="file-item"
               >
                 <div class="file-info">
@@ -444,6 +499,8 @@ const form = ref({
   employees: [],
 });
 const uploadedFiles = ref([]);
+const existingAttachments = ref([]);
+const attachmentsToDelete = ref([]);
 const fileInput = ref(null);
 const error = ref(null);
 const success = ref(null);
@@ -581,6 +638,21 @@ const loadRequest = async (id) => {
     // Increment formKey to force Vue to re-render the radio buttons with the new value
     await nextTick();
     formKey.value++;
+
+    // Load existing attachments
+    if (request.attachments && Array.isArray(request.attachments)) {
+      existingAttachments.value = request.attachments.map(att => ({
+        id: att.id,
+        name: att.file_name,
+        file_name: att.file_name,
+        file_path: att.file_path,
+        file_type: att.file_type,
+        size: att.file_size,
+        file_size: att.file_size,
+        isExisting: true
+      }));
+      console.log("Loaded existing attachments:", existingAttachments.value);
+    }
 
     console.log("============ FORM AFTER LOADING ============");
     console.log("form.idea_ownership_type:", form.value.idea_ownership_type);
@@ -795,6 +867,14 @@ const removeFile = (index) => {
   validationErrors.value.attachments = "";
 };
 
+const removeExistingAttachment = (index) => {
+  const attachment = existingAttachments.value[index];
+  if (attachment && attachment.id) {
+    attachmentsToDelete.value.push(attachment.id);
+  }
+  existingAttachments.value.splice(index, 1);
+};
+
 const formatFileSize = (bytes) => {
   if (bytes === 0) return t("common.zeroBytes");
   const k = 1024;
@@ -861,10 +941,17 @@ const handleSubmit = async () => {
       });
     }
 
-    // Append files
+    // Append new files only
     uploadedFiles.value.forEach((file, index) => {
       formData.append(`attachments[${index}]`, file);
     });
+
+    // Append attachments to delete (when editing)
+    if (attachmentsToDelete.value.length > 0) {
+      attachmentsToDelete.value.forEach((id, index) => {
+        formData.append(`delete_attachments[${index}]`, id);
+      });
+    }
 
     let response;
     if (isEditMode.value) {
@@ -964,10 +1051,17 @@ const saveDraft = async () => {
       });
     }
 
-    // Append files
+    // Append new files only
     uploadedFiles.value.forEach((file, index) => {
       formData.append(`attachments[${index}]`, file);
     });
+
+    // Append attachments to delete (when editing)
+    if (attachmentsToDelete.value.length > 0) {
+      attachmentsToDelete.value.forEach((id, index) => {
+        formData.append(`delete_attachments[${index}]`, id);
+      });
+    }
 
     // Use update endpoint if editing existing request
     const url = isEditMode.value

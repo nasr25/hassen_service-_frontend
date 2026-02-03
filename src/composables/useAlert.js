@@ -1,4 +1,5 @@
 import Swal from 'sweetalert2'
+import { useI18n } from 'vue-i18n'
 
 // Custom SweetAlert2 configuration with better styling
 const Toast = Swal.mixin({
@@ -14,6 +15,7 @@ const Toast = Swal.mixin({
 })
 
 export function useAlert() {
+  const { t } = useI18n()
   // Success alert (toast)
   const showSuccess = (message, options = {}) => {
     return Toast.fire({
@@ -59,8 +61,8 @@ export function useAlert() {
       showCancelButton: true,
       confirmButtonColor: '#02735E',
       cancelButtonColor: '#d33',
-      confirmButtonText: options.confirmText || 'Yes',
-      cancelButtonText: options.cancelText || 'Cancel',
+      confirmButtonText: options.confirmText || t('common.yes'),
+      cancelButtonText: options.cancelText || t('common.cancel'),
       reverseButtons: true,
       ...options
     })
@@ -69,14 +71,14 @@ export function useAlert() {
   // Delete confirmation dialog
   const showDeleteConfirm = (options = {}) => {
     return Swal.fire({
-      title: options.title || 'Are you sure?',
-      text: options.text || 'This action cannot be undone!',
+      title: options.title || t('common.confirmDelete'),
+      text: options.text || t('common.deleteWarning'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#6c757d',
-      confirmButtonText: options.confirmText || 'Yes, delete it!',
-      cancelButtonText: options.cancelText || 'Cancel',
+      confirmButtonText: options.confirmText || t('common.yesDelete'),
+      cancelButtonText: options.cancelText || t('common.cancel'),
       reverseButtons: true,
       ...options
     })

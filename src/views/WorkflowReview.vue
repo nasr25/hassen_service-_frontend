@@ -433,7 +433,7 @@
                         clip-rule="evenodd"
                       />
                     </svg>
-                    {{ requestEvaluationStatus[request.id] ? $t('workflow.viewEditEvaluation') : $t('workflow.startEvaluation') }}
+                    {{ $t('workflow.viewEvaluation') }}
                   </BaseButton>
                 </template>
 
@@ -513,7 +513,7 @@
                         clip-rule="evenodd"
                       />
                     </svg>
-                    {{ requestEvaluationStatus[request.id] ? $t('workflow.viewEditEvaluation') : $t('workflow.startEvaluation') }}
+                    {{ $t('workflow.viewEvaluation') }}
                   </BaseButton>
                 </template>
               </template>
@@ -534,7 +534,7 @@
         @click.stop
       >
         <div class="modal-header">
-          <h2>{{ $t('evaluation.requestEvaluation') }}</h2>
+          <h2>{{ evaluationModal.readOnly ? $t('evaluation.viewEvaluation') : $t('evaluation.requestEvaluation') }}</h2>
           <button
             @click="closeEvaluationModal"
             class="modal-close"
@@ -553,7 +553,7 @@
             </svg>
           </button>
         </div>
-        <p class="modal-subtitle">{{ $t('evaluation.evaluateBeforeProceeding') }}</p>
+        <p class="modal-subtitle">{{ evaluationModal.readOnly ? $t('evaluation.evaluationReadOnly') : $t('evaluation.evaluateBeforeProceeding') }}</p>
 
         <div
           v-if="evaluationModal.isLoading"
@@ -592,6 +592,7 @@
                   type="button"
                   :class="['toggle-btn', 'toggle-applied', { active: evaluationModal.answers[question.id]?.is_applied === true }]"
                   @click="setAnswer(question.id, true)"
+                  :disabled="evaluationModal.readOnly"
                 >
                   ✓ {{ $t('evaluation.applied') }}
                 </button>
@@ -599,6 +600,7 @@
                   type="button"
                   :class="['toggle-btn', 'toggle-not-applied', { active: evaluationModal.answers[question.id]?.is_applied === false }]"
                   @click="setAnswer(question.id, false)"
+                  :disabled="evaluationModal.readOnly"
                 >
                   ✗ {{ $t('evaluation.notApplied') }}
                 </button>
@@ -612,6 +614,7 @@
                 :placeholder="$t('evaluation.notesPlaceholder')"
                 rows="2"
                 class="form-textarea"
+                :disabled="evaluationModal.readOnly"
               ></textarea>
             </div>
           </div>
@@ -626,9 +629,10 @@
             variant="secondary"
             @click="closeEvaluationModal"
           >
-            {{ $t('common.cancel') }}
+            {{ evaluationModal.readOnly ? $t('common.close') : $t('common.cancel') }}
           </BaseButton>
           <BaseButton
+            v-if="!evaluationModal.readOnly"
             variant="primary"
             @click="submitEvaluationAndProceed"
             :disabled="!allQuestionsAnswered || evaluationModal.isSaving"
@@ -1149,6 +1153,7 @@ const evaluationModal = ref({
   nextAction: null,
   isLoading: false,
   isSaving: false,
+  readOnly: false,
 });
 
 const answeredCount = computed(() => {
@@ -1603,6 +1608,8 @@ const openEvaluationModal = async (request, nextAction) => {
     evaluationModal.value.show = true;
     evaluationModal.value.request = request;
     evaluationModal.value.nextAction = nextAction;
+    // Evaluation is read-only after the idea is assigned to a path
+    evaluationModal.value.readOnly = !!request.workflow_path_id;
 
     const response = await axios.get(
       `${API_URL}/workflow/requests/${request.id}/evaluation-questions`,
@@ -1645,6 +1652,7 @@ const closeEvaluationModal = () => {
     nextAction: null,
     isLoading: false,
     isSaving: false,
+    readOnly: false,
   };
   evaluationQuestions.value = [];
 };

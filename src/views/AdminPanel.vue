@@ -2321,9 +2321,6 @@ const saveRole = async () => {
 
       showSuccess(t("messages.success.roleUpdated"));
     } else {
-      await axios.post(`${API_URL}/permissions/roles`, roleModal.value.form, {
-        headers: { Authorization: `Bearer ${authStore.token}` },
-      });
       await httpRequest(`/permissions/roles`, {
         method: "POST",
         data,
@@ -2355,8 +2352,8 @@ const deleteRole = async (role) => {
   if (!deleteRoleConfirmed) return;
 
   try {
-    await httpRequest(`/permissions/roles/${role.id}`, {
-      method: "DELETE",
+    await axios.delete(`${API_URL}/permissions/roles/${role.id}`, {
+      headers: { Authorization: `Bearer ${authStore.token}` },
     });
 
     showSuccess(t("messages.success.roleDeleted"));

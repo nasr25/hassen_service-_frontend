@@ -311,6 +311,8 @@
                   <BaseButton
                     variant="info"
                     @click="openPathEvaluationModal(request, 'return')"
+                    :disabled="!request.employee_completed"
+                    :title="!request.employee_completed ? $t('department.implementationApprovalDisabledHint') : ''"
                   >
                     {{ $t('department.implementationApproval') }}
                   </BaseButton>
