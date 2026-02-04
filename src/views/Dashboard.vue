@@ -4,7 +4,7 @@
       <!-- Welcome Section -->
       <div class="welcome-section">
         <div>
-          <h1>{{ $t('common.welcome') }}, {{ user?.name }}!</h1>
+          <h1>{{ $t('common.welcome') }}, {{ user?.username ?? user?.name }}!</h1>
           <p class="welcome-subtitle">{{ systemTitle }}</p>
         </div>
         <!-- <BaseBadge

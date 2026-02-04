@@ -23,7 +23,7 @@
             </svg>
           </div>
           <h1>{{ $t('auth.login') }}</h1>
-          <p class="subtitle">{{ systemTitle }}</p>
+          <!-- <p class="subtitle">{{ systemTitle }}</p> -->
         </div>
 
         <div v-if="error" class="alert alert-error">
@@ -118,7 +118,7 @@
         </div>
 
         <h1 class="welcome-title">{{ $t('auth.welcome') || 'مرحباً' }}</h1>
-        <p class="welcome-description">{{ systemTitle }}</p>
+        <p class="welcome-description">{{ systemDescription }}</p>
       </div>
     </div>
   </div>
@@ -141,11 +141,15 @@ const router = useRouter()
 const authStore = useAuthStore()
 const { t, locale } = useI18n()
 const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
-const { logo, siteName, siteNameAr, fetchPublicSettings } = useSettings()
+const { logo, siteName, siteNameAr,siteDescriptionAr, siteDescription, fetchPublicSettings } = useSettings()
 
 // Computed property for system title based on locale
 const systemTitle = computed(() => {
   return locale.value === 'ar' ? siteNameAr.value : siteName.value
+})
+
+const systemDescription = computed(() => {
+  return locale.value === 'ar' ? siteDescriptionAr.value : siteDescription.value
 })
 
 onMounted(async () => {
@@ -189,7 +193,8 @@ const handleLogin = async () => {
   if (result.success) {
     router.push('/dashboard')
   } else {
-    showError(result.error || t('auth.loginFailed'))
+    showError(result.error || t('auth.loginFailed')
+)
   }
 }
 
