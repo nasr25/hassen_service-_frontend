@@ -1743,14 +1743,19 @@ const loadData = async () => {
         }
         break;
       case "assignments":
-        const questionsRes = await httpRequest(`/admin/evaluation-questions`);
-        evaluationQuestions.value = questionsRes.data.questions;
+        const assignQuestionsRes = await httpRequest(`/admin/evaluation-questions`);
+        evaluationQuestions.value = assignQuestionsRes.data.questions;
         break;
       case "evaluations":
-        const pathQuestionsRes = await httpRequest(
-          `/admin/path-evaluation-questions`
-        );
+        // Load both evaluation questions and path evaluation questions
+        const [questionsRes, pathQuestionsRes, evalPathsRes] = await Promise.all([
+          httpRequest(`/admin/evaluation-questions`),
+          httpRequest(`/admin/path-evaluation-questions`),
+          httpRequest(`/admin/workflow-paths`)
+        ]);
+        evaluationQuestions.value = questionsRes.data.questions;
         pathEvaluationQuestions.value = pathQuestionsRes.data.questions;
+        workflowPaths.value = evalPathsRes.data.paths;
         break;
       case "workflowPaths":
         const pathsRes = await httpRequest(`/admin/workflow-paths`);
