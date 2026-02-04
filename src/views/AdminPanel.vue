@@ -805,6 +805,7 @@
             v-model.number="questionModal.form.order"
             type="number"
             min="0"
+            class="display_order"
           />
         </div>
         <div class="form-group">
@@ -874,6 +875,7 @@
             v-model.number="pathQuestionModal.form.order"
             type="number"
             min="0"
+            class="display_order"
           />
         </div>
         <div class="form-group">
@@ -3992,5 +3994,13 @@ html[dir="rtl"] .autocomplete-item-details {
 /* RTL Support for color input group */
 html[dir="rtl"] .color-input-group {
   flex-direction: row-reverse;
+}
+
+
+.display_order {
+  border: 1px solid #949494;
+  border-radius: 5px;
+  margin: 0 10px;
+  padding: 0px 5px;
 }
 </style>
