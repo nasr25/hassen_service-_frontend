@@ -361,7 +361,9 @@
     "rejected": "تم رفض الطلب",
     "need_more_details": "معلومات إضافية مطلوبة",
     "completed": "تم إكمال الطلب",
-    "returned": "تم إرجاع الطلب"
+    "returned": "تم إرجاع الطلب",
+    "departmentAEvaluations": "تقييمات القسم أ",
+    "pathEvaluations": "تقييمات المسار"
   },
   "status": {
     "draft": "مسودة",

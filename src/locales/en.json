@@ -360,7 +360,9 @@
     "rejected": "Request Rejected",
     "need_more_details": "More Information Required",
     "completed": "Request Completed",
-    "returned": "Request Returned"
+    "returned": "Request Returned",
+    "departmentAEvaluations": "Department A Evaluations",
+    "pathEvaluations": "Path Evaluations"
   },
   "status": {
     "draft": "Draft",
