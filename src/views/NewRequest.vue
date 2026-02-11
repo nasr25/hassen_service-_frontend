@@ -79,17 +79,39 @@
             @blur="handleBlur('description')"
           />
 
-          <!-- Department -->
-          <BaseSelect
-            v-model="form.department"
-            :label="$t('request.innovativePath')"
-            :placeholder="$t('request.departmentPlaceholder')"
-            required
-            :options="departmentOptions"
-            :error="touched.department ? validationErrors.department : ''"
-            :help="$t('request.departmentHelp')"
-            @blur="handleBlur('department')"
-          />
+          <!-- Department / Innovative Path -->
+          <div class="form-group">
+            <label class="form-label">
+              {{ $t('request.innovativePath') }}
+              <span class="required-star">*</span>
+            </label>
+            <div class="radio-group idea-type-checkbox-group">
+              <label
+                v-for="dept in departmentOptions"
+                :key="dept.value"
+                class="radio-label idea-type-option"
+                :class="{ 'active': form.department === dept.value }"
+              >
+                <input
+                  type="radio"
+                  v-model="form.department"
+                  :value="dept.value"
+                  name="department"
+                  class="radio-input"
+                  @blur="handleBlur('department')"
+                />
+                <span class="checkbox-text">{{ dept.label }}</span>
+              </label>
+            </div>
+            <span
+              v-if="touched.department && validationErrors.department"
+              class="form-error"
+            >{{ validationErrors.department }}</span>
+            <span
+              v-else
+              class="form-help"
+            >{{ $t('request.departmentHelp') }}</span>
+          </div>
 
           <!-- Idea Ownership Type -->
           <div class="form-group">
@@ -840,6 +862,10 @@ const handleFileChange = (event) => {
     "image/jpeg",
     "image/jpg",
     "image/png",
+    "application/msword", // .doc
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+    "application/vnd.ms-powerpoint", // .ppt
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .pptx
   ];
   const invalidFiles = files.filter(
     (file) => !allowedTypes.includes(file.type)

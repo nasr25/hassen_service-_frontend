@@ -312,7 +312,7 @@
     "attachmentsOptional": "Attachments",
     "attachmentsOptionalMax": "(Optional - Max 5 files)",
     "chooseFilesOrDrag": "Choose files or drag and drop",
-    "allowedFileTypes": "PDF, JPG, JPEG, PNG (Max 5 files)",
+    "allowedFileTypes": "PDF, JPG, PNG, Word, PowerPoint (Max 5 files)",
     "uploadedFilesCount": "New Files ({count}/5)",
     "existingFilesCount": "Existing Attachments ({count})",
     "saveAsDraft": "Save as Draft",
@@ -336,7 +336,7 @@
       "departmentRequired": "Please select a department",
       "pathRequired": "Please select a path",
       "maxFilesExceeded": "Maximum {max} files allowed",
-      "invalidFileType": "Only PDF, JPG, JPEG, and PNG files are allowed",
+      "invalidFileType": "Only PDF, JPG, PNG, Word, and PowerPoint files are allowed",
       "fixValidationErrors": "Please fix the validation errors",
       "draftRequiresTitle": "Title and description are required to save as draft"
     },

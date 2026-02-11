@@ -313,7 +313,7 @@
     "attachmentsOptional": "المرفقات",
     "attachmentsOptionalMax": "(اختياري - 5 ملفات كحد أقصى)",
     "chooseFilesOrDrag": "اختر الملفات أو اسحبها وأفلتها",
-    "allowedFileTypes": "PDF، JPG، JPEG، PNG (5 ملفات كحد أقصى)",
+    "allowedFileTypes": "PDF، JPG، PNG، Word، PowerPoint (5 ملفات كحد أقصى)",
     "uploadedFilesCount": "ملفات جديدة ({count}/5)",
     "existingFilesCount": "المرفقات الحالية ({count})",
     "saveAsDraft": "حفظ كمسودة",
@@ -337,7 +337,7 @@
       "departmentRequired": "الرجاء اختيار القسم",
       "pathRequired": "الرجاء اختيار المسار",
       "maxFilesExceeded": "الحد الأقصى {max} ملفات مسموح",
-      "invalidFileType": "يُسمح فقط بملفات PDF وJPG وJPEG وPNG",
+      "invalidFileType": "يُسمح فقط بملفات PDF وJPG وPNG وWord وPowerPoint",
       "fixValidationErrors": "الرجاء إصلاح أخطاء التحقق",
       "draftRequiresTitle": "العنوان والوصف مطلوبان لحفظ المسودة"
     },

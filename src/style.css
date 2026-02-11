@@ -414,6 +414,22 @@ a:hover {
   color: var(--color-gray-700);
 }
 
+/* Badge Sizes */
+.badge-sm {
+  padding: 0 var(--spacing-2);
+  font-size: var(--font-size-xs);
+}
+
+.badge-md {
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--font-size-xs);
+}
+
+.badge-lg {
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--font-size-sm);
+}
+
 /* RTL Support for Badges */
 [dir="rtl"] .badge {
   direction: rtl;

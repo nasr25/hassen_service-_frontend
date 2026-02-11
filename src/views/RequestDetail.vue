@@ -306,11 +306,34 @@
                     clip-rule="evenodd"
                   />
                 </svg>
-                <span class="attachment-name">{{ attachment.file_name }}</span>
-                <span
-                  v-if="attachment.file_size"
-                  class="attachment-size"
-                >{{ formatFileSize(attachment.file_size) }}</span>
+                <div class="attachment-details">
+                  <span class="attachment-name">{{ attachment.file_name }}</span>
+                  <div class="attachment-meta">
+                    <span
+                      v-if="attachment.file_size"
+                      class="attachment-size"
+                    >{{ formatFileSize(attachment.file_size) }}</span>
+                    <span v-if="attachment.stage" class="attachment-stage">
+                      <template v-if="getAttachmentTransition(attachment)">
+                        {{ $t('status.' + getAttachmentTransition(attachment).from_status) }}
+                        {{ $i18n.locale === 'ar' ? '←' : '→' }}
+                        {{ $t('status.' + getAttachmentTransition(attachment).to_status) }}
+                      </template>
+                      <template v-else>
+                        {{ $t('status.' + attachment.stage) }}
+                      </template>
+                    </span>
+                    <span v-if="attachment.uploader" class="attachment-uploader">
+                      <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                      </svg>
+                      {{ attachment.uploader.name || attachment.uploader.username }}
+                    </span>
+                    <span v-if="attachment.uploaded_at" class="attachment-date">
+                      {{ formatDate(attachment.uploaded_at) }}
+                    </span>
+                  </div>
+                </div>
               </div>
               <a
                 :href="`${BASE_URL}/storage/${attachment.file_path}`"
@@ -699,6 +722,27 @@ const getStatusVariant = (status) => {
   return variants[status] || "gray";
 };
 
+const getAttachmentTransition = (attachment) => {
+  if (!request.value?.transitions || !attachment.stage) return null;
+  // Find the transition where to_status matches the attachment stage
+  // Pick the closest one by time if uploaded_at is available
+  const matching = request.value.transitions.filter(
+    (t) => t.to_status === attachment.stage
+  );
+  if (matching.length === 0) return null;
+  if (matching.length === 1) return matching[0];
+  // If multiple matches and we have uploaded_at, pick the closest by time
+  if (attachment.uploaded_at) {
+    const uploadTime = new Date(attachment.uploaded_at).getTime();
+    return matching.reduce((closest, t) => {
+      const diff = Math.abs(new Date(t.created_at).getTime() - uploadTime);
+      const closestDiff = Math.abs(new Date(closest.created_at).getTime() - uploadTime);
+      return diff < closestDiff ? t : closest;
+    });
+  }
+  return matching[0];
+};
+
 const formatAction = (action) => {
   if (!action) return t("common.notAvailable");
   const camelCaseAction = action.replace(/_([a-z])/g, (_, letter) =>
@@ -946,7 +990,7 @@ const formatFileSize = (bytes) => {
 
 .attachment-info {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--spacing-3);
   flex: 1;
   min-width: 0;
@@ -955,6 +999,14 @@ const formatFileSize = (bytes) => {
 .attachment-info svg {
   flex-shrink: 0;
   color: var(--color-gray-400);
+  margin-top: 2px;
+}
+
+.attachment-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  min-width: 0;
 }
 
 .attachment-name {
@@ -965,10 +1017,41 @@ const formatFileSize = (bytes) => {
   white-space: nowrap;
 }
 
+.attachment-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  flex-wrap: wrap;
+}
+
 .attachment-size {
   color: var(--color-text-secondary);
   font-size: var(--font-size-xs);
   flex-shrink: 0;
+}
+
+.attachment-stage {
+  flex-shrink: 0;
+}
+
+.attachment-date {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-xs);
+  flex-shrink: 0;
+}
+
+.attachment-uploader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  flex-shrink: 0;
+}
+
+.attachment-uploader svg {
+  color: var(--color-gray-400);
+  margin-top: 0;
 }
 
 .download-link {

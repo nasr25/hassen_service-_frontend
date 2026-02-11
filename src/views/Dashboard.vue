@@ -198,156 +198,99 @@
         </a>
       </div>
 
-      <!-- Stats Grid -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon stat-icon-primary">
-            <svg
-              width="24"
-              height="24"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-              <path
-                fill-rule="evenodd"
-                d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </div>
-          <div class="stat-content">
-            <span class="stat-value">{{ stats.totalRequests }}</span>
-            <span class="stat-label">{{ $t('dashboard.stats.totalRequests') }}</span>
-          </div>
+      <!-- Statistics Card -->
+      <div class="profile-card">
+        <div class="card-header">
+          <h2>{{ $t('profile.statistics') }}</h2>
         </div>
+        <div class="card-body">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-primary">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                  <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="stat-details">
+                <div class="stat-label">{{ $t('dashboard.stats.totalRequests') }}</div>
+                <div class="stat-value">{{ stats.totalRequests }}</div>
+              </div>
+            </div>
 
-        <div class="stat-card">
-          <div class="stat-icon stat-icon-info">
-            <svg
-              width="24"
-              height="24"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-              <path
-                fill-rule="evenodd"
-                d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ stats.draftRequests }}</div>
-            <div class="stat-label">{{ $t('dashboard.stats.draft') }}</div>
-          </div>
-        </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-info">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                  <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="stat-details">
+                <div class="stat-label">{{ $t('dashboard.stats.draft') }}</div>
+                <div class="stat-value">{{ stats.draftRequests }}</div>
+              </div>
+            </div>
 
-        <div class="stat-card">
-          <div class="stat-icon stat-icon-warning">
-            <svg
-              width="24"
-              height="24"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ stats.pendingRequests }}</div>
-            <div class="stat-label">{{ $t('dashboard.stats.pendingRequests') }}</div>
-          </div>
-        </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-warning">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="stat-details">
+                <div class="stat-label">{{ $t('dashboard.stats.pendingRequests') }}</div>
+                <div class="stat-value">{{ stats.pendingRequests }}</div>
+              </div>
+            </div>
 
-        <div class="stat-card">
-          <div class="stat-icon stat-icon-primary">
-            <svg
-              width="24"
-              height="24"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L9.414 11H13a1 1 0 100-2H9.414l1.293-1.293z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ stats.inProgressRequests }}</div>
-            <div class="stat-label">{{ $t('dashboard.stats.inProgress') }}</div>
-          </div>
-        </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-primary">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L9.414 11H13a1 1 0 100-2H9.414l1.293-1.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="stat-details">
+                <div class="stat-label">{{ $t('dashboard.stats.inProgress') }}</div>
+                <div class="stat-value">{{ stats.inProgressRequests }}</div>
+              </div>
+            </div>
 
-        <div class="stat-card">
-          <div class="stat-icon stat-icon-success">
-            <svg
-              width="24"
-              height="24"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ stats.approvedRequests }}</div>
-            <div class="stat-label">{{ $t('dashboard.stats.approved') }}</div>
-          </div>
-        </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-success">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="stat-details">
+                <div class="stat-label">{{ $t('dashboard.stats.approved') }}</div>
+                <div class="stat-value">{{ stats.approvedRequests }}</div>
+              </div>
+            </div>
 
-        <div class="stat-card">
-          <div class="stat-icon stat-icon-purple">
-            <svg
-              width="24"
-              height="24"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ stats.completedRequests }}</div>
-            <div class="stat-label">{{ $t('dashboard.stats.completed') }}</div>
-          </div>
-        </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-purple">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="stat-details">
+                <div class="stat-label">{{ $t('dashboard.stats.completed') }}</div>
+                <div class="stat-value">{{ stats.completedRequests }}</div>
+              </div>
+            </div>
 
-        <div class="stat-card">
-          <div class="stat-icon stat-icon-error">
-            <svg
-              width="24"
-              height="24"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                clip-rule="evenodd"
-              />
-            </svg>
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-error">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="stat-details">
+                <div class="stat-label">{{ $t('dashboard.stats.rejected') }}</div>
+                <div class="stat-value">{{ stats.rejectedRequests }}</div>
+              </div>
+            </div>
           </div>
-          <div class="stat-content">
-            <div class="stat-value">{{ stats.rejectedRequests }}</div>
-            <div class="stat-label">{{ $t('dashboard.stats.rejected') }}</div>
-          </div>
-
         </div>
       </div>
 
@@ -794,53 +737,75 @@ html[dir="rtl"] .action-card {
   margin: 0;
 }
 
-/* Stats Grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--spacing-6);
-  margin-bottom: var(--spacing-);
-}
-
-.stat-card {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-4);
-  padding: var(--spacing-6);
-  cursor: default;
-
+/* Profile Card (Statistics wrapper) */
+.profile-card {
   background: white;
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  align-items: center;
-
-  transition: all 0.2s ease;
-  border: 2px solid transparent;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  direction: ltr;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  transition: all var(--transition-base);
+  margin-bottom: var(--spacing-6);
 }
 
-/* RTL Support for stat cards */
-html[dir="rtl"] .stat-card {
-  flex-direction: row-reverse;
+.profile-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+html[dir="rtl"] .profile-card {
   direction: rtl;
 }
 
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.card-header {
+  padding: var(--spacing-5);
+  border-bottom: 2px solid rgba(34, 197, 94, 0.2);
+  background: linear-gradient(to bottom, #f0fdf4, #ffffff);
 }
 
-.stat-card.active {
-  border-color: #02735e;
-  background: #f0fdf4;
+.card-header h2 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: #015a4a;
+  margin: 0;
+}
+
+.card-body {
+  padding: var(--spacing-6);
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-4);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+}
+
+html[dir="rtl"] .stat-item {
+  flex-direction: row-reverse;
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .stat-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-xl);
+  width: 48px;
+  height: 48px;
+  color: white;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -848,54 +813,49 @@ html[dir="rtl"] .stat-card {
 }
 
 .stat-icon-primary {
-  background: var(--color-primary-100);
-  color: var(--color-primary-600);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
 }
 
 .stat-icon-info {
-  background: #e0f2fe;
-  color: #0284c7;
-}
-
-.stat-icon-success {
-  background: var(--color-success-100);
-  color: var(--color-success-600);
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
 }
 
 .stat-icon-warning {
-  background: var(--color-warning-100);
-  color: var(--color-warning-600);
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.stat-icon-success {
+  background: linear-gradient(135deg, #02735e, #015a4a);
 }
 
 .stat-icon-purple {
-  background: #f3e8ff;
-  color: #9333ea;
+  background: linear-gradient(135deg, #a855f7, #9333ea);
 }
 
 .stat-icon-error {
-  background: var(--color-error-100);
-  color: var(--color-error-600);
+  background: linear-gradient(135deg, #ef4444, #dc2626);
 }
 
-.stat-content {
+.stat-details {
   display: flex;
   flex-direction: column;
+  gap: 2px;
+}
+
+html[dir="rtl"] .stat-details {
+  align-items: flex-end;
   text-align: right;
-}
-[dir="rtl"] .stat-content {
-  text-align: left;
-}
-.stat-value {
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  line-height: 1;
-  margin-bottom: var(--spacing-2);
 }
 
 .stat-label {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
+}
+
+.stat-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 }
 
 /* Charts Grid */
@@ -937,10 +897,6 @@ html[dir="rtl"] .chart-title {
 
 [dir="rtl"] .card {
   direction: ltr !important;
-}
-
-[dir="rtl"] .stat-card {
-  flex-direction: row !important;
 }
 
 @media (max-width: 768px) {
