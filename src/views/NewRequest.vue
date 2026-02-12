@@ -484,6 +484,118 @@
           </div>
         </form>
       </BaseCard>
+
+      <!-- Post-Submission Survey Modal -->
+      <div
+        v-if="showSurveyModal && postSubmissionSurvey"
+        class="survey-modal-overlay"
+      >
+        <div class="survey-modal" @click.stop>
+          <div class="survey-modal-header">
+            <h2>{{ $t('survey.postSubmissionTitle') }}</h2>
+            <p>{{ $t('survey.postSubmissionSubtitle') }}</p>
+          </div>
+
+          <div class="survey-modal-body">
+            <div class="survey-modal-title">
+              {{ locale === 'ar' ? (postSubmissionSurvey.title_ar || postSubmissionSurvey.title) : postSubmissionSurvey.title }}
+            </div>
+            <p
+              v-if="postSubmissionSurvey.description || postSubmissionSurvey.description_ar"
+              class="survey-modal-desc"
+            >
+              {{ locale === 'ar' ? (postSubmissionSurvey.description_ar || postSubmissionSurvey.description) : (postSubmissionSurvey.description || postSubmissionSurvey.description_ar) }}
+            </p>
+
+            <div
+              v-for="(question, qIndex) in postSubmissionSurvey.questions"
+              :key="question.id"
+              class="survey-question-card"
+            >
+              <div class="survey-question-header">
+                <span class="survey-question-number">{{ qIndex + 1 }}</span>
+                <div class="survey-question-text">
+                  <h3>{{ locale === 'ar' ? question.question_text_ar : question.question_text }}</h3>
+                  <span
+                    v-if="question.is_required"
+                    class="survey-required-badge"
+                  >{{ $t('survey.required') }}</span>
+                  <span v-else class="survey-optional-badge">{{ $t('survey.optional') }}</span>
+                </div>
+              </div>
+
+              <!-- Multiple Choice -->
+              <div
+                v-if="question.question_type === 'multiple_choice'"
+                class="survey-choice-options"
+              >
+                <button
+                  v-for="option in question.options"
+                  :key="option.id"
+                  type="button"
+                  :class="['survey-choice-btn', { selected: surveyAnswers[question.id]?.option_id === option.id }]"
+                  @click="selectSurveyOption(question.id, option.id)"
+                >
+                  {{ locale === 'ar' ? option.option_text_ar : option.option_text }}
+                </button>
+              </div>
+
+              <!-- Satisfaction Rating -->
+              <div
+                v-else-if="question.question_type === 'satisfaction'"
+                class="survey-satisfaction-scale"
+              >
+                <button
+                  v-for="option in question.options"
+                  :key="option.id"
+                  type="button"
+                  :class="['survey-satisfaction-btn', `satisfaction-${option.option_value}`, { selected: surveyAnswers[question.id]?.option_id === option.id }]"
+                  @click="selectSurveyOption(question.id, option.id)"
+                >
+                  <span class="satisfaction-value">{{ option.option_value }}</span>
+                  <span class="satisfaction-label">{{ locale === 'ar' ? option.option_text_ar : option.option_text }}</span>
+                </button>
+              </div>
+
+              <!-- Text Area -->
+              <div
+                v-else-if="question.question_type === 'text'"
+                class="survey-text-input"
+              >
+                <textarea
+                  v-model="surveyAnswers[question.id].text_answer"
+                  rows="3"
+                  :placeholder="$t('survey.textPlaceholder')"
+                  class="survey-text-area"
+                ></textarea>
+              </div>
+            </div>
+
+            <div v-if="surveyValidationError" class="survey-validation-error">
+              {{ surveyValidationError }}
+            </div>
+          </div>
+
+          <div class="survey-modal-footer">
+            <button
+              type="button"
+              class="survey-btn-skip"
+              @click="closeSurveyModal"
+              :disabled="isSubmittingSurvey"
+            >
+              {{ $t('survey.skip') }}
+            </button>
+            <button
+              type="button"
+              class="survey-btn-submit"
+              @click="submitPostSubmissionSurvey"
+              :disabled="isSubmittingSurvey"
+            >
+              {{ isSubmittingSurvey ? $t('survey.submitting') : $t('survey.submitSurvey') }}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </AppLayout>
 </template>
@@ -538,6 +650,15 @@ const employeeSearchQuery = ref("");
 const employeeSearchResults = ref([]);
 const isSearching = ref(false);
 let searchTimeout = null;
+
+// Post-submission survey state
+const postSubmissionSurvey = ref(null);
+const showSurveyModal = ref(false);
+const surveyAnswers = ref({});
+const isSubmittingSurvey = ref(false);
+const surveyValidationError = ref(null);
+const newRequestId = ref(null);
+
 const pageBreadcrumbs = computed(() => [
   { name: t("nav.dashboard"), link: "/" },
   { name: t("nav.myRequests"), link: "/requests" },
@@ -1006,6 +1127,34 @@ const handleSubmit = async () => {
         : t("request.successMessages.ideaSubmitted")
     );
 
+    // For new submissions (not edits), check for post-submission survey
+    if (!isEditMode.value) {
+      // Capture the new request ID from the response
+      const createdRequestId = response.data.request?.id;
+      newRequestId.value = createdRequestId;
+
+      try {
+        const surveyRes = await httpRequest('/surveys/trigger/post_submission');
+        const surveyData = surveyRes.data.survey;
+        const respondedIds = surveyRes.data.responded_request_ids || [];
+
+        // Show survey if it exists and user hasn't responded for this specific request
+        if (surveyData && createdRequestId && !respondedIds.includes(createdRequestId)) {
+          postSubmissionSurvey.value = surveyData;
+          // Initialize answers
+          const answers = {};
+          surveyData.questions.forEach((q) => {
+            answers[q.id] = { question_id: q.id, option_id: null, text_answer: "" };
+          });
+          surveyAnswers.value = answers;
+          showSurveyModal.value = true;
+          return; // Don't redirect yet
+        }
+      } catch (surveyErr) {
+        console.error("Failed to check post-submission survey:", surveyErr);
+      }
+    }
+
     setTimeout(() => {
       router.push("/requests");
     }, 2000);
@@ -1117,6 +1266,66 @@ const saveDraft = async () => {
   } finally {
     isDraftSave.value = false;
   }
+};
+
+// Post-submission survey methods
+const selectSurveyOption = (questionId, optionId) => {
+  surveyAnswers.value[questionId].option_id = optionId;
+  surveyValidationError.value = null;
+};
+
+const submitPostSubmissionSurvey = async () => {
+  surveyValidationError.value = null;
+
+  // Validate required questions
+  for (const question of postSubmissionSurvey.value.questions) {
+    if (!question.is_required) continue;
+    const answer = surveyAnswers.value[question.id];
+    if (question.question_type === "text" && !answer.text_answer?.trim()) {
+      surveyValidationError.value = t("survey.allRequiredMessage");
+      return;
+    }
+    if (["multiple_choice", "satisfaction"].includes(question.question_type) && !answer.option_id) {
+      surveyValidationError.value = t("survey.allRequiredMessage");
+      return;
+    }
+  }
+
+  try {
+    isSubmittingSurvey.value = true;
+    const answersArray = Object.values(surveyAnswers.value).map((a) => ({
+      question_id: a.question_id,
+      option_id: a.option_id,
+      text_answer: a.text_answer || null,
+    }));
+
+    await axios.post(
+      `${API_URL}/surveys/${postSubmissionSurvey.value.id}/submit`,
+      { answers: answersArray, request_id: newRequestId.value },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+
+    showSuccess(t("messages.success.surveySubmitted"));
+    showSurveyModal.value = false;
+    setTimeout(() => {
+      router.push("/requests");
+    }, 1000);
+  } catch (err) {
+    showError(err.response?.data?.message || "Failed to submit survey");
+  } finally {
+    isSubmittingSurvey.value = false;
+  }
+};
+
+const closeSurveyModal = () => {
+  showSurveyModal.value = false;
+  router.push("/requests");
 };
 
 const goBack = () => {
@@ -1602,6 +1811,290 @@ html[dir="rtl"] .idea-type-tooltip {
   .idea-type-tooltip {
     max-width: 250px;
     min-width: 150px;
+  }
+}
+
+/* Post-Submission Survey Modal */
+.survey-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-4);
+}
+
+.survey-modal {
+  background: white;
+  border-radius: var(--radius-xl);
+  max-width: 700px;
+  width: 100%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+
+.survey-modal-header {
+  padding: var(--spacing-6) var(--spacing-8);
+  background: linear-gradient(135deg, #02735e, #015a4a);
+  color: white;
+}
+
+.survey-modal-header h2 {
+  margin: 0 0 var(--spacing-1);
+  font-size: var(--font-size-xl);
+}
+
+.survey-modal-header p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: var(--font-size-sm);
+}
+
+.survey-modal-body {
+  padding: var(--spacing-6) var(--spacing-8);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.survey-modal-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-2);
+}
+
+.survey-modal-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-6);
+}
+
+.survey-question-card {
+  padding: var(--spacing-4) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.survey-question-card:last-of-type {
+  border-bottom: none;
+}
+
+.survey-question-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
+}
+
+.survey-question-number {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #02735e, #015a4a);
+  color: white;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xs);
+  flex-shrink: 0;
+}
+
+.survey-question-text {
+  flex: 1;
+}
+
+.survey-question-text h3 {
+  margin: 0 0 var(--spacing-1);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.survey-required-badge {
+  font-size: var(--font-size-xs);
+  color: #ef4444;
+  font-weight: var(--font-weight-medium);
+}
+
+.survey-optional-badge {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.survey-choice-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.survey-choice-btn {
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: var(--font-size-sm);
+}
+
+.survey-choice-btn:hover {
+  border-color: #02735e;
+  background: rgba(2, 115, 94, 0.05);
+}
+
+.survey-choice-btn.selected {
+  border-color: #02735e;
+  background: #02735e;
+  color: white;
+}
+
+.survey-satisfaction-scale {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
+.survey-satisfaction-btn {
+  flex: 1;
+  min-width: 80px;
+  padding: var(--spacing-2);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-background);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.survey-satisfaction-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.survey-satisfaction-btn .satisfaction-value {
+  display: block;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-1);
+}
+
+.survey-satisfaction-btn .satisfaction-label {
+  display: block;
+  font-size: 10px;
+  color: var(--color-text-secondary);
+}
+
+.satisfaction-1 { border-color: #fecaca; }
+.satisfaction-1:hover, .satisfaction-1.selected { background: #fef2f2; border-color: #ef4444; }
+.satisfaction-1.selected .satisfaction-value { color: #ef4444; }
+
+.satisfaction-2 { border-color: #fed7aa; }
+.satisfaction-2:hover, .satisfaction-2.selected { background: #fff7ed; border-color: #f97316; }
+.satisfaction-2.selected .satisfaction-value { color: #f97316; }
+
+.satisfaction-3 { border-color: #fef08a; }
+.satisfaction-3:hover, .satisfaction-3.selected { background: #fefce8; border-color: #eab308; }
+.satisfaction-3.selected .satisfaction-value { color: #eab308; }
+
+.satisfaction-4 { border-color: #bbf7d0; }
+.satisfaction-4:hover, .satisfaction-4.selected { background: #f0fdf4; border-color: #22c55e; }
+.satisfaction-4.selected .satisfaction-value { color: #22c55e; }
+
+.satisfaction-5 { border-color: #86efac; }
+.satisfaction-5:hover, .satisfaction-5.selected { background: #ecfdf5; border-color: #16a34a; }
+.satisfaction-5.selected .satisfaction-value { color: #16a34a; }
+
+.survey-text-area {
+  width: 100%;
+  padding: var(--spacing-3);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color var(--transition-fast);
+}
+
+.survey-text-area:focus {
+  outline: none;
+  border-color: #02735e;
+}
+
+.survey-validation-error {
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-4);
+  background: #fef2f2;
+  color: #ef4444;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  border: 1px solid #fecaca;
+}
+
+.survey-modal-footer {
+  display: flex;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-8);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.survey-btn-skip {
+  flex: 1;
+  padding: var(--spacing-3) var(--spacing-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: white;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.survey-btn-skip:hover:not(:disabled) {
+  background: var(--color-gray-100);
+}
+
+.survey-btn-submit {
+  flex: 1;
+  padding: var(--spacing-3) var(--spacing-6);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, #02735e, #015a4a);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.survey-btn-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.survey-btn-submit:disabled,
+.survey-btn-skip:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .survey-satisfaction-scale {
+    flex-direction: column;
+  }
+  .survey-satisfaction-btn {
+    min-width: unset;
+  }
+  .survey-choice-options {
+    flex-direction: column;
+  }
+  .survey-modal-footer {
+    flex-direction: column;
   }
 }
 </style>

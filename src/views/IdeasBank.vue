@@ -184,6 +184,45 @@
             </div>
           </div>
 
+          <!-- Collaborating Employees -->
+          <div
+            class="idea-employees"
+            v-if="idea.employees && idea.employees.length > 0"
+          >
+            <div class="employees-header">
+              <svg
+                width="16"
+                height="16"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+              </svg>
+              <span>{{ $t('request.collaboratingEmployees') }} ({{ idea.employees.length }})</span>
+            </div>
+            <div class="employees-list">
+              <div
+                v-for="emp in idea.employees"
+                :key="emp.id"
+                class="employee-chip"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span>{{ emp.employee_name }}</span>
+              </div>
+            </div>
+          </div>
+
           <div
             class="idea-footer"
             v-if="idea.current_assignee"
@@ -533,6 +572,7 @@ onMounted(() => {
   background: linear-gradient(135deg, #10b981, #059669);
 }
 
+
 .stat-content {
   display: flex;
   flex-direction: column;
@@ -740,6 +780,51 @@ onMounted(() => {
   color: #02735e;
 }
 
+/* Collaborating Employees */
+.idea-employees {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.employees-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.employees-header svg {
+  color: #02735e;
+}
+
+.employees-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.employee-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 20px;
+  font-size: 12px;
+  color: #015a4a;
+  font-weight: 500;
+}
+
+.employee-chip svg {
+  color: #02735e;
+}
+
+
 /* Empty State */
 .empty-state {
   display: flex;
@@ -862,6 +947,16 @@ onMounted(() => {
 [dir="rtl"] .assignee {
   flex-direction: row-reverse;
 }
+
+[dir="rtl"] .employees-header {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .employee-chip {
+  flex-direction: row-reverse;
+}
+
+
 
 [dir="rtl"] .stat-card {
   flex-direction: row-reverse;

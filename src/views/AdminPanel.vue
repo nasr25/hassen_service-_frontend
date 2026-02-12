@@ -80,6 +80,12 @@
         >
           🔀 {{ $t('admin.workflowPaths') }}
         </button>
+        <button
+          :class="['tab', { active: activeTab === 'surveys' }]"
+          @click="changeTab('surveys')"
+        >
+          📊 {{ $t('admin.surveys') }}
+        </button>
         <router-link
           to="/admin/settings"
           class="tab tab-link"
@@ -774,6 +780,393 @@
           >
             <p>{{ $t('admin.noPathsFound') }}</p>
           </div>
+        </div>
+      </div>
+
+      <!-- Surveys Tab -->
+      <div
+        v-if="activeTab === 'surveys'"
+        class="tab-content"
+      >
+        <div class="section-header">
+          <h2>{{ $t('admin.surveys') }} ({{ surveys.length }})</h2>
+          <button
+            @click="openSurveyModal()"
+            class="btn-primary"
+          >➕ {{ $t('admin.addSurvey') }}</button>
+        </div>
+        <div
+          v-if="isLoading"
+          class="loading"
+        >{{ $t('common.loading') }}</div>
+        <div
+          v-else
+          class="table-container"
+        >
+          <table class="logs-table">
+            <thead>
+              <tr>
+                <th>{{ $t('admin.surveyTitle') }}</th>
+                <th>{{ $t('admin.description') }}</th>
+                <th>{{ $t('admin.triggerPoint') }}</th>
+                <th>{{ $t('admin.questions') }}</th>
+                <th>{{ $t('admin.responses') }}</th>
+                <th>{{ $t('admin.status') }}</th>
+                <th>{{ $t('admin.actions') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="survey in surveys"
+                :key="survey.id"
+              >
+                <td>
+                  <strong>{{ survey.title }}</strong><br>
+                  <small class="text-muted">{{ survey.title_ar }}</small>
+                </td>
+                <td>
+                  <div v-if="survey.description">{{ survey.description.substring(0, 50) }}{{ survey.description.length > 50 ? '...' : '' }}</div>
+                  <div v-else class="text-muted">-</div>
+                </td>
+                <td>
+                  <span v-if="survey.trigger_point" :class="['badge', survey.trigger_point === 'post_submission' ? 'badge-primary' : 'badge-warning']">
+                    {{ $t('admin.trigger_' + survey.trigger_point) }}
+                  </span>
+                  <span v-else class="text-muted">-</span>
+                </td>
+                <td><span class="badge badge-info">{{ survey.questions?.length || 0 }}</span></td>
+                <td><span class="badge badge-info">{{ survey.responses_count || 0 }}</span></td>
+                <td>
+                  <span :class="['badge', survey.is_active ? 'badge-success' : 'badge-inactive']">
+                    {{ survey.is_active ? $t('admin.active') : $t('admin.inactive') }}
+                  </span>
+                </td>
+                <td class="actions">
+                  <button
+                    @click="openSurveyModal(survey)"
+                    class="btn-icon"
+                    :title="$t('common.edit')"
+                  >✏️</button>
+                  <button
+                    @click="toggleSurveyStatus(survey)"
+                    class="btn-icon"
+                    :title="survey.is_active ? $t('common.deactivate') : $t('common.activate')"
+                  >
+                    {{ survey.is_active ? '⏸️' : '▶️' }}
+                  </button>
+                  <button
+                    @click="viewSurveyResponses(survey)"
+                    class="btn-icon"
+                    :title="$t('admin.viewResponses')"
+                  >📋</button>
+                  <button
+                    @click="deleteSurvey(survey)"
+                    class="btn-icon btn-danger"
+                    :title="$t('common.delete')"
+                  >🗑️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div
+            v-if="surveys.length === 0"
+            class="empty-state"
+          >
+            <p>{{ $t('survey.noSurveys') }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Survey Create/Edit Modal -->
+    <div
+      v-if="surveyModal.show"
+      class="modal-overlay"
+      @click="closeSurveyModal"
+    >
+      <div
+        class="modal-content modal-large"
+        @click.stop
+      >
+        <h2>{{ surveyModal.isEdit ? $t('admin.editSurvey') : $t('admin.addSurvey') }}</h2>
+
+        <!-- Survey Basic Info -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>{{ $t('admin.surveyTitle') }} {{ $t('admin.required') }}</label>
+            <input
+              v-model="surveyModal.form.title"
+              type="text"
+              required
+              :placeholder="$t('admin.surveyTitlePlaceholder')"
+            />
+          </div>
+          <div class="form-group">
+            <label>{{ $t('admin.surveyTitleAr') }} {{ $t('admin.required') }}</label>
+            <input
+              v-model="surveyModal.form.title_ar"
+              type="text"
+              required
+              dir="rtl"
+              :placeholder="$t('admin.surveyTitleArPlaceholder')"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>{{ $t('admin.surveyDescription') }}</label>
+            <textarea
+              v-model="surveyModal.form.description"
+              rows="2"
+              :placeholder="$t('admin.surveyDescriptionPlaceholder')"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label>{{ $t('admin.surveyDescriptionAr') }}</label>
+            <textarea
+              v-model="surveyModal.form.description_ar"
+              rows="2"
+              dir="rtl"
+              :placeholder="$t('admin.surveyDescriptionArPlaceholder')"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><input
+                v-model="surveyModal.form.is_active"
+                type="checkbox"
+              /> {{ $t('admin.active') }}</label>
+          </div>
+          <div class="form-group">
+            <label>{{ $t('admin.triggerPoint') }}</label>
+            <select v-model="surveyModal.form.trigger_point">
+              <option :value="null">{{ $t('admin.noTrigger') }}</option>
+              <option value="post_submission">{{ $t('admin.postSubmission') }}</option>
+              <option value="post_completion">{{ $t('admin.postCompletion') }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Questions Builder -->
+        <div class="survey-questions-builder">
+          <div class="section-header">
+            <h3>{{ $t('admin.surveyQuestions') }} ({{ surveyModal.form.questions.length }})</h3>
+            <button
+              @click="addSurveyQuestion"
+              class="btn-primary btn-sm"
+            >➕ {{ $t('admin.addQuestion') }}</button>
+          </div>
+
+          <div
+            v-for="(question, qIndex) in surveyModal.form.questions"
+            :key="qIndex"
+            class="question-builder-card"
+          >
+            <div class="question-builder-header">
+              <span class="question-number">#{{ qIndex + 1 }}</span>
+              <button
+                @click="removeSurveyQuestion(qIndex)"
+                class="btn-icon btn-danger btn-sm"
+                :title="$t('admin.removeQuestion')"
+              >✖️</button>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>{{ $t('admin.questionText') }} {{ $t('admin.required') }}</label>
+                <input
+                  v-model="question.question_text"
+                  type="text"
+                  required
+                  :placeholder="$t('admin.questionTextPlaceholder')"
+                />
+              </div>
+              <div class="form-group">
+                <label>{{ $t('admin.questionTextAr') }} {{ $t('admin.required') }}</label>
+                <input
+                  v-model="question.question_text_ar"
+                  type="text"
+                  required
+                  dir="rtl"
+                  :placeholder="$t('admin.questionTextArPlaceholder')"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>{{ $t('admin.questionType') }}</label>
+                <select
+                  v-model="question.question_type"
+                  @change="onQuestionTypeChange(qIndex)"
+                >
+                  <option value="multiple_choice">{{ $t('admin.multipleChoice') }}</option>
+                  <option value="satisfaction">{{ $t('admin.satisfactionRating') }}</option>
+                  <option value="text">{{ $t('admin.textArea') }}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>{{ $t('admin.order') }}</label>
+                <input
+                  v-model.number="question.order"
+                  type="number"
+                  min="0"
+                />
+              </div>
+              <div class="form-group checkbox-group">
+                <label><input
+                    v-model="question.is_required"
+                    type="checkbox"
+                  /> {{ $t('survey.required') }}</label>
+                <label><input
+                    v-model="question.is_active"
+                    type="checkbox"
+                  /> {{ $t('admin.active') }}</label>
+              </div>
+            </div>
+
+            <!-- Options Builder -->
+            <div
+              v-if="question.question_type !== 'text'"
+              class="options-builder"
+            >
+              <div class="options-header">
+                <label>{{ $t('admin.answerOptions') }}</label>
+                <div class="options-actions">
+                  <button
+                    v-if="question.question_type === 'satisfaction'"
+                    @click="autoFillSatisfactionOptions(qIndex)"
+                    class="btn-secondary btn-sm"
+                  >🔄 {{ $t('admin.autoFillSatisfaction') }}</button>
+                  <button
+                    @click="addOption(qIndex)"
+                    class="btn-primary btn-sm"
+                  >➕ {{ $t('admin.addOption') }}</button>
+                </div>
+              </div>
+              <div
+                v-for="(option, oIndex) in question.options"
+                :key="oIndex"
+                class="option-row"
+              >
+                <input
+                  v-model="option.option_text"
+                  type="text"
+                  :placeholder="$t('admin.optionText')"
+                  class="option-input"
+                />
+                <input
+                  v-model="option.option_text_ar"
+                  type="text"
+                  dir="rtl"
+                  :placeholder="$t('admin.optionTextAr')"
+                  class="option-input"
+                />
+                <input
+                  v-model.number="option.option_value"
+                  type="number"
+                  :placeholder="$t('admin.optionValue')"
+                  class="option-value-input"
+                />
+                <input
+                  v-model.number="option.order"
+                  type="number"
+                  placeholder="#"
+                  class="option-order-input"
+                />
+                <button
+                  @click="removeOption(qIndex, oIndex)"
+                  class="btn-icon btn-danger btn-sm"
+                >✖️</button>
+              </div>
+            </div>
+
+            <!-- Text type info -->
+            <div
+              v-else
+              class="text-type-info"
+            >
+              <p class="text-muted">{{ $t('admin.noOptionsNeeded') }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            @click="closeSurveyModal"
+            class="btn-secondary"
+          >{{ $t('common.cancel') }}</button>
+          <button
+            @click="saveSurvey"
+            :disabled="surveyModal.isLoading"
+            class="btn-primary"
+          >
+            {{ surveyModal.isLoading ? $t('common.saving') : $t('common.save') }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Survey Responses Modal -->
+    <div
+      v-if="surveyResponsesModal.show"
+      class="modal-overlay"
+      @click="closeSurveyResponsesModal"
+    >
+      <div
+        class="modal-content modal-large"
+        @click.stop
+      >
+        <h2>{{ $t('admin.surveyResponses') }}: {{ surveyResponsesModal.survey?.title }}</h2>
+
+        <div
+          v-if="surveyResponsesModal.isLoading"
+          class="loading"
+        >{{ $t('common.loading') }}</div>
+        <div
+          v-else-if="surveyResponsesModal.responses.length === 0"
+          class="empty-state"
+        >
+          <p>{{ $t('admin.noResponses') }}</p>
+        </div>
+        <div
+          v-else
+          class="responses-list"
+        >
+          <div
+            v-for="response in surveyResponsesModal.responses"
+            :key="response.id"
+            class="response-card"
+          >
+            <div class="response-header">
+              <strong>{{ response.user?.name || $t('common.unknown') }}</strong>
+              <span class="text-muted">{{ formatDate(response.submitted_at) }}</span>
+            </div>
+            <div class="response-answers">
+              <div
+                v-for="answer in response.answers"
+                :key="answer.id"
+                class="response-answer"
+              >
+                <div class="answer-question">{{ answer.question?.question_text }}</div>
+                <div class="answer-value">
+                  <span v-if="answer.selected_option">{{ answer.selected_option.option_text }}</span>
+                  <span v-else-if="answer.text_answer">{{ answer.text_answer }}</span>
+                  <span v-else class="text-muted">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            @click="closeSurveyResponsesModal"
+            class="btn-secondary"
+          >{{ $t('common.close') }}</button>
         </div>
       </div>
     </div>
@@ -1522,6 +1915,7 @@ const workflowPaths = ref([]);
 const roles = ref([]);
 const permissions = ref([]);
 const ideaTypes = ref([]);
+const surveys = ref([]);
 const error = ref(null);
 const success = ref(null);
 const isLoading = ref(true);
@@ -1625,6 +2019,27 @@ const pathModal = ref({
   isLoading: false,
   form: { name: "", code: "", description: "", order: 0, is_active: true },
   editId: null,
+});
+const surveyModal = ref({
+  show: false,
+  isEdit: false,
+  isLoading: false,
+  form: {
+    title: "",
+    title_ar: "",
+    description: "",
+    description_ar: "",
+    is_active: true,
+    trigger_point: null,
+    questions: [],
+  },
+  editId: null,
+});
+const surveyResponsesModal = ref({
+  show: false,
+  isLoading: false,
+  survey: null,
+  responses: [],
 });
 
 const totalWeight = computed(() => {
@@ -1771,6 +2186,10 @@ const loadData = async () => {
       case "ideaTypes":
         const ideaTypesRes = await httpRequest(`/admin/idea-types`);
         ideaTypes.value = ideaTypesRes.data.ideaTypes;
+        break;
+      case "surveys":
+        const surveysRes = await httpRequest(`/admin/surveys`);
+        surveys.value = surveysRes.data.surveys;
         break;
     }
 
@@ -2766,6 +3185,194 @@ const deletePath = async (path) => {
   } catch (err) {
     showError(err.response?.data?.message || "Failed to delete workflow path");
   }
+};
+
+// ============= SURVEY MANAGEMENT =============
+
+const openSurveyModal = (survey = null) => {
+  if (survey) {
+    surveyModal.value = {
+      show: true,
+      isEdit: true,
+      isLoading: false,
+      form: {
+        title: survey.title,
+        title_ar: survey.title_ar,
+        description: survey.description || "",
+        description_ar: survey.description_ar || "",
+        is_active: survey.is_active,
+        trigger_point: survey.trigger_point || null,
+        questions: (survey.questions || []).map((q) => ({
+          id: q.id,
+          question_text: q.question_text,
+          question_text_ar: q.question_text_ar,
+          question_type: q.question_type,
+          order: q.order,
+          is_required: q.is_required,
+          is_active: q.is_active,
+          options: (q.options || []).map((o) => ({
+            id: o.id,
+            option_text: o.option_text,
+            option_text_ar: o.option_text_ar,
+            option_value: o.option_value,
+            order: o.order,
+          })),
+        })),
+      },
+      editId: survey.id,
+    };
+  } else {
+    surveyModal.value = {
+      show: true,
+      isEdit: false,
+      isLoading: false,
+      form: {
+        title: "",
+        title_ar: "",
+        description: "",
+        description_ar: "",
+        is_active: true,
+        trigger_point: null,
+        questions: [],
+      },
+      editId: null,
+    };
+  }
+};
+
+const closeSurveyModal = () => {
+  surveyModal.value.show = false;
+};
+
+const addSurveyQuestion = () => {
+  surveyModal.value.form.questions.push({
+    id: null,
+    question_text: "",
+    question_text_ar: "",
+    question_type: "multiple_choice",
+    order: surveyModal.value.form.questions.length,
+    is_required: true,
+    is_active: true,
+    options: [],
+  });
+};
+
+const removeSurveyQuestion = (index) => {
+  surveyModal.value.form.questions.splice(index, 1);
+};
+
+const onQuestionTypeChange = (qIndex) => {
+  const question = surveyModal.value.form.questions[qIndex];
+  if (question.question_type === "text") {
+    question.options = [];
+  } else if (question.question_type === "satisfaction" && question.options.length === 0) {
+    autoFillSatisfactionOptions(qIndex);
+  }
+};
+
+const autoFillSatisfactionOptions = (qIndex) => {
+  const defaults = [
+    { option_text: "Not Satisfied", option_text_ar: "غير راضٍ", option_value: 1, order: 0 },
+    { option_text: "Somewhat Satisfied", option_text_ar: "راضٍ إلى حد ما", option_value: 2, order: 1 },
+    { option_text: "Satisfied", option_text_ar: "راضٍ", option_value: 3, order: 2 },
+    { option_text: "Very Satisfied", option_text_ar: "راضٍ جداً", option_value: 4, order: 3 },
+    { option_text: "Extremely Satisfied", option_text_ar: "راضٍ للغاية", option_value: 5, order: 4 },
+  ];
+  surveyModal.value.form.questions[qIndex].options = defaults.map((d) => ({ ...d, id: null }));
+};
+
+const addOption = (qIndex) => {
+  surveyModal.value.form.questions[qIndex].options.push({
+    id: null,
+    option_text: "",
+    option_text_ar: "",
+    option_value: surveyModal.value.form.questions[qIndex].options.length + 1,
+    order: surveyModal.value.form.questions[qIndex].options.length,
+  });
+};
+
+const removeOption = (qIndex, oIndex) => {
+  surveyModal.value.form.questions[qIndex].options.splice(oIndex, 1);
+};
+
+const saveSurvey = async () => {
+  try {
+    surveyModal.value.isLoading = true;
+    const url = surveyModal.value.isEdit
+      ? `${API_URL}/admin/surveys/${surveyModal.value.editId}`
+      : `${API_URL}/admin/surveys`;
+    const method = surveyModal.value.isEdit ? "put" : "post";
+
+    await axios[method](url, surveyModal.value.form, {
+      headers: {
+        Authorization: `Bearer ${authStore.token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+
+    showSuccess(
+      surveyModal.value.isEdit
+        ? t("messages.success.surveyUpdated")
+        : t("messages.success.surveyCreated")
+    );
+    closeSurveyModal();
+    await loadData();
+  } catch (err) {
+    showError(err.response?.data?.message || "Failed to save survey");
+  } finally {
+    surveyModal.value.isLoading = false;
+  }
+};
+
+const toggleSurveyStatus = async (survey) => {
+  try {
+    await httpRequest(`/admin/surveys/${survey.id}/toggle-status`, {
+      method: "POST",
+    });
+    showSuccess(survey.is_active ? t("admin.deactivated") : t("admin.activated"));
+    await loadData();
+  } catch (err) {
+    showError(err.response?.data?.message || "Failed to toggle status");
+  }
+};
+
+const deleteSurvey = async (survey) => {
+  const { isConfirmed } = await showDeleteConfirm({
+    title: t("common.confirmDelete"),
+    text: `${t("common.deleteConfirmMessage")} "${survey.title}"?`,
+  });
+  if (!isConfirmed) return;
+
+  try {
+    await httpRequest(`/admin/surveys/${survey.id}`, { method: "DELETE" });
+    showSuccess(t("messages.success.surveyDeleted"));
+    await loadData();
+  } catch (err) {
+    showError(err.response?.data?.message || "Failed to delete survey");
+  }
+};
+
+const viewSurveyResponses = async (survey) => {
+  surveyResponsesModal.value = {
+    show: true,
+    isLoading: true,
+    survey: survey,
+    responses: [],
+  };
+
+  try {
+    const res = await httpRequest(`/admin/surveys/${survey.id}/responses`);
+    surveyResponsesModal.value.responses = res.data.responses;
+  } catch (err) {
+    showError(err.response?.data?.message || "Failed to load responses");
+  } finally {
+    surveyResponsesModal.value.isLoading = false;
+  }
+};
+
+const closeSurveyResponsesModal = () => {
+  surveyResponsesModal.value.show = false;
 };
 </script>
 
@@ -4007,5 +4614,173 @@ html[dir="rtl"] .color-input-group {
   border-radius: 5px;
   margin: 0 10px;
   padding: 0px 5px;
+}
+
+/* Survey Modal Styles */
+.modal-large {
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.form-row {
+  display: flex;
+  gap: var(--spacing-4);
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.survey-questions-builder {
+  margin-top: var(--spacing-6);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--spacing-4);
+}
+
+.question-builder-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+  background: var(--color-surface);
+}
+
+.question-builder-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-3);
+}
+
+.question-number {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-700);
+  font-size: var(--font-size-lg);
+}
+
+.checkbox-group {
+  display: flex;
+  gap: var(--spacing-4);
+  align-items: center;
+  padding-top: var(--spacing-6);
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  white-space: nowrap;
+}
+
+.options-builder {
+  margin-top: var(--spacing-3);
+  padding: var(--spacing-3);
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+}
+
+.options-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-3);
+}
+
+.options-actions {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.option-row {
+  display: flex;
+  gap: var(--spacing-2);
+  align-items: center;
+  margin-bottom: var(--spacing-2);
+}
+
+.option-input {
+  flex: 1;
+  padding: var(--spacing-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.option-value-input {
+  width: 70px;
+  padding: var(--spacing-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.option-order-input {
+  width: 50px;
+  padding: var(--spacing-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+}
+
+.btn-sm {
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--font-size-xs);
+}
+
+.text-type-info {
+  padding: var(--spacing-3);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-3);
+}
+
+/* Responses Modal */
+.responses-list {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.response-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-4);
+  margin-bottom: var(--spacing-3);
+}
+
+.response-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-3);
+  padding-bottom: var(--spacing-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.response-answers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.response-answer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--spacing-2);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+}
+
+.answer-question {
+  flex: 1;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.answer-value {
+  flex: 1;
+  text-align: right;
+  color: var(--color-text-primary);
 }
 </style>

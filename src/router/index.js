@@ -106,6 +106,18 @@ const routes = [
     name: 'IdeasBank',
     component: () => import('../views/IdeasBank.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/surveys',
+    name: 'Surveys',
+    component: () => import('../views/SurveyList.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/surveys/:id',
+    name: 'SurveyForm',
+    component: () => import('../views/SurveyForm.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 

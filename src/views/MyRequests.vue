@@ -183,6 +183,17 @@
                   />
                 </svg>
               </button>
+              <button
+                v-if="request.status === 'completed' && postCompletionSurveyId && !respondedRequestIds.includes(request.id)"
+                class="survey-btn"
+                @click.stop="router.push(`/surveys/${postCompletionSurveyId}?request_id=${request.id}`)"
+              >
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                  <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                </svg>
+                {{ $t('survey.takeSurvey') }}
+              </button>
             </template>
           </RequestCard>
       </div>
@@ -193,6 +204,76 @@
         :pagination="pagination"
         @change="goToPage"
       />
+
+      <!-- Shared Ideas Section -->
+      <div
+        v-if="!isLoading && sharedIdeas.length > 0"
+        class="shared-section"
+      >
+        <div class="shared-section-header">
+          <svg
+            width="24"
+            height="24"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+          </svg>
+          <div>
+            <h2>{{ $t('ideasBank.stats.shared') }} ({{ sharedIdeas.length }})</h2>
+            <p class="shared-section-subtitle">{{ $t('ideasBank.sharedSubtitle') }}</p>
+          </div>
+        </div>
+
+        <div class="requests-grid">
+          <RequestCard
+            v-for="idea in sharedIdeas"
+            :key="'shared-' + idea.id"
+            :request="idea"
+            :clickable="true"
+            :show-description="true"
+            :truncate-description="true"
+            :description-length="120"
+            :show-submitter="true"
+            :show-department="true"
+            :show-date="true"
+            class="shared-idea-card"
+            @click="viewDetails(idea.id)"
+          >
+            <template #actions>
+              <button
+                class="view-btn"
+                @click.stop="viewDetails(idea.id)"
+              >
+                {{ $t('request.viewDetails') }}
+                <svg
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+              <button
+                v-if="idea.status === 'completed' && postCompletionSurveyId && !respondedRequestIds.includes(idea.id)"
+                class="survey-btn"
+                @click.stop="router.push(`/surveys/${postCompletionSurveyId}?request_id=${idea.id}`)"
+              >
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                  <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                </svg>
+                {{ $t('survey.takeSurvey') }}
+              </button>
+            </template>
+          </RequestCard>
+        </div>
+      </div>
     </div>
   </AppLayout>
 </template>
@@ -219,9 +300,12 @@ const { t } = useI18n();
 const { showSuccess, showError } = useAlert();
 
 const requests = ref([]);
+const sharedIdeas = ref([]);
 const error = ref(null);
 const isLoading = ref(true);
 const filterStatus = ref("all");
+const postCompletionSurveyId = ref(null);
+const respondedRequestIds = ref([]);
 const statusCounts = ref({
   all: 0,
   draft: 0,
@@ -268,6 +352,16 @@ const onFilterChange = (status) => {
 
 onMounted(async () => {
   await loadRequests();
+  // Check for post-completion survey
+  try {
+    const surveyRes = await httpRequest('/surveys/trigger/post_completion');
+    if (surveyRes.data.survey) {
+      postCompletionSurveyId.value = surveyRes.data.survey.id;
+      respondedRequestIds.value = surveyRes.data.responded_request_ids || [];
+    }
+  } catch (err) {
+    console.error("Failed to check post-completion survey:", err);
+  }
 });
 
 const loadRequests = async () => {
@@ -288,6 +382,7 @@ const loadRequests = async () => {
     const response = await httpRequest(`/requests?${queryString}`);
 
     requests.value = response.data.requests;
+    sharedIdeas.value = response.data.shared_ideas || [];
 
     // Update pagination state
     if (response.data.pagination) {
@@ -712,6 +807,79 @@ const truncate = (text, length) => {
 .view-btn:hover {
   background: var(--color-primary-50);
   border-color: var(--color-primary-300);
+}
+
+.survey-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  border: 1px solid #7c3aed;
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex: 1;
+}
+
+.survey-btn:hover {
+  background: linear-gradient(135deg, #6d28d9, #5b21b6);
+  border-color: #6d28d9;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Shared Ideas Section */
+.shared-section {
+  margin-top: var(--spacing-10);
+  padding-top: var(--spacing-8);
+  border-top: 2px solid rgba(168, 85, 247, 0.2);
+}
+
+.shared-section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-6);
+  padding: var(--spacing-4) var(--spacing-5);
+  background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.shared-section-header svg {
+  color: #9333ea;
+  flex-shrink: 0;
+}
+
+.shared-section-header h2 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: #581c87;
+  margin: 0;
+}
+
+.shared-section-subtitle {
+  font-size: var(--font-size-sm);
+  color: #7c3aed;
+  margin: var(--spacing-1) 0 0 0;
+}
+
+.shared-idea-card {
+  border: 1px solid rgba(168, 85, 247, 0.15);
+}
+
+.shared-idea-card:hover {
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+[dir="rtl"] .shared-section-header {
+  direction: rtl;
+  text-align: right;
 }
 
 @media (max-width: 768px) {
