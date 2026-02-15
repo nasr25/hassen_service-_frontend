@@ -285,6 +285,17 @@
                   {{ locale === 'ar' ? type.description_ar : type.description }}
                 </div>
               </label>
+              <!-- Add New Type Button -->
+              <button
+                type="button"
+                class="idea-type-option add-new-type-btn"
+                @click="showAddTypeModal = true"
+              >
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+                </svg>
+                <span class="checkbox-text">{{ $t('request.addNewIdeaType') }}</span>
+              </button>
             </div>
             <span
               v-if="validationErrors.idea_types"
@@ -484,6 +495,58 @@
         </form>
       </BaseCard>
 
+      <!-- Add New Idea Type Modal -->
+      <div
+        v-if="showAddTypeModal"
+        class="add-type-modal-overlay"
+        @click.self="showAddTypeModal = false"
+      >
+        <div class="add-type-modal">
+          <div class="add-type-modal-header">
+            <h3>{{ $t('request.addNewIdeaType') }}</h3>
+            <button type="button" class="add-type-modal-close" @click="showAddTypeModal = false">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+          <div class="add-type-modal-body">
+            <div class="add-type-field">
+              <label class="form-label">{{ $t('request.newIdeaTypeName') }} <span class="required-star">*</span></label>
+              <input
+                v-model="newTypeForm.name"
+                type="text"
+                class="add-type-input"
+                :placeholder="$t('request.newIdeaTypeName')"
+              />
+            </div>
+            <div class="add-type-field">
+              <label class="form-label">{{ $t('request.newIdeaTypeNameAr') }} <span class="required-star">*</span></label>
+              <input
+                v-model="newTypeForm.name_ar"
+                type="text"
+                class="add-type-input"
+                dir="rtl"
+                :placeholder="$t('request.newIdeaTypeNameAr')"
+              />
+            </div>
+          </div>
+          <div class="add-type-modal-footer">
+            <button type="button" class="add-type-btn-cancel" @click="showAddTypeModal = false">
+              {{ $t('common.cancel') }}
+            </button>
+            <button
+              type="button"
+              class="add-type-btn-submit"
+              :disabled="isAddingType || !newTypeForm.name.trim() || !newTypeForm.name_ar.trim()"
+              @click="addNewIdeaType"
+            >
+              {{ isAddingType ? '...' : $t('common.save') }}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Post-Submission Survey Modal -->
       <div
         v-if="showSurveyModal && postSubmissionSurvey"
@@ -650,6 +713,11 @@ const employeeSearchResults = ref([]);
 const isSearching = ref(false);
 let searchTimeout = null;
 
+// Add new idea type state
+const showAddTypeModal = ref(false);
+const newTypeForm = ref({ name: '', name_ar: '' });
+const isAddingType = ref(false);
+
 // Post-submission survey state
 const postSubmissionSurvey = ref(null);
 const showSurveyModal = ref(false);
@@ -730,6 +798,30 @@ const loadIdeaTypes = async () => {
   } catch (err) {
     console.error("Failed to load idea types:", err);
     ideaTypes.value = [];
+  }
+};
+
+const addNewIdeaType = async () => {
+  if (!newTypeForm.value.name.trim() || !newTypeForm.value.name_ar.trim()) return;
+  try {
+    isAddingType.value = true;
+    const response = await httpRequest('/idea-types', {
+      method: 'POST',
+      data: {
+        name: newTypeForm.value.name.trim(),
+        name_ar: newTypeForm.value.name_ar.trim(),
+      },
+    });
+    const createdType = response.data.ideaType;
+    ideaTypes.value.push(createdType);
+    form.value.idea_types.push(createdType.id.toString());
+    showAddTypeModal.value = false;
+    newTypeForm.value = { name: '', name_ar: '' };
+    showSuccess(t('request.addNewIdeaTypeSuccess'));
+  } catch (err) {
+    showError(err.response?.data?.message || 'Failed to add idea type');
+  } finally {
+    isAddingType.value = false;
   }
 };
 
@@ -1811,6 +1903,154 @@ html[dir="rtl"] .idea-type-tooltip {
     max-width: 250px;
     min-width: 150px;
   }
+}
+
+/* Add New Type Button */
+.add-new-type-btn {
+  border: 2px dashed var(--color-border);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  transition: all var(--transition-fast);
+}
+
+.add-new-type-btn:hover {
+  border-color: #02735e;
+  color: #02735e;
+  background: rgba(2, 115, 94, 0.05);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.add-new-type-btn svg {
+  color: inherit;
+}
+
+/* Add New Type Modal */
+.add-type-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-4);
+}
+
+.add-type-modal {
+  background: white;
+  border-radius: var(--radius-xl);
+  max-width: 480px;
+  width: 100%;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+}
+
+.add-type-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-5) var(--spacing-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.add-type-modal-header h3 {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.add-type-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: var(--spacing-1);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.add-type-modal-close:hover {
+  background: var(--color-gray-100);
+  color: var(--color-text-primary);
+}
+
+.add-type-modal-body {
+  padding: var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.add-type-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.add-type-input {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  transition: all var(--transition-fast);
+  box-sizing: border-box;
+}
+
+.add-type-input:focus {
+  outline: none;
+  border-color: #02735e;
+  box-shadow: 0 0 0 3px rgba(2, 115, 94, 0.1);
+}
+
+.add-type-modal-footer {
+  display: flex;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4) var(--spacing-6);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.add-type-btn-cancel {
+  flex: 1;
+  padding: var(--spacing-3) var(--spacing-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: white;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.add-type-btn-cancel:hover {
+  background: var(--color-gray-100);
+}
+
+.add-type-btn-submit {
+  flex: 1;
+  padding: var(--spacing-3) var(--spacing-6);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, #02735e, #015a4a);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.add-type-btn-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.add-type-btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Post-Submission Survey Modal */

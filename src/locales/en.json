@@ -292,6 +292,10 @@
     "ideaTypePlaceholder": "Select an idea type",
     "ideaTypeHelp": "Choose the category that best fits your idea",
     "ideaTypesHelp": "Select one or more categories that best fit your idea",
+    "addNewIdeaType": "Add New Type",
+    "newIdeaTypeName": "Name (English)",
+    "newIdeaTypeNameAr": "Name (Arabic)",
+    "addNewIdeaTypeSuccess": "New idea type added successfully",
     "department": "Path",
     "departmentPlaceholder": "Select a path",
     "departmentHelp": "Select the path related to your idea, or choose 'Unknown' if unsure",
@@ -377,6 +381,17 @@
     "approved": "Ideas Approved",
     "rejected": "Ideas Rejected",
     "completed": "Ideas Completed"
+  },
+  "statusName": {
+    "draft": "Draft",
+    "pending": "Pending",
+    "in_review": "In Review",
+    "in_progress": "In Progress",
+    "need_more_details": "Need Details",
+    "missing_requirement": "Missing Requirement",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "completed": "Completed"
   },
   "workflow": {
     "title": "Workflow Review",

@@ -293,6 +293,10 @@
     "ideaTypePlaceholder": "اختر فئة الفكرة",
     "ideaTypeHelp": "اختر الفئة التي تناسب فكرتك بشكل أفضل",
     "ideaTypesHelp": "اختر فئة واحدة أو أكثر تناسب فكرتك بشكل أفضل",
+    "addNewIdeaType": "إضافة نوع جديد",
+    "newIdeaTypeName": "الاسم (إنجليزي)",
+    "newIdeaTypeNameAr": "الاسم (عربي)",
+    "addNewIdeaTypeSuccess": "تمت إضافة نوع الفكرة الجديد بنجاح",
     "department": "المسار",
     "departmentPlaceholder": "اختر المسار",
     "departmentHelp": "اختر المسار المتعلق بفكرتك، أو اختر 'غير معروف' إذا لم تكن متأكداً",
@@ -378,6 +382,17 @@
     "approved": "افكار موافق عليه",
     "rejected": "افكار لم يتم اعتمادها",
     "completed": "افكار مكتملة"
+  },
+  "statusName": {
+    "draft": "مسودة",
+    "pending": "قيد الانتظار",
+    "in_review": "قيد المراجعة",
+    "in_progress": "قيد التنفيذ",
+    "need_more_details": "بحاجة لتفاصيل",
+    "missing_requirement": "متطلبات ناقصة",
+    "approved": "موافق عليه",
+    "rejected": "مرفوض",
+    "completed": "مكتمل"
   },
   "workflow": {
     "title": "مراجعة سير العمل",
