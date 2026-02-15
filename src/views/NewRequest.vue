@@ -150,7 +150,6 @@
             class="form-group"
           >
             <label class="form-label">
-              {{ $t('request.collaboratingEmployees') }}
               <span class="optional-text">{{ $t('request.searchEmployeesAD') }}</span>
             </label>
             <div class="employee-search-container">
