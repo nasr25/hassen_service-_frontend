@@ -443,7 +443,7 @@
                     variant="success"
                     size="sm"
                     @click="checkEvaluationAndOpen(request, 'assign')"
-                    :disabled="!requestEvaluationStatus[request.id]"
+                    disabled
                   >
                     <svg
                       width="16"

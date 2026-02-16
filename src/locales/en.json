@@ -429,6 +429,7 @@
     "explainDetailsNeeded": "Explain what details are needed from the user...",
     "additionalInfoNeeded": "What additional information do you need?",
     "reject": "Reject",
+    "requestRejected": "Request Rejected",
     "rejectRequest": "Reject Request",
     "permanentRejectionWarning": "This will permanently reject the request and end the workflow.",
     "rejectionReason": "Rejection Reason",
@@ -477,7 +478,8 @@
       "employeeReject": "Employee Rejected Request",
       "progressUpdate": "Progress Updated",
       "acceptLater": "Accepted for Later Implementation",
-      "employeeComplete": "Employee Completed Work"
+      "employeeComplete": "Employee Completed Work",
+      "activate": "Idea Activated for Implementation"
     },
     "department": "Department",
     "evaluationModal": {
@@ -547,6 +549,12 @@
     "executeOn": "Execute on",
     "dateDue": "Date Due",
     "startImplementing": "Start Implementing",
+    "editExecutionDate": "Edit Execution Date",
+    "editExecutionDateTitle": "Edit Execution Date",
+    "executionDateUpdated": "Execution date updated successfully",
+    "editStartDate": "Edit Start Date",
+    "editStartDateTitle": "Edit Start Date",
+    "startDateUpdated": "Start date updated successfully",
     "activateIdeaPrompt": "You are about to activate this idea for implementation. You can then assign it to an employee.",
     "optionalComments": "Optional comments",
     "pathEvaluationRequired": "Path Evaluation Required",

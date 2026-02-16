@@ -242,6 +242,7 @@
                   <BaseButton
                     variant="success"
                     @click="activateIdea(request)"
+                    :disabled="!isExecutionDateDue(request.expected_execution_date)"
                   >
                     <svg
                       width="16"
@@ -256,6 +257,20 @@
                       />
                     </svg>
                     {{ $t('department.startImplementing') }}
+                  </BaseButton>
+                  <BaseButton
+                    variant="outline"
+                    @click="openEditExecutionDateModal(request)"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                    {{ $t('department.editExecutionDate') }}
                   </BaseButton>
                 </template>
 
@@ -295,7 +310,7 @@
                   <BaseButton
                     variant="warning"
                     @click="openPathEvaluationModal(request, 'accept_later')"
-                    :disabled="request.returned_from_employee"
+                    :disabled="request.returned_from_employee || !!request.expected_execution_date"
                   >
                     {{ $t('department.acceptForLater') }}
                   </BaseButton>
@@ -303,7 +318,6 @@
                   <BaseButton
                     variant="danger"
                     @click="openPathEvaluationModal(request, 'reject')"
-                    :disabled="request.returned_from_employee"
                   >
                     {{ $t('department.rejectIdea') }}
                   </BaseButton>
@@ -354,9 +368,25 @@
                   <BaseButton
                     variant="primary"
                     @click="openEmployeeUpdateProgressModal(request)"
-                    :disabled="request.progress_percentage === 100"
+                    :disabled="request.progress_percentage === 100 || (request.expected_execution_date && !isExecutionDateDue(request.expected_execution_date))"
                   >
                     {{ $t('department.updateProgress') }}
+                  </BaseButton>
+
+                  <BaseButton
+                    variant="outline"
+                    @click="openEditStartDateModal(request)"
+                    :disabled="request.progress_percentage > 0"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                    {{ $t('department.editStartDate') }}
                   </BaseButton>
 
                   <BaseButton
@@ -1066,6 +1096,89 @@
         </div>
       </div>
     </div>
+    <!-- Edit Execution Date Modal -->
+    <div
+      v-if="editDateModal.show"
+      class="modal-overlay"
+      @click="closeEditDateModal"
+    >
+      <div
+        class="modal-content"
+        @click.stop
+      >
+        <h2>{{ $t('department.editExecutionDateTitle') }}</h2>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ editDateModal.request?.title }}</p>
+
+        <div class="form-group">
+          <label>{{ $t('department.expectedDate') }} *</label>
+          <input
+            type="date"
+            v-model="editDateModal.newDate"
+            class="date-input"
+            :min="new Date().toISOString().split('T')[0]"
+            required
+          />
+        </div>
+
+        <div class="modal-actions">
+          <BaseButton
+            variant="secondary"
+            @click="closeEditDateModal"
+          >
+            {{ $t('common.cancel') }}
+          </BaseButton>
+          <BaseButton
+            variant="primary"
+            @click="confirmEditExecutionDate"
+            :disabled="!editDateModal.newDate || editDateModal.isLoading"
+          >
+            {{ editDateModal.isLoading ? '...' : $t('common.save') }}
+          </BaseButton>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Start Date Modal (Employee) -->
+    <div
+      v-if="editStartDateModal.show"
+      class="modal-overlay"
+      @click="closeEditStartDateModal"
+    >
+      <div
+        class="modal-content"
+        @click.stop
+      >
+        <h2>{{ $t('department.editStartDateTitle') }}</h2>
+        <p class="modal-subtitle">{{ $t('request.request') }}: {{ editStartDateModal.request?.title }}</p>
+
+        <div class="form-group">
+          <label>{{ $t('request.expectedExecutionDate') }} *</label>
+          <input
+            type="date"
+            v-model="editStartDateModal.newDate"
+            class="date-input"
+            :min="new Date().toISOString().split('T')[0]"
+            required
+          />
+        </div>
+
+        <div class="modal-actions">
+          <BaseButton
+            variant="secondary"
+            @click="closeEditStartDateModal"
+          >
+            {{ $t('common.cancel') }}
+          </BaseButton>
+          <BaseButton
+            variant="primary"
+            @click="confirmEditStartDate"
+            :disabled="!editStartDateModal.newDate || editStartDateModal.isLoading"
+          >
+            {{ editStartDateModal.isLoading ? '...' : $t('common.save') }}
+          </BaseButton>
+        </div>
+      </div>
+    </div>
   </AppLayout>
 </template>
 
@@ -1131,6 +1244,13 @@ const returnToManagerModal = ref({
   isLoading: false,
 });
 
+const editStartDateModal = ref({
+  show: false,
+  request: null,
+  newDate: "",
+  isLoading: false,
+});
+
 const employeeRejectModal = ref({
   show: false,
   request: null,
@@ -1174,6 +1294,13 @@ const acceptLaterModal = ref({
   request: null,
   expectedDate: "",
   comments: "",
+  isLoading: false,
+});
+
+const editDateModal = ref({
+  show: false,
+  request: null,
+  newDate: "",
   isLoading: false,
 });
 
@@ -2006,6 +2133,78 @@ const closeAcceptLaterModal = () => {
   acceptLaterModal.value.expectedDate = "";
   acceptLaterModal.value.comments = "";
   acceptLaterModal.value.isLoading = false;
+};
+
+const openEditExecutionDateModal = (request) => {
+  editDateModal.value.show = true;
+  editDateModal.value.request = request;
+  editDateModal.value.newDate = request.expected_execution_date || "";
+};
+
+const closeEditDateModal = () => {
+  editDateModal.value.show = false;
+  editDateModal.value.request = null;
+  editDateModal.value.newDate = "";
+  editDateModal.value.isLoading = false;
+};
+
+const confirmEditExecutionDate = async () => {
+  try {
+    editDateModal.value.isLoading = true;
+    await axios.post(
+      `${API_URL}/department/requests/${editDateModal.value.request.id}/update-execution-date`,
+      { expected_execution_date: editDateModal.value.newDate },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      }
+    );
+    closeEditDateModal();
+    showSuccess(t("department.executionDateUpdated"));
+    loadRequests().catch((err) => {
+      console.error("Failed to reload requests:", err);
+    });
+  } catch (err) {
+    showError(err.response?.data?.message || "Failed to update execution date");
+    editDateModal.value.isLoading = false;
+  }
+};
+
+const openEditStartDateModal = (request) => {
+  editStartDateModal.value.show = true;
+  editStartDateModal.value.request = request;
+  editStartDateModal.value.newDate = request.expected_execution_date || "";
+};
+
+const closeEditStartDateModal = () => {
+  editStartDateModal.value.show = false;
+  editStartDateModal.value.request = null;
+  editStartDateModal.value.newDate = "";
+  editStartDateModal.value.isLoading = false;
+};
+
+const confirmEditStartDate = async () => {
+  try {
+    editStartDateModal.value.isLoading = true;
+    await axios.post(
+      `${API_URL}/department/requests/${editStartDateModal.value.request.id}/employee-update-start-date`,
+      { expected_execution_date: editStartDateModal.value.newDate },
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      }
+    );
+    closeEditStartDateModal();
+    showSuccess(t("department.startDateUpdated"));
+    loadRequests().catch((err) => {
+      console.error("Failed to reload requests:", err);
+    });
+  } catch (err) {
+    showError(err.response?.data?.message || "Failed to update start date");
+    editStartDateModal.value.isLoading = false;
+  }
 };
 
 const confirmAcceptLater = async () => {

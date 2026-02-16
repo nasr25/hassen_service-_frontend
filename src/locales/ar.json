@@ -428,6 +428,7 @@
     "explainDetailsNeeded": "اشرح التفاصيل المطلوبة من المستخدم...",
     "additionalInfoNeeded": "ما هي المعلومات الإضافية التي تحتاجها؟",
     "reject": "رفض",
+    "requestRejected": "تم رفض الطلب",
     "rejectRequest": "رفض الطلب",
     "permanentRejectionWarning": "سيؤدي ذلك إلى رفض الطلب بشكل دائم وإنهاء سير العمل.",
     "rejectionReason": "سبب الرفض",
@@ -476,7 +477,8 @@
       "employeeReject": "رفض الموظف للطلب",
       "progressUpdate": "تحديث التقدم",
       "acceptLater": "تم القبول للتنفيذ لاحقاً",
-      "employeeComplete": "إكمال الموظف للعمل"
+      "employeeComplete": "إكمال الموظف للعمل",
+      "activate": "تم تفعيل الفكرة للتنفيذ"
     },
     "department": "القسم",
     "evaluationModal": {
@@ -546,6 +548,12 @@
     "executeOn": "التنفيذ في",
     "dateDue": "حان موعد التنفيذ",
     "startImplementing": "بدء التنفيذ",
+    "editExecutionDate": "تعديل تاريخ التنفيذ",
+    "editExecutionDateTitle": "تعديل تاريخ التنفيذ",
+    "executionDateUpdated": "تم تحديث تاريخ التنفيذ بنجاح",
+    "editStartDate": "تعديل تاريخ البدء",
+    "editStartDateTitle": "تعديل تاريخ البدء",
+    "startDateUpdated": "تم تحديث تاريخ البدء بنجاح",
     "activateIdeaPrompt": "أنت على وشك تفعيل هذه الفكرة للتنفيذ. يمكنك بعد ذلك تعيينها لموظف.",
     "optionalComments": "تعليقات اختيارية",
     "pathEvaluationRequired": "تقييم المسار مطلوب",
