@@ -296,8 +296,7 @@
                 <BaseButton
                   variant="outline"
                   size="sm"
-                  @click="checkEvaluationAndOpen(request, 'details')"
-                  :disabled="!requestEvaluationStatus[request.id]"
+                  @click="openDetailsModal(request)"
                 >
                   <svg
                     width="16"
@@ -462,8 +461,7 @@
                   <BaseButton
                     variant="outline"
                     size="sm"
-                    @click="checkEvaluationAndOpen(request, 'details')"
-                    :disabled="!requestEvaluationStatus[request.id]"
+                    @click="openDetailsModal(request)"
                   >
                     <svg
                       width="16"
