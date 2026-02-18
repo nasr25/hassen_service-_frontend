@@ -442,7 +442,7 @@
                     variant="success"
                     size="sm"
                     @click="checkEvaluationAndOpen(request, 'assign')"
-                    disabled
+                    :disabled="!requestEvaluationStatus[request.id]"
                   >
                     <svg
                       width="16"

@@ -293,7 +293,6 @@
                   <BaseButton
                     variant="success"
                     @click="openPathEvaluationModal(request, 'accept')"
-                    :disabled="request.returned_from_employee"
                   >
                     {{ $t('department.acceptIdea') }}
                   </BaseButton>
@@ -318,6 +317,7 @@
                   <BaseButton
                     variant="danger"
                     @click="openPathEvaluationModal(request, 'reject')"
+                    :disabled="request.employee_completed"
                   >
                     {{ $t('department.rejectIdea') }}
                   </BaseButton>
