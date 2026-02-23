@@ -10,7 +10,7 @@
       <div class="login-content">
         <div class="login-header">
           <div class="logo-icon">
-            <img v-if="logo" :src="logo" alt="Logo" class="logo-image" />
+            <img v-if="logo" :src="logo" alt="Logo" class="logo-image" @error="onLogoError" />
             <svg v-else width="56" height="56" viewBox="0 0 48 48" fill="none">
               <rect width="48" height="48" rx="12" fill="url(#gradient)" />
               <path d="M24 14L34 20V28L24 34L14 28V20L24 14Z" fill="white" opacity="0.9" />
@@ -109,7 +109,7 @@
     <div class="welcome-panel">
       <div class="welcome-content">
         <div class="welcome-icon">
-          <img v-if="logo" :src="logo" alt="Logo" class="welcome-logo-image" />
+          <img v-if="logo" :src="logo" alt="Logo" class="welcome-logo-image" @error="onLogoError" />
           <svg v-else width="120" height="120" viewBox="0 0 120 120" fill="none">
             <circle cx="60" cy="60" r="60" fill="rgba(255, 255, 255, 0.1)" />
             <path d="M60 30L80 42V66L60 78L40 66V42L60 30Z" fill="white" opacity="0.9" stroke="white" stroke-width="2"/>
@@ -141,7 +141,14 @@ const router = useRouter()
 const authStore = useAuthStore()
 const { t, locale } = useI18n()
 const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert()
-const { logo, siteName, siteNameAr,siteDescriptionAr, siteDescription, fetchPublicSettings } = useSettings()
+const { logo: settingsLogo, siteName, siteNameAr,siteDescriptionAr, siteDescription, fetchPublicSettings } = useSettings()
+
+// Logo with error fallback
+const logoFailed = ref(false)
+const logo = computed(() => logoFailed.value ? null : settingsLogo.value)
+const onLogoError = () => {
+  logoFailed.value = true
+}
 
 // Computed property for system title based on locale
 const systemTitle = computed(() => {
@@ -277,6 +284,9 @@ html[dir="rtl"] .language-switcher-wrapper {
   display: flex;
   justify-content: center;
   margin-bottom: var(--spacing-4);
+  width: 25%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .logo-image {
@@ -514,6 +524,9 @@ html[dir="rtl"] .logging-text {
   margin-bottom: var(--spacing-8);
   display: flex;
   justify-content: center;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .welcome-logo-image {

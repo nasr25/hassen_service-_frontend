@@ -314,14 +314,7 @@
                       class="attachment-size"
                     >{{ formatFileSize(attachment.file_size) }}</span>
                     <span v-if="attachment.stage" class="attachment-stage">
-                      <template v-if="getAttachmentTransition(attachment)">
-                        {{ $t('status.' + getAttachmentTransition(attachment).from_status) }}
-                        {{ $i18n.locale === 'ar' ? '←' : '→' }}
-                        {{ $t('status.' + getAttachmentTransition(attachment).to_status) }}
-                      </template>
-                      <template v-else>
-                        {{ $t('status.' + attachment.stage) }}
-                      </template>
+                      {{ $t('statusName.' + attachment.stage) }}
                     </span>
                     <span v-if="attachment.uploader" class="attachment-uploader">
                       <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20">

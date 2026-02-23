@@ -14,6 +14,7 @@
               :src="logo"
               alt="Logo"
               class="logo-image"
+              @error="onLogoError"
             />
 
           </div>
@@ -433,12 +434,22 @@ import axios from "axios";
 import BaseBadge from "./BaseBadge.vue";
 import LanguageSwitcher from "./LanguageSwitcher.vue";
 import { API_URL } from "../config/api";
-import logo from "../assets/images/svg/logo_light.svg";
+import staticLogo from "../assets/images/svg/logo_light.svg";
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
 const { t, locale } = useI18n();
-const { siteName, siteNameAr, fetchPublicSettings } = useSettings();
+const { siteName, siteNameAr, logo: settingsLogo, fetchPublicSettings } = useSettings();
+
+// Use settings logo if available, fall back to static SVG
+const logoFailed = ref(false);
+const logo = computed(() => {
+  if (logoFailed.value) return staticLogo;
+  return settingsLogo.value || staticLogo;
+});
+const onLogoError = () => {
+  logoFailed.value = true;
+};
 
 const sidebarCollapsed = ref(false);
 const userMenuOpen = ref(false);
