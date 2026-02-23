@@ -284,14 +284,11 @@ html[dir="rtl"] .language-switcher-wrapper {
   display: flex;
   justify-content: center;
   margin-bottom: var(--spacing-4);
-  width: 25%;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-.logo-image {
-  width: 100%;
-  height: 100%;
+.logo-icon .logo-image {
+  width: 25%;
+  height: auto;
   object-fit: contain;
 }
 
@@ -524,14 +521,11 @@ html[dir="rtl"] .logging-text {
   margin-bottom: var(--spacing-8);
   display: flex;
   justify-content: center;
-  width: 50%;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-.welcome-logo-image {
-  width: 100%;
-  height: 100%;
+.welcome-icon .welcome-logo-image {
+  width: 50%;
+  height: auto;
   object-fit: contain;
   filter: brightness(0) invert(1);
 }
