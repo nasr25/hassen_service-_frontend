@@ -512,15 +512,6 @@
           </div>
           <div class="add-type-modal-body">
             <div class="add-type-field">
-              <label class="form-label">{{ $t('request.newIdeaTypeName') }} <span class="required-star">*</span></label>
-              <input
-                v-model="newTypeForm.name"
-                type="text"
-                class="add-type-input"
-                :placeholder="$t('request.newIdeaTypeName')"
-              />
-            </div>
-            <div class="add-type-field">
               <label class="form-label">{{ $t('request.newIdeaTypeNameAr') }} <span class="required-star">*</span></label>
               <input
                 v-model="newTypeForm.name_ar"
@@ -538,7 +529,7 @@
             <button
               type="button"
               class="add-type-btn-submit"
-              :disabled="isAddingType || !newTypeForm.name.trim() || !newTypeForm.name_ar.trim()"
+              :disabled="isAddingType || !newTypeForm.name_ar.trim()"
               @click="addNewIdeaType"
             >
               {{ isAddingType ? '...' : $t('common.save') }}
@@ -715,7 +706,7 @@ let searchTimeout = null;
 
 // Add new idea type state
 const showAddTypeModal = ref(false);
-const newTypeForm = ref({ name: '', name_ar: '' });
+const newTypeForm = ref({ name_ar: '' });
 const isAddingType = ref(false);
 
 // Post-submission survey state
@@ -802,21 +793,22 @@ const loadIdeaTypes = async () => {
 };
 
 const addNewIdeaType = async () => {
-  if (!newTypeForm.value.name.trim() || !newTypeForm.value.name_ar.trim()) return;
+  if (!newTypeForm.value.name_ar.trim()) return;
   try {
     isAddingType.value = true;
+    const arabicName = newTypeForm.value.name_ar.trim();
     const response = await httpRequest('/idea-types', {
       method: 'POST',
       data: {
-        name: newTypeForm.value.name.trim(),
-        name_ar: newTypeForm.value.name_ar.trim(),
+        name: arabicName,
+        name_ar: arabicName,
       },
     });
     const createdType = response.data.ideaType;
     ideaTypes.value.push(createdType);
     form.value.idea_types.push(createdType.id.toString());
     showAddTypeModal.value = false;
-    newTypeForm.value = { name: '', name_ar: '' };
+    newTypeForm.value = { name_ar: '' };
     showSuccess(t('request.addNewIdeaTypeSuccess'));
   } catch (err) {
     showError(err.response?.data?.message || 'Failed to add idea type');
