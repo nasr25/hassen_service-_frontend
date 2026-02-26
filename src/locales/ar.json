@@ -374,7 +374,9 @@
   },
   "status": {
     "draft": "مسودة",
-    "pending": "افكار قيد الانتظار",
+    "first_screening": "افكار قيد الفرز الأول",
+    "final_review": "افكار قيد المراجعة النهائية",
+    "temporarily_pending": "افكار معلقة مؤقتا",
     "in_review": "افكار قيد المراجعة",
     "in_progress": "افكار قيد التنفيذ",
     "need_more_details": "افكار بحاجة لتفاصيل",
@@ -385,7 +387,9 @@
   },
   "statusName": {
     "draft": "مسودة",
-    "pending": "قيد الانتظار",
+    "first_screening": "الفرز الأول",
+    "final_review": "المراجعة النهائية",
+    "temporarily_pending": "معلق مؤقتا",
     "in_review": "قيد المراجعة",
     "in_progress": "قيد التنفيذ",
     "need_more_details": "بحاجة لتفاصيل",

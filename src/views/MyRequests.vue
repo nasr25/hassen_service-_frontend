@@ -309,7 +309,9 @@ const respondedRequestIds = ref([]);
 const statusCounts = ref({
   all: 0,
   draft: 0,
-  pending: 0,
+  first_screening: 0,
+  final_review: 0,
+  temporarily_pending: 0,
   in_review: 0,
   need_more_details: 0,
   approved: 0,
@@ -335,7 +337,9 @@ import { API_URL, BASE_URL } from "../config/api";
 const statuses = computed(() => [
   { label: t("common.all"), value: "all" },
   { label: t("status.draft"), value: "draft" },
-  { label: t("status.pending"), value: "pending" },
+  { label: t("status.first_screening"), value: "first_screening" },
+  { label: t("status.final_review"), value: "final_review" },
+  { label: t("status.temporarily_pending"), value: "temporarily_pending" },
   { label: t("status.in_review"), value: "in_review" },
   { label: t("status.need_more_details"), value: "need_more_details" },
   { label: t("status.approved"), value: "approved" },
@@ -440,7 +444,9 @@ const getEmptyStateMessage = () => {
 const getStatusVariant = (status) => {
   const variants = {
     draft: "gray",
-    pending: "warning",
+    first_screening: "warning",
+    final_review: "info",
+    temporarily_pending: "warning",
     in_review: "info",
     in_progress: "primary",
     need_more_details: "warning",

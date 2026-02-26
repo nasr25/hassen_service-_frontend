@@ -89,8 +89,8 @@
             <span class="count">{{ requests.length }}</span>
           </button>
           <button
-            @click="filterStatus = 'pending'"
-            :class="['filter-chip', { active: filterStatus === 'pending' }]"
+            @click="filterStatus = 'first_screening'"
+            :class="['filter-chip', { active: filterStatus === 'first_screening' }]"
           >
             {{ $t('workflow.pendingAssignment') }}
             <span class="count">{{ getPendingCount() }}</span>
@@ -272,7 +272,7 @@
             <!-- Action Buttons -->
             <template #actions>
               <!-- Initial pending request actions -->
-              <template v-if="request.status === 'pending' && !request.workflow_path_id">
+              <template v-if="request.status === 'first_screening' && !request.workflow_path_id">
                 <BaseButton
                   variant="success"
                   size="sm"
@@ -351,7 +351,7 @@
               </template>
 
               <!-- Request with workflow path but pending (after details provided) or in review -->
-              <template v-else-if="request.workflow_path_id && (request.status === 'in_review' || request.status === 'pending')">
+              <template v-else-if="request.workflow_path_id && (request.status === 'in_review' || request.status === 'first_screening')">
                 <!-- If request went through employee processing, show final actions -->
                 <template v-if="request.went_through_employee_processing">
                   <BaseButton
@@ -1171,9 +1171,9 @@ const filteredRequests = computed(() => {
   if (filterStatus.value === "all") {
     return requests.value;
   }
-  if (filterStatus.value === "pending") {
+  if (filterStatus.value === "first_screening") {
     return requests.value.filter(
-      (r) => r.status === "pending" && !r.workflow_path_id
+      (r) => r.status === "first_screening" && !r.workflow_path_id
     );
   }
   if (filterStatus.value === "in_review") {
@@ -1195,7 +1195,7 @@ onMounted(async () => {
 
 const getPendingCount = () => {
   return requests.value.filter(
-    (r) => r.status === "pending" && !r.workflow_path_id
+    (r) => r.status === "first_screening" && !r.workflow_path_id
   ).length;
 };
 
@@ -1263,7 +1263,9 @@ const formatDate = (dateString) => {
 
 const getStatusVariant = (status) => {
   const variants = {
-    pending: "warning",
+    first_screening: "warning",
+    final_review: "info",
+    temporarily_pending: "warning",
     in_review: "info",
     in_progress: "primary",
     need_more_details: "warning",

@@ -215,7 +215,7 @@
               <!-- Manager Actions (only for unassigned requests) -->
               <template v-if="isManager && !request.current_user_id">
                 <!-- Pending (Accepted for Later) - Show Activate button -->
-                <template v-if="request.status === 'pending' && request.expected_execution_date">
+                <template v-if="request.status === 'temporarily_pending' && request.expected_execution_date">
                   <div class="pending-idea-notice">
                     <svg
                       width="20"
@@ -1409,7 +1409,9 @@ const toggleEvaluation = (requestId) => {
 const getStatusVariant = (status) => {
   const variants = {
     draft: "gray",
-    pending: "warning",
+    first_screening: "warning",
+    final_review: "info",
+    temporarily_pending: "warning",
     in_review: "info",
     in_progress: "primary",
     need_more_details: "warning",

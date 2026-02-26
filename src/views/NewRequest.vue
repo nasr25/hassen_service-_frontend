@@ -1139,7 +1139,7 @@ const handleSubmit = async () => {
 
     formData.append("department", form.value.department);
     formData.append("benefits", form.value.benefits || "");
-    formData.append("status", "pending");
+    formData.append("status", "first_screening");
     formData.append("idea_ownership_type", form.value.idea_ownership_type);
 
     if (isEditMode.value && form.value.additional_details) {

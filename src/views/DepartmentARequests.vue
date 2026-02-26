@@ -205,7 +205,9 @@ const viewHistory = (requestId) => {
 const getStatusVariant = (status) => {
   const variants = {
     draft: "gray",
-    pending: "warning",
+    first_screening: "warning",
+    final_review: "info",
+    temporarily_pending: "warning",
     in_review: "info",
     in_progress: "primary",
     need_more_details: "warning",

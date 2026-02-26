@@ -210,7 +210,9 @@ const latestTransition = computed(() => {
 const getStatusVariant = (status) => {
   const variants = {
     'draft': 'secondary',
-    'pending': 'warning',
+    'first_screening': 'warning',
+    'final_review': 'info',
+    'temporarily_pending': 'warning',
     'in_review': 'info',
     'in_progress': 'primary',
     'need_more_details': 'warning',

@@ -373,7 +373,9 @@
   },
   "status": {
     "draft": "Draft",
-    "pending": "Ideas Pending",
+    "first_screening": "Ideas In First Screening",
+    "final_review": "Ideas In Final Review",
+    "temporarily_pending": "Ideas Temporarily Pending",
     "in_review": "Ideas In Review",
     "in_progress": "Ideas In Progress",
     "need_more_details": "Ideas Need Details",
@@ -384,7 +386,9 @@
   },
   "statusName": {
     "draft": "Draft",
-    "pending": "Pending",
+    "first_screening": "First Screening",
+    "final_review": "Final Review",
+    "temporarily_pending": "Temporarily Pending",
     "in_review": "In Review",
     "in_progress": "In Progress",
     "need_more_details": "Need Details",
