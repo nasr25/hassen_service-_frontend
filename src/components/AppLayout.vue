@@ -8,13 +8,10 @@
       <div class="sidebar-header">
         <div class="logo-container">
           <div class="logo">
-            <!-- Use custom logo if available, otherwise show default SVG -->
             <img
-              v-if="logo"
-              :src="logo"
+              :src="staticLogo"
               alt="Logo"
               class="logo-image"
-              @error="onLogoError"
             />
 
           </div>
@@ -441,15 +438,6 @@ const authStore = useAuthStore();
 const { t, locale } = useI18n();
 const { siteName, siteNameAr, logo: settingsLogo, fetchPublicSettings } = useSettings();
 
-// Use settings logo if available, fall back to static SVG
-const logoFailed = ref(false);
-const logo = computed(() => {
-  if (logoFailed.value) return staticLogo;
-  return settingsLogo.value || staticLogo;
-});
-const onLogoError = () => {
-  logoFailed.value = true;
-};
 
 const sidebarCollapsed = ref(false);
 const userMenuOpen = ref(false);
