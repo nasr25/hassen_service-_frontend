@@ -59,6 +59,7 @@
         </form>
 
         <!-- Test Accounts Section -->
+        <!-- 
         <div class="test-accounts">
           <div class="test-accounts-header">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
@@ -102,6 +103,7 @@
             {{ $t('auth.passwordNote') }} <strong>{{ $t('auth.passwordValue') }}</strong>
           </div>
         </div>
+        -->
       </div>
     </div>
 
@@ -159,10 +161,10 @@ const systemDescription = computed(() => {
   return locale.value === 'ar' ? siteDescriptionAr.value : siteDescription.value
 })
 
-onMounted(async () => {
-  fetchPublicSettings()
-  await fetchDemoAccounts()
-})
+// onMounted(async () => {
+//   fetchPublicSettings()
+//   await fetchDemoAccounts()
+// })
 
 const form = ref({
   username: '',
@@ -175,19 +177,19 @@ const testAccounts = ref([])
 const isLoadingAccounts = ref(false)
 const loggingInAs = ref(null)
 
-const fetchDemoAccounts = async () => {
-  try {
-    isLoadingAccounts.value = true
-    const response = await axios.get(`${API_URL}/auth/demo-accounts`)
-    testAccounts.value = response.data.users
-  } catch (err) {
-    console.error('Failed to fetch demo accounts:', err)
-    // Fallback to empty array if fetch fails
-    testAccounts.value = []
-  } finally {
-    isLoadingAccounts.value = false
-  }
-}
+// const fetchDemoAccounts = async () => {
+//   try {
+//     isLoadingAccounts.value = true
+//     const response = await axios.get(`${API_URL}/auth/demo-accounts`)
+//     testAccounts.value = response.data.users
+//   } catch (err) {
+//     console.error('Failed to fetch demo accounts:', err)
+//     // Fallback to empty array if fetch fails
+//     testAccounts.value = []
+//   } finally {
+//     isLoadingAccounts.value = false
+//   }
+// }
 
 const handleLogin = async () => {
   error.value = null
