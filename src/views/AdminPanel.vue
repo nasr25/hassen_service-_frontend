@@ -1843,6 +1843,13 @@
           <small v-if="pathModal.isEdit">{{ $t('admin.pathCannotChange') }}</small>
         </div>
         <div class="form-group">
+          <label>{{ $t('admin.department') }} {{ $t('admin.required') }}</label>
+          <select v-model="pathModal.form.department_id" required>
+            <option value="">{{ $t('admin.selectDepartment') }}</option>
+            <option v-for="dept in departments" :key="dept.id" :value="dept.id">{{ dept.name }}</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label>{{ $t('admin.pathDescription') }}</label>
           <textarea
             v-model="pathModal.form.description"
@@ -2017,7 +2024,7 @@ const pathModal = ref({
   show: false,
   isEdit: false,
   isLoading: false,
-  form: { name: "", code: "", description: "", order: 0, is_active: true },
+  form: { name: "", code: "", description: "", department_id: "", order: 0, is_active: true },
   editId: null,
 });
 const surveyModal = ref({
@@ -3093,6 +3100,7 @@ const openPathModal = (path = null) => {
         name: path.name,
         code: path.code,
         description: path.description || "",
+        department_id: path.department_id || "",
         order: path.order || 0,
         is_active: path.is_active,
       },
@@ -3107,6 +3115,7 @@ const openPathModal = (path = null) => {
         name: "",
         code: "",
         description: "",
+        department_id: "",
         order: workflowPaths.value.length,
         is_active: true,
       },
@@ -3124,6 +3133,7 @@ const closePathModal = () => {
       name: "",
       code: "",
       description: "",
+      department_id: "",
       order: 0,
       is_active: true,
     },
