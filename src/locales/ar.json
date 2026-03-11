@@ -374,15 +374,15 @@
   },
   "status": {
     "draft": "مسودة",
-    "first_screening": "افكار قيد الفرز الأول",
-    "final_review": "افكار قيد المراجعة النهائية",
-    "temporarily_pending": "افكار معلقة مؤقتا",
-    "in_review": "افكار قيد المراجعة",
-    "in_progress": "افكار قيد التنفيذ",
-    "need_more_details": "افكار بحاجة لتفاصيل",
+    "first_screening": "الفرز الاولي",
+    "final_review": "المراجعة النهائية",
+    "temporarily_pending": "معلقة مؤقتا",
+    "in_review": "قيد المراجعة",
+    "in_progress": "قيد التنفيذ",
+    "need_more_details": "فكرة بحاجة الى تفاصيل",
     "missing_requirement": "متطلبات ناقصة",
-    "approved": "افكار موافق عليه",
-    "rejected": "افكار لم يتم اعتمادها",
+    "approved": "موافق عليه",
+    "rejected": "لم يتم اعتمادها",
     "completed": "افكار مكتملة"
   },
   "statusName": {
