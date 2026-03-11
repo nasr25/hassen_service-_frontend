@@ -763,6 +763,11 @@
                 </td>
                 <td class="actions">
                   <button
+                    @click="openStepsModal(path)"
+                    class="btn-icon btn-info"
+                    :title="$t('admin.manageSteps')"
+                  >🔢</button>
+                  <button
                     @click="openPathModal(path)"
                     class="btn-icon"
                   >✏️</button>
@@ -1813,6 +1818,68 @@
 
     <!-- Workflow Path Modal -->
     <div
+      v-if="stepsModal.show"
+      class="modal-overlay"
+      @click="closeStepsModal"
+    >
+      <div class="modal-content" style="max-width:650px" @click.stop>
+        <h2>{{ $t('admin.pathSteps') }}: {{ stepsModal.path?.name }}</h2>
+
+        <!-- Existing steps list -->
+        <table v-if="stepsModal.steps.length > 0" class="logs-table" style="margin-bottom:1rem">
+          <thead>
+            <tr>
+              <th>{{ $t('admin.stepOrder') }}</th>
+              <th>{{ $t('admin.department') }}</th>
+              <th>{{ $t('admin.requiresApproval') }}</th>
+              <th>{{ $t('admin.actions') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="step in stepsModal.steps" :key="step.id">
+              <td><span class="badge badge-info">#{{ step.step_order }}</span></td>
+              <td>{{ step.department?.name }}</td>
+              <td>
+                <span :class="['badge', step.requires_approval ? 'badge-success' : 'badge-inactive']">
+                  {{ step.requires_approval ? $t('common.yes') : $t('common.no') }}
+                </span>
+              </td>
+              <td class="actions">
+                <button @click="deleteStep(step)" class="btn-icon btn-danger">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p v-else class="text-muted" style="margin-bottom:1rem">{{ $t('admin.noStepsFound') }}</p>
+
+        <!-- Add new step form -->
+        <div style="border-top:1px solid #e5e7eb;padding-top:1rem">
+          <h3 style="margin-bottom:0.75rem">{{ $t('admin.addStep') }}</h3>
+          <div class="form-group">
+            <label>{{ $t('admin.department') }} {{ $t('admin.required') }}</label>
+            <select v-model="stepsModal.newStep.department_id" required>
+              <option value="">{{ $t('admin.selectDepartment') }}</option>
+              <option v-for="dept in departments" :key="dept.id" :value="dept.id">{{ dept.name }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>{{ $t('admin.stepOrder') }} {{ $t('admin.required') }}</label>
+            <input v-model.number="stepsModal.newStep.step_order" type="number" min="1" :placeholder="$t('admin.stepOrderPlaceholder')" />
+          </div>
+          <div class="form-group">
+            <label><input v-model="stepsModal.newStep.requires_approval" type="checkbox" /> {{ $t('admin.requiresApproval') }}</label>
+          </div>
+          <div class="modal-actions">
+            <button @click="closeStepsModal" class="btn-secondary">{{ $t('common.close') }}</button>
+            <button @click="addStep" :disabled="stepsModal.isLoading" class="btn-primary">
+              {{ stepsModal.isLoading ? $t('common.saving') : $t('admin.addStep') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
       v-if="pathModal.show"
       class="modal-overlay"
       @click="closePathModal"
@@ -2026,6 +2093,13 @@ const pathModal = ref({
   isLoading: false,
   form: { name: "", code: "", description: "", department_id: "", order: 0, is_active: true },
   editId: null,
+});
+const stepsModal = ref({
+  show: false,
+  isLoading: false,
+  path: null,
+  steps: [],
+  newStep: { department_id: "", step_order: 1, requires_approval: true },
 });
 const surveyModal = ref({
   show: false,
@@ -3089,6 +3163,51 @@ const deleteIdeaType = async (ideaType) => {
 };
 
 // ============= WORKFLOW PATH MANAGEMENT =============
+
+const openStepsModal = async (path) => {
+  stepsModal.value = {
+    show: true,
+    isLoading: false,
+    path,
+    steps: [],
+    newStep: { department_id: "", step_order: 1, requires_approval: true },
+  };
+  const res = await httpRequest(`/admin/workflow-paths/${path.id}/steps`);
+  stepsModal.value.steps = res.data.steps;
+};
+
+const closeStepsModal = () => {
+  stepsModal.value.show = false;
+};
+
+const addStep = async () => {
+  if (!stepsModal.value.newStep.department_id || !stepsModal.value.newStep.step_order) return;
+  stepsModal.value.isLoading = true;
+  try {
+    const res = await httpRequest(`/admin/workflow-paths/${stepsModal.value.path.id}/steps`, {
+      method: "POST",
+      data: stepsModal.value.newStep,
+    });
+    stepsModal.value.steps.push(res.data.step);
+    stepsModal.value.steps.sort((a, b) => a.step_order - b.step_order);
+    stepsModal.value.newStep = { department_id: "", step_order: stepsModal.value.steps.length + 1, requires_approval: true };
+    showSuccess(res.data.message || "Step added");
+  } catch (err) {
+    showError(err.response?.data?.message || err.message);
+  }
+  stepsModal.value.isLoading = false;
+};
+
+const deleteStep = async (step) => {
+  if (!confirm("Delete this step?")) return;
+  try {
+    await httpRequest(`/admin/workflow-paths/${stepsModal.value.path.id}/steps/${step.id}`, { method: "DELETE" });
+    stepsModal.value.steps = stepsModal.value.steps.filter((s) => s.id !== step.id);
+    showSuccess("Step deleted");
+  } catch (err) {
+    showError(err.response?.data?.message || err.message);
+  }
+};
 
 const openPathModal = (path = null) => {
   if (path) {
