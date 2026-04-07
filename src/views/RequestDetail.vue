@@ -969,6 +969,7 @@ const formatFileSize = (bytes) => {
 
 .attachment-item {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-4);
