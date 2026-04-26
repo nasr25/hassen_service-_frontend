@@ -1505,7 +1505,7 @@
           >
             <option value="">{{ $t('admin.selectUser') }}</option>
             <option
-              v-for="user in users.filter(u => ['manager', 'employee'].includes(u.role))"
+              v-for="user in getAssignUsersToDepartment"
               :key="user.id"
               :value="user.id"
             >
@@ -1974,6 +1974,7 @@ const { showSuccess, showError, showConfirm, showDeleteConfirm } = useAlert();
 const activeTab = ref("departments");
 const departments = ref([]);
 const users = ref([]);
+const getAssignUsersToDepartment = ref([]);
 const usersPagination = ref({
   total: 0,
   per_page: 10,
@@ -2225,6 +2226,7 @@ const loadData = async () => {
     const check = activeTab.value;
 
     console.log(activeTab.value);
+    // alert(activeTab.value);
     switch (check) {
       case "departments":
         const deptsRes = await httpRequest(`/admin/departments`);
@@ -2239,8 +2241,11 @@ const loadData = async () => {
         }
         break;
       case "assignments":
-        const assignQuestionsRes = await httpRequest(`/admin/evaluation-questions`);
-        evaluationQuestions.value = assignQuestionsRes.data.questions;
+       const getAssignUsersToDepartmentRes = await httpRequest(`/admin/get-assign-users-to-department?search=${encodeURIComponent(userSearch.value)}`);
+        getAssignUsersToDepartment.value = getAssignUsersToDepartmentRes.data.users;
+        if (getAssignUsersToDepartmentRes.data.pagination) {
+          usersPagination.value = usersRes.data.pagination;
+        }
         break;
       case "evaluations":
         // Load both evaluation questions and path evaluation questions
